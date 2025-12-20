@@ -6,6 +6,7 @@
     <Project Path="Yarito.Domain.Core/Yarito.Domain.Core.csproj" />
   </Folder>
   <Folder Name="/src/01_Domain/Services/">
+    <Project Path="Yarito.Domain.AppServices/Yarito.Domain.AppServices.csproj" />
     <Project Path="Yarito.Domain.Services/Yarito.Domain.Services.csproj" />
   </Folder>
   <Folder Name="/src/02_Infrastructure/" />
