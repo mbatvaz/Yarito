@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Yarito.Domain.Core\Yarito.Domain.Core.csproj" />
+  </ItemGroup>
+
 </Project>
