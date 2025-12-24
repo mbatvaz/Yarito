@@ -17,8 +17,8 @@ namespace Yarito.Domain.Core.Entities.Categories;
 public class ExpertCategory : BaseEntity
 {
     // Foreign Keys
-    public required Guid ExpertId { get; set; }
-    public required Guid CategoryId { get; set; }
+    public Guid ExpertId { get; set; }
+    public Guid CategoryId { get; set; }
 
     // Navigation Properties
     public Expert Expert { get; set; } = null!;

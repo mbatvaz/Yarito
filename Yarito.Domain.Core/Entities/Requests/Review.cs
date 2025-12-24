@@ -1,5 +1,6 @@
 ﻿using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Users;
+using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.Entities.Requests;
 
@@ -30,6 +31,7 @@ public class Review : BaseEntity
     // Properties
     public int Rating { get; set; }
     public string? Comment { get; set; }
+    public ReviewStatusEnum ReviewStatus { get; set; }
 
     // Foreign Keys
     public Guid RequestId { get; set; }

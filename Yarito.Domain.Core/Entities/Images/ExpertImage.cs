@@ -15,11 +15,11 @@ namespace Yarito.Domain.Core.Entities.Images;
 public class ExpertImage : BaseEntity
 {
     // Properties
-    public required string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     // Foreign Keys
-    public required Guid ExpertId { get; set; }
+    public Guid ExpertId { get; set; }
 
     // Navigation Properties
-    public required Expert Expert { get; set; }
+    public Expert Expert { get; set; } = null!;
 }

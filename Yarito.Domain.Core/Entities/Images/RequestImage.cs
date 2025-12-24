@@ -16,11 +16,11 @@ namespace Yarito.Domain.Core.Entities.Images;
 public class RequestImage : BaseEntity
 {
     // Properties
-    public required string Url { get; set; }
+    public string Url { get; set; } = string.Empty;
 
     // Foreign Keys
     public Guid RequestId { get; set; }
 
     // Navigation Properties
-    public required Request Request { get; set; }
+    public Request Request { get; set; } = null!;
 }
