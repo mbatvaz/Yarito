@@ -26,7 +26,7 @@ namespace Yarito.Domain.Core.Entities.Requests;
 /// <item><description><b>Expert:</b> ارجاع به موجودیت متخصص</description></item>
 /// <item><description><b>ReviewId:</b> شناسه نظر ثبت‌شده برای این پیشنهاد</description></item>
 /// <item><description><b>Review:</b> ارجاع به نظر ثبت‌شده</description></item>
-/// <item><description><b>Images:</b> لیست تصاویر مرتبط با این پیشنهاد</description></item>
+/// <item><description><b>ExpertImages:</b> لیست تصاویر مرتبط متخصص با این پیشنهاد</description></item>
 /// </list>
 /// </remarks>
 public class Bid : BaseEntity
@@ -44,7 +44,7 @@ public class Bid : BaseEntity
 
     // Navigation Properties
     public Request Request { get; set; } = null!;
+    public ICollection<BidImage> BidImage { get; set; } = [];
     public Expert Expert { get; set; } = null!;
-    public ICollection<Image> Images { get; set; } = [];
     public Review? Review { get; set; }
 }

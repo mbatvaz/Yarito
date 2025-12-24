@@ -2,7 +2,6 @@
 using Yarito.Domain.Core.Entities.Users;
 
 namespace Yarito.Domain.Core.Entities.Cities;
-
 /// <summary>
 /// نماینده یک شهر یا استان است. اگر یک شهر والد نداشته باشد، به عنوان استان در نظر گرفته می‌شود。
 /// </summary>

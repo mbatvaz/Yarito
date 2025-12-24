@@ -1,7 +1,7 @@
 ﻿using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Entities.Requests;
 
 namespace Yarito.Domain.Core.Entities.Categories;
-
 /// <summary>
 /// نماینده یک دسته‌بندی برای خدمات است. هر دسته‌بندی می‌تواند یک والد داشته باشد و به این ترتیب یک ساختار سلسله‌مراتبی ایجاد می‌شود.
 /// خدماتی که والد ندارند، به عنوان دسته‌بندی اصلی در نظر گرفته می‌شوند.
@@ -34,4 +34,6 @@ public class Category : BaseEntity
     // Navigation Properties
     public Category? Parent { get; set; }
     public ICollection<Category> Children { get; set; } = [];
+    public ICollection<Request> Requests { get; set; } = [];
+    public ICollection<ExpertCategory> ExpertCategories { get; set; } = [];
 }

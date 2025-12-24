@@ -28,10 +28,9 @@ namespace Yarito.Domain.Core.Entities.Requests;
 /// <item><description><b>Category:</b> ارجاع به موجودیت دسته‌بندی</description></item>
 /// <item><description><b>AcceptedBidId:</b> شناسه پیشنهاد پذیرفته‌شده (در صورتی که وجود داشته باشد)</description></item>
 /// <item><description><b>AcceptedBid:</b> ارجاع به پیشنهاد پذیرفته‌شده</description></item>
-/// <item><description><b>ReviewId:</b> شناسه نظر ثبت‌شده برای این درخواست</description></item>
-/// <item><description><b>Review:</b> ارجاع به نظر ثبت‌شده</description></item>
+/// <item><description><b>Review:</b> ارجاع به نظر ثبت‌شده برای این درخواست</description></item>
 /// <item><description><b>Bids:</b> لیست تمام پیشنهادهای ثبت‌شده برای این درخواست</description></item>
-/// <item><description><b>Images:</b> لیست تصاویر مرتبط با این درخواست</description></item>
+/// <item><description><b>RequestImages:</b> لیست تصاویر مرتبط با این درخواست</description></item>
 /// </list>
 /// </remarks>
 public class Request : BaseEntity
@@ -48,13 +47,12 @@ public class Request : BaseEntity
     public Guid CustomerId { get; set; }
     public Guid CategoryId { get; set; }
     public Guid? AcceptedBidId { get; set; }
-    public Guid? ReviewId { get; set; }
 
     // Navigation Properties
     public Customer Customer { get; set; } = null!;
     public Category Category { get; set; } = null!;
     public Bid? AcceptedBid { get; set; }
     public ICollection<Bid> Bids { get; set; } = [];
-    public ICollection<Image> Images { get; set; } = [];
+    public ICollection<RequestImage> RequestImages { get; set; } = [];
     public Review? Review { get; set; }
 }

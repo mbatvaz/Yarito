@@ -1,5 +1,4 @@
 ﻿namespace Yarito.Domain.Core.Entities._Common;
-
 /// <summary>
 /// کلاس پایه برای تمام موجودیت‌های سیستم که ویژگی‌های مشترک را فراهم می‌کند.
 /// </summary>

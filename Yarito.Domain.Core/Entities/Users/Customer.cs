@@ -6,7 +6,7 @@ namespace Yarito.Domain.Core.Entities.Users;
 /// نماینده یک مشتری در سیستم است که می‌تواند درخواست‌های خدماتی ثبت کند.
 /// </summary>
 /// <remarks>
-/// <para>این کلاس از `AppUser` ارث‌بری می‌کند و ویژگی‌های مختص مشتریان را اضافه می‌کند.</para>
+/// <para>این کلاس ارتباط یک به یک با `AppUser` دارد و ویژگی‌های مختص مشتریان را اضافه می‌کند.</para>
 /// <para>پراپرتی‌ها:</para>
 /// <list type="bullet">
 /// <item><description><b>Address:</b> آدرس محل سکونت مشتری</description></item>
