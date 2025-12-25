@@ -1,7 +1,7 @@
 ﻿using Yarito.Domain.Core.Entities._Common;
-using Yarito.Domain.Core.Entities.Categories;
 using Yarito.Domain.Core.Entities.Images;
 using Yarito.Domain.Core.Entities.Users;
+using Yarito.Domain.Core.Entities.Works;
 using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.Entities.Requests;
@@ -24,8 +24,8 @@ namespace Yarito.Domain.Core.Entities.Requests;
 /// <list type="bullet">
 /// <item><description><b>CustomerId:</b> شناسه مشتری ثبت‌کننده درخواست</description></item>
 /// <item><description><b>Customer:</b> ارجاع به موجودیت مشتری</description></item>
-/// <item><description><b>CategoryId:</b> شناسه دسته‌بندی خدمت</description></item>
-/// <item><description><b>Category:</b> ارجاع به موجودیت دسته‌بندی</description></item>
+/// <item><description><b>WorkId:</b> شناسه خدمت مورد نیاز</description></item>
+/// <item><description><b>Work:</b> ارجاع به موجودیت خدمت</description></item>
 /// <item><description><b>AcceptedBidId:</b> شناسه پیشنهاد پذیرفته‌شده (در صورتی که وجود داشته باشد)</description></item>
 /// <item><description><b>AcceptedBid:</b> ارجاع به پیشنهاد پذیرفته‌شده</description></item>
 /// <item><description><b>Review:</b> ارجاع به نظر ثبت‌شده برای این درخواست</description></item>
@@ -44,15 +44,15 @@ public class Request : BaseEntity
     public RequestStatusEnum Status { get; set; } = RequestStatusEnum.Pending;
 
     // Foreign Keys
-    public Guid CustomerId { get; set; }
-    public Guid CategoryId { get; set; }
-    public Guid? AcceptedBidId { get; set; }
+    public int CustomerId { get; set; }
+    public int WorkId { get; set; }
+    public int? AcceptedBidId { get; set; }
 
     // Navigation Properties
     public Customer Customer { get; set; } = null!;
-    public Category Category { get; set; } = null!;
     public Bid? AcceptedBid { get; set; }
+    public Work Work { get; set; } = null!;
+    public Review? Review { get; set; }
     public ICollection<Bid> Bids { get; set; } = [];
     public ICollection<RequestImage> RequestImages { get; set; } = [];
-    public Review? Review { get; set; }
 }

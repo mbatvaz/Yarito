@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System;
 using Yarito.Domain.Core.Entities.Images;
-using static Yarito.Infra.Database.SQLServer.EFCore.Configurations.SeedDataGuids;
 
 namespace Yarito.Infra.Database.SQLServer.EFCore.Configurations.Images;
 
@@ -9,55 +9,168 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
 {
     public void Configure(EntityTypeBuilder<RequestImage> builder)
     {
+        // Primary Key
         builder.HasKey(i => i.Id);
 
-        builder.Property(i => i.Url)
+        // Indexes
+        builder.HasIndex(i => i.RequestId);
+
+        // Property Configurations
+        builder.Property(i => i.ImgPath)
             .IsRequired()
             .HasMaxLength(100);
 
         builder.Property(i => i.RequestId)
             .IsRequired();
 
+        // Relationships
         builder.HasOne(i => i.Request)
             .WithMany(r => r.RequestImages)
             .HasForeignKey(i => i.RequestId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Query Filter
         builder.HasQueryFilter(x => !x.IsDeleted);
 
-        var now = DateTime.UtcNow;
-
-        // SeedData - تصاویر درخواست‌ها
+        // Seed Data
         builder.HasData(
-            // تصاویر درخواست 1 - تعمیر شیر آب
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000001"), RequestId = Request1Id, Url = "/images/requests/request1-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-5) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000002"), RequestId = Request1Id, Url = "/images/requests/request1-img2.jpg", IsDeleted = false, CreatedAt = now.AddDays(-5) },
+            // Images for Request 1 (سیم‌کشی آشپزخانه)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage1Id,
+                ImgPath = "/images/requests/req1_img1_a7f3d8e2.jpg",
+                RequestId = SeedDataIds.Request1Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-25)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage2Id,
+                ImgPath = "/images/requests/req1_img2_b4e9c1f6.jpg",
+                RequestId = SeedDataIds.Request1Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-25)
+            },
 
-            // تصاویر درخواست 2 - نظافت منزل
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000003"), RequestId = Request2Id, Url = "/images/requests/request2-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-3) },
+            // Images for Request 2 (تعمیر شیر آب)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage3Id,
+                ImgPath = "/images/requests/req2_img1_c2d8a5b9.jpg",
+                RequestId = SeedDataIds.Request2Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-18)
+            },
 
-            // تصاویر درخواست 3 - تعمیر موتور خودرو
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000004"), RequestId = Request3Id, Url = "/images/requests/request3-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-2) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000005"), RequestId = Request3Id, Url = "/images/requests/request3-img2.jpg", IsDeleted = false, CreatedAt = now.AddDays(-2) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000006"), RequestId = Request3Id, Url = "/images/requests/request3-img3.jpg", IsDeleted = false, CreatedAt = now.AddDays(-2) },
+            // Images for Request 3 (نظافت منزل)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage4Id,
+                ImgPath = "/images/requests/req3_img1_d9f6e3c7.jpg",
+                RequestId = SeedDataIds.Request3Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage5Id,
+                ImgPath = "/images/requests/req3_img2_e5a8b4d1.jpg",
+                RequestId = SeedDataIds.Request3Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage6Id,
+                ImgPath = "/images/requests/req3_img3_f1c9d7e2.jpg",
+                RequestId = SeedDataIds.Request3Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
+            },
 
-            // تصاویر درخواست 4 - نصب لوستر
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000007"), RequestId = Request4Id, Url = "/images/requests/request4-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-10) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000008"), RequestId = Request4Id, Url = "/images/requests/request4-img2.jpg", IsDeleted = false, CreatedAt = now.AddDays(-10) },
+            // Images for Request 4 (رنگ اتاق)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage7Id,
+                ImgPath = "/images/requests/req4_img1_g8b5f2a6.jpg",
+                RequestId = SeedDataIds.Request4Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-5)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage8Id,
+                ImgPath = "/images/requests/req4_img2_h3d7c9e4.jpg",
+                RequestId = SeedDataIds.Request4Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-5)
+            },
 
-            // تصاویر درخواست 6 - رنگ‌آمیزی اتاق
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000009"), RequestId = Request6Id, Url = "/images/requests/request6-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-30) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000010"), RequestId = Request6Id, Url = "/images/requests/request6-img2.jpg", IsDeleted = false, CreatedAt = now.AddDays(-30) },
+            // Images for Request 5 (تعمیر یخچال)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage9Id,
+                ImgPath = "/images/requests/req5_img1_i6e2a8b5.jpg",
+                RequestId = SeedDataIds.Request5Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-3)
+            },
 
-            // تصاویر درخواست 7 - تعمیر یخچال
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000011"), RequestId = Request7Id, Url = "/images/requests/request7-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-25) },
+            // Images for Request 6 (نصب لوستر)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage10Id,
+                ImgPath = "/images/requests/req6_img1_j9f4c3d7.jpg",
+                RequestId = SeedDataIds.Request6Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-1)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage11Id,
+                ImgPath = "/images/requests/req6_img2_k2a5e8b1.jpg",
+                RequestId = SeedDataIds.Request6Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-1)
+            },
 
-            // تصاویر درخواست 9 - تعویض لوله‌ها
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000012"), RequestId = Request9Id, Url = "/images/requests/request9-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-20) },
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000013"), RequestId = Request9Id, Url = "/images/requests/request9-img2.jpg", IsDeleted = false, CreatedAt = now.AddDays(-20) },
+            // Images for Request 7 (قالیشویی)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage12Id,
+                ImgPath = "/images/requests/req7_img1_l7c9d2f6.jpg",
+                RequestId = SeedDataIds.Request7Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-12)
+            },
 
-            // تصاویر درخواست 10 - صافکاری خودرو (لغو شده)
-            new RequestImage { Id = Guid.Parse("80000000-0000-0000-0000-000000000014"), RequestId = Request10Id, Url = "/images/requests/request10-img1.jpg", IsDeleted = false, CreatedAt = now.AddDays(-18) }
+            // Images for Request 8 (تعمیر توالت)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage13Id,
+                ImgPath = "/images/requests/req8_img1_m4e6a3b8.jpg",
+                RequestId = SeedDataIds.Request8Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-8)
+            },
+
+            // Images for Request 10 (تعمیر ماشین لباسشویی)
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage14Id,
+                ImgPath = "/images/requests/req10_img1_n8f5d7c2.jpg",
+                RequestId = SeedDataIds.Request10Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-14)
+            },
+            new RequestImage
+            {
+                Id = SeedDataIds.RequestImage15Id,
+                ImgPath = "/images/requests/req10_img2_o1b9e4a6.jpg",
+                RequestId = SeedDataIds.Request10Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-14)
+            }
         );
     }
 }

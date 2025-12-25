@@ -1,5 +1,4 @@
 ﻿using Yarito.Domain.Core.Entities._Common;
-using Yarito.Domain.Core.Entities.Images;
 using Yarito.Domain.Core.Entities.Users;
 using Yarito.Domain.Core.Enums.Requests;
 
@@ -24,9 +23,7 @@ namespace Yarito.Domain.Core.Entities.Requests;
 /// <item><description><b>Request:</b> ارجاع به موجودیت درخواست</description></item>
 /// <item><description><b>ExpertId:</b> شناسه متخصص ثبت‌کننده پیشنهاد</description></item>
 /// <item><description><b>Expert:</b> ارجاع به موجودیت متخصص</description></item>
-/// <item><description><b>ReviewId:</b> شناسه نظر ثبت‌شده برای این پیشنهاد</description></item>
-/// <item><description><b>Review:</b> ارجاع به نظر ثبت‌شده</description></item>
-/// <item><description><b>ExpertImages:</b> لیست تصاویر مرتبط متخصص با این پیشنهاد</description></item>
+/// <item><description><b>ExpertPortfolioImages:</b> لیست تصاویر نمونه کار که متخصص برای این پیشنهاد انتخاب کرده</description></item>
 /// </list>
 /// </remarks>
 public class Bid : BaseEntity
@@ -34,17 +31,14 @@ public class Bid : BaseEntity
     // Properties
     public string? Description { get; set; }
     public decimal ProposedPrice { get; set; }
-    public DateTime? ProposedVisitDateTime { get; set; }
+    public DateTime ProposedVisitDateTime { get; set; }
     public BidStatusEnum Status { get; set; } = BidStatusEnum.Pending;
 
     // Foreign Keys
-    public Guid RequestId { get; set; }
-    public Guid ExpertId { get; set; }
-    public Guid? ReviewId { get; set; }
+    public int RequestId { get; set; }
+    public int ExpertId { get; set; }
 
     // Navigation Properties
     public Request Request { get; set; } = null!;
-    public ICollection<BidImage> BidImage { get; set; } = [];
     public Expert Expert { get; set; } = null!;
-    public Review? Review { get; set; }
 }

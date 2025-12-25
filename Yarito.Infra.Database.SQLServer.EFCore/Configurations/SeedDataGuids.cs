@@ -1,188 +1,164 @@
 ﻿namespace Yarito.Infra.Database.SQLServer.EFCore.Configurations;
 
 /// <summary>
-/// کلاس مرکزی برای نگهداری Guid های ثابت برای SeedData
+/// کلاس مرکزی برای نگهداری ID های ثابت برای SeedData
 /// </summary>
-public static class SeedDataGuids
+public static class SeedDataIds
 {
-    #region Cities - شهرها و استان‌ها
+    public static readonly DateTime SeedDataBaseDate = new (2025, 12, 25, 0, 0, 0, DateTimeKind.Utc);
 
+    #region City IDs
     // استان‌ها
-    public static readonly Guid TehranProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000001");
-    public static readonly Guid IsfahanProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000002");
-    public static readonly Guid KhorasanProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000003");
-    public static readonly Guid FarsProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000004");
-    public static readonly Guid AzerbaijanProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000005");
-    public static readonly Guid KhuzestanProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000006");
-    public static readonly Guid GilanProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000007");
-    public static readonly Guid MazandaranProvinceId = Guid.Parse("10000000-0000-0000-0000-000000000008");
+    public const int TehranProvinceId = 1;
+    public const int IsfahanProvinceId = 2;
+    public const int ShirazProvinceId = 3;
 
-    // شهرها - استان تهران
-    public static readonly Guid TehranCityId = Guid.Parse("10000000-0000-0000-0001-000000000101");
-    public static readonly Guid KarajCityId = Guid.Parse("10000000-0000-0000-0001-000000000102");
-    public static readonly Guid ReyCityId = Guid.Parse("10000000-0000-0000-0001-000000000103");
+    // شهرهای تهران
+    public const int TehranCityId = 4;
+    public const int KarajCityId = 5;
+    public const int RayCityId = 6;
 
-    // شهرها - استان اصفهان
-    public static readonly Guid IsfahanCityId = Guid.Parse("10000000-0000-0000-0002-000000000201");
-    public static readonly Guid KashanCityId = Guid.Parse("10000000-0000-0000-0002-000000000202");
-    public static readonly Guid NajafAbadCityId = Guid.Parse("10000000-0000-0000-0002-000000000203");
+    // شهرهای اصفهان
+    public const int IsfahanCityId = 7;
+    public const int NajafabadCityId = 8;
+    public const int KashanCityId = 9;
 
-    // شهرها - استان خراسان رضوی
-    public static readonly Guid MashhadCityId = Guid.Parse("10000000-0000-0000-0003-000000000301");
-    public static readonly Guid NeishaborCityId = Guid.Parse("10000000-0000-0000-0003-000000000302");
-    public static readonly Guid SabzevarCityId = Guid.Parse("10000000-0000-0000-0003-000000000303");
-
-    // شهرها - استان فارس
-    public static readonly Guid ShirazCityId = Guid.Parse("10000000-0000-0000-0004-000000000401");
-    public static readonly Guid MarvDashtCityId = Guid.Parse("10000000-0000-0000-0004-000000000402");
-
-    // شهرها - استان آذربایجان شرقی
-    public static readonly Guid TabrizCityId = Guid.Parse("10000000-0000-0000-0005-000000000501");
-    public static readonly Guid MaragheCityId = Guid.Parse("10000000-0000-0000-0005-000000000502");
-
-    // شهرها - استان خوزستان
-    public static readonly Guid AhvazCityId = Guid.Parse("10000000-0000-0000-0006-000000000601");
-    public static readonly Guid AbadanCityId = Guid.Parse("10000000-0000-0000-0006-000000000602");
-
-    // شهرها - استان گیلان
-    public static readonly Guid RashtCityId = Guid.Parse("10000000-0000-0000-0007-000000000701");
-    public static readonly Guid AnzaliCityId = Guid.Parse("10000000-0000-0000-0007-000000000702");
-
-    // شهرها - استان مازندران
-    public static readonly Guid SariCityId = Guid.Parse("10000000-0000-0000-0008-000000000801");
-    public static readonly Guid BabolCityId = Guid.Parse("10000000-0000-0000-0008-000000000802");
-
+    // شهرهای شیراز
+    public const int ShirazCityId = 10;
+    public const int MarvsdashtCityId = 11;
+    public const int JahromCityId = 12;
     #endregion
 
-    #region Categories - دسته‌بندی‌ها
-
-    // دسته‌بندی‌های اصلی
-    public static readonly Guid BuildingRepairId = Guid.Parse("20000000-0000-0000-0000-000000000001");
-    public static readonly Guid HomeServicesId = Guid.Parse("20000000-0000-0000-0000-000000000002");
-    public static readonly Guid CarServicesId = Guid.Parse("20000000-0000-0000-0000-000000000003");
-    public static readonly Guid EducationId = Guid.Parse("20000000-0000-0000-0000-000000000004");
-    public static readonly Guid BeautyHealthId = Guid.Parse("20000000-0000-0000-0000-000000000005");
-
-    // زیر دسته‌بندی‌های تعمیرات ساختمان
-    public static readonly Guid PlumbingId = Guid.Parse("20000000-0000-0000-0001-000000000101");
-    public static readonly Guid ElectricalId = Guid.Parse("20000000-0000-0000-0001-000000000102");
-    public static readonly Guid PaintingId = Guid.Parse("20000000-0000-0000-0001-000000000103");
-    public static readonly Guid TilingId = Guid.Parse("20000000-0000-0000-0001-000000000104");
-
-    // زیر دسته‌بندی‌های خدمات منزل
-    public static readonly Guid CleaningId = Guid.Parse("20000000-0000-0000-0002-000000000201");
-    public static readonly Guid MovingId = Guid.Parse("20000000-0000-0000-0002-000000000202");
-    public static readonly Guid ApplianceRepairId = Guid.Parse("20000000-0000-0000-0002-000000000203");
-    public static readonly Guid CookingId = Guid.Parse("20000000-0000-0000-0002-000000000204");
-
-    // زیر دسته‌بندی‌های خدمات خودرو
-    public static readonly Guid MechanicId = Guid.Parse("20000000-0000-0000-0003-000000000301");
-    public static readonly Guid BodyWorkId = Guid.Parse("20000000-0000-0000-0003-000000000302");
-    public static readonly Guid CarWashId = Guid.Parse("20000000-0000-0000-0003-000000000303");
-
-    // زیر دسته‌بندی‌های آموزش
-    public static readonly Guid LanguageId = Guid.Parse("20000000-0000-0000-0004-000000000401");
-    public static readonly Guid MusicId = Guid.Parse("20000000-0000-0000-0004-000000000402");
-    public static readonly Guid ComputerId = Guid.Parse("20000000-0000-0000-0004-000000000403");
-
-    // زیر دسته‌بندی‌های زیبایی و سلامت
-    public static readonly Guid MenHairdresserId = Guid.Parse("20000000-0000-0000-0005-000000000501");
-    public static readonly Guid WomenHairdresserId = Guid.Parse("20000000-0000-0000-0005-000000000502");
-    public static readonly Guid MassageId = Guid.Parse("20000000-0000-0000-0005-000000000503");
-
+    #region Category IDs
+    public const int ElectricCategoryId = 1;
+    public const int PlumbingCategoryId = 2;
+    public const int CleaningCategoryId = 3;
+    public const int PaintingCategoryId = 4;
+    public const int ApplianceRepairCategoryId = 5;
     #endregion
 
-    #region Users - کاربران
+    #region Work IDs
+    // خدمات برق
+    public const int HomeWiringWorkId = 1;
+    public const int LightInstallationWorkId = 2;
+    public const int SwitchRepairWorkId = 3;
 
-    // مشتریان
-    public static readonly Guid Customer1Id = Guid.Parse("30000000-0000-0000-0001-000000001001");
-    public static readonly Guid Customer2Id = Guid.Parse("30000000-0000-0000-0001-000000001002");
-    public static readonly Guid Customer3Id = Guid.Parse("30000000-0000-0000-0001-000000001003");
-    public static readonly Guid Customer4Id = Guid.Parse("30000000-0000-0000-0001-000000001004");
-    public static readonly Guid Customer5Id = Guid.Parse("30000000-0000-0000-0001-000000001005");
+    // خدمات لوله کشی
+    public const int PipeRepairWorkId = 4;
+    public const int FaucetInstallationWorkId = 5;
+    public const int ToiletRepairWorkId = 6;
 
-    // متخصصان
-    public static readonly Guid Expert1Id = Guid.Parse("30000000-0000-0000-0002-000000002001");
-    public static readonly Guid Expert2Id = Guid.Parse("30000000-0000-0000-0002-000000002002");
-    public static readonly Guid Expert3Id = Guid.Parse("30000000-0000-0000-0002-000000002003");
-    public static readonly Guid Expert4Id = Guid.Parse("30000000-0000-0000-0002-000000002004");
-    public static readonly Guid Expert5Id = Guid.Parse("30000000-0000-0000-0002-000000002005");
-    public static readonly Guid Expert6Id = Guid.Parse("30000000-0000-0000-0002-000000002006");
-    public static readonly Guid Expert7Id = Guid.Parse("30000000-0000-0000-0002-000000002007");
-    public static readonly Guid Expert8Id = Guid.Parse("30000000-0000-0000-0002-000000002008");
+    // خدمات نظافت
+    public const int HomeCleaningWorkId = 7;
+    public const int WindowCleaningWorkId = 8;
+    public const int CarpetCleaningWorkId = 9;
 
+    // خدمات نقاشی
+    public const int InteriorPaintingWorkId = 10;
+    public const int ExteriorPaintingWorkId = 11;
+    public const int WallPaperingWorkId = 12;
+
+    // خدمات تعمیر لوازم خانگی
+    public const int WashingMachineRepairWorkId = 13;
+    public const int RefrigeratorRepairWorkId = 14;
+    public const int ACRepairWorkId = 15;
     #endregion
 
-    #region ExpertImages - تصاویر متخصصان
-
-    public static readonly Guid Expert1Image1Id = Guid.Parse("50000000-0000-0001-0000-000000000001");
-    public static readonly Guid Expert1Image2Id = Guid.Parse("50000000-0000-0001-0000-000000000002");
-    public static readonly Guid Expert1Image3Id = Guid.Parse("50000000-0000-0001-0000-000000000003");
-
-    public static readonly Guid Expert2Image1Id = Guid.Parse("50000000-0000-0002-0000-000000000004");
-    public static readonly Guid Expert2Image2Id = Guid.Parse("50000000-0000-0002-0000-000000000005");
-    public static readonly Guid Expert2Image3Id = Guid.Parse("50000000-0000-0002-0000-000000000006");
-
-    public static readonly Guid Expert3Image1Id = Guid.Parse("50000000-0000-0003-0000-000000000007");
-    public static readonly Guid Expert3Image2Id = Guid.Parse("50000000-0000-0003-0000-000000000008");
-
-    public static readonly Guid Expert4Image1Id = Guid.Parse("50000000-0000-0004-0000-000000000009");
-    public static readonly Guid Expert4Image2Id = Guid.Parse("50000000-0000-0004-0000-000000000010");
-    public static readonly Guid Expert4Image3Id = Guid.Parse("50000000-0000-0004-0000-000000000011");
-
-    public static readonly Guid Expert5Image1Id = Guid.Parse("50000000-0000-0005-0000-000000000012");
-    public static readonly Guid Expert5Image2Id = Guid.Parse("50000000-0000-0005-0000-000000000013");
-
-    public static readonly Guid Expert6Image1Id = Guid.Parse("50000000-0000-0006-0000-000000000014");
-    public static readonly Guid Expert6Image2Id = Guid.Parse("50000000-0000-0006-0000-000000000015");
-
-    public static readonly Guid Expert7Image1Id = Guid.Parse("50000000-0000-0007-0000-000000000016");
-    public static readonly Guid Expert7Image2Id = Guid.Parse("50000000-0000-0007-0000-000000000017");
-
-    public static readonly Guid Expert8Image1Id = Guid.Parse("50000000-0000-0008-0000-000000000018");
-    public static readonly Guid Expert8Image2Id = Guid.Parse("50000000-0000-0008-0000-000000000019");
-
+    #region Customer IDs
+    public const int Customer1Id = 1;
+    public const int Customer2Id = 2;
+    public const int Customer3Id = 3;
+    public const int Customer4Id = 4;
+    public const int Customer5Id = 5;
     #endregion
 
-    #region Requests - درخواست‌ها
-
-    public static readonly Guid Request1Id = Guid.Parse("60000000-0000-0000-0000-000000000001");
-    public static readonly Guid Request2Id = Guid.Parse("60000000-0000-0000-0000-000000000002");
-    public static readonly Guid Request3Id = Guid.Parse("60000000-0000-0000-0000-000000000003");
-    public static readonly Guid Request4Id = Guid.Parse("60000000-0000-0000-0000-000000000004");
-    public static readonly Guid Request5Id = Guid.Parse("60000000-0000-0000-0000-000000000005");
-    public static readonly Guid Request6Id = Guid.Parse("60000000-0000-0000-0000-000000000006");
-    public static readonly Guid Request7Id = Guid.Parse("60000000-0000-0000-0000-000000000007");
-    public static readonly Guid Request8Id = Guid.Parse("60000000-0000-0000-0000-000000000008");
-    public static readonly Guid Request9Id = Guid.Parse("60000000-0000-0000-0000-000000000009");
-    public static readonly Guid Request10Id = Guid.Parse("60000000-0000-0000-0000-000000000010");
-    public static readonly Guid Request11Id = Guid.Parse("60000000-0000-0000-0000-000000000011");
-
+    #region Expert IDs
+    public const int Expert1Id = 6;
+    public const int Expert2Id = 7;
+    public const int Expert3Id = 8;
+    public const int Expert4Id = 9;
+    public const int Expert5Id = 10;
     #endregion
 
-    #region Bids - پیشنهادات
+    #region Request IDs
+    public const int Request1Id = 1;
+    public const int Request2Id = 2;
+    public const int Request3Id = 3;
+    public const int Request4Id = 4;
+    public const int Request5Id = 5;
+    public const int Request6Id = 6;
+    public const int Request7Id = 7;
+    public const int Request8Id = 8;
+    public const int Request9Id = 9;
+    public const int Request10Id = 10;
+    #endregion
 
-    public static readonly Guid Bid1Id = Guid.Parse("70000000-0000-0000-0000-000000000001");
-    public static readonly Guid Bid2Id = Guid.Parse("70000000-0000-0000-0000-000000000002");
-    public static readonly Guid Bid3Id = Guid.Parse("70000000-0000-0000-0000-000000000003");
-    public static readonly Guid Bid4Id = Guid.Parse("70000000-0000-0000-0000-000000000004");
-    public static readonly Guid Bid5Id = Guid.Parse("70000000-0000-0000-0000-000000000005");
-    public static readonly Guid Bid6Id = Guid.Parse("70000000-0000-0000-0000-000000000006");
-    public static readonly Guid Bid7Id = Guid.Parse("70000000-0000-0000-0000-000000000007");
-    public static readonly Guid Bid8Id = Guid.Parse("70000000-0000-0000-0000-000000000008");
-    public static readonly Guid Bid9Id = Guid.Parse("70000000-0000-0000-0000-000000000009");
-    public static readonly Guid Bid10Id = Guid.Parse("70000000-0000-0000-0000-000000000010");
-    public static readonly Guid Bid11Id = Guid.Parse("70000000-0000-0000-0000-000000000011");
-    public static readonly Guid Bid12Id = Guid.Parse("70000000-0000-0000-0000-000000000012");
-    public static readonly Guid Bid13Id = Guid.Parse("70000000-0000-0000-0000-000000000013");
-    public static readonly Guid Bid14Id = Guid.Parse("70000000-0000-0000-0000-000000000014");
-    public static readonly Guid Bid15Id = Guid.Parse("70000000-0000-0000-0000-000000000015");
-    public static readonly Guid Bid16Id = Guid.Parse("70000000-0000-0000-0000-000000000016");
-    public static readonly Guid Bid17Id = Guid.Parse("70000000-0000-0000-0000-000000000017");
-    public static readonly Guid Bid18Id = Guid.Parse("70000000-0000-0000-0000-000000000018");
-    public static readonly Guid Bid19Id = Guid.Parse("70000000-0000-0000-0000-000000000019");
-    public static readonly Guid Bid20Id = Guid.Parse("70000000-0000-0000-0000-000000000020");
-    public static readonly Guid Bid21Id = Guid.Parse("70000000-0000-0000-0000-000000000021");
+    #region Bid IDs
+    public const int Bid1Id = 1;
+    public const int Bid2Id = 2;
+    public const int Bid3Id = 3;
+    public const int Bid4Id = 4;
+    public const int Bid5Id = 5;
+    public const int Bid6Id = 6;
+    public const int Bid7Id = 7;
+    public const int Bid8Id = 8;
+    public const int Bid9Id = 9;
+    public const int Bid10Id = 10;
+    public const int Bid11Id = 11;
+    public const int Bid12Id = 12;
+    public const int Bid13Id = 13;
+    public const int Bid14Id = 14;
+    public const int Bid15Id = 15;
+    public const int Bid16Id = 16;
+    public const int Bid17Id = 17;
+    public const int Bid18Id = 18;
+    public const int Bid19Id = 19;
+    public const int Bid20Id = 20;
+    #endregion
 
+    #region Review IDs
+    public const int Review1Id = 1;
+    public const int Review2Id = 2;
+    public const int Review3Id = 3;
+    public const int Review4Id = 4;
+    public const int Review5Id = 5;
+    public const int Review6Id = 6;
+    public const int Review7Id = 7;
+    #endregion
+
+    #region RequestImage IDs
+    public const int RequestImage1Id = 1;
+    public const int RequestImage2Id = 2;
+    public const int RequestImage3Id = 3;
+    public const int RequestImage4Id = 4;
+    public const int RequestImage5Id = 5;
+    public const int RequestImage6Id = 6;
+    public const int RequestImage7Id = 7;
+    public const int RequestImage8Id = 8;
+    public const int RequestImage9Id = 9;
+    public const int RequestImage10Id = 10;
+    public const int RequestImage11Id = 11;
+    public const int RequestImage12Id = 12;
+    public const int RequestImage13Id = 13;
+    public const int RequestImage14Id = 14;
+    public const int RequestImage15Id = 15;
+    #endregion
+
+    #region ExpertPortfolioImage IDs
+    public const int ExpertPortfolioImage1Id = 1;
+    public const int ExpertPortfolioImage2Id = 2;
+    public const int ExpertPortfolioImage3Id = 3;
+    public const int ExpertPortfolioImage4Id = 4;
+    public const int ExpertPortfolioImage5Id = 5;
+    public const int ExpertPortfolioImage6Id = 6;
+    public const int ExpertPortfolioImage7Id = 7;
+    public const int ExpertPortfolioImage8Id = 8;
+    public const int ExpertPortfolioImage9Id = 9;
+    public const int ExpertPortfolioImage10Id = 10;
+    public const int ExpertPortfolioImage11Id = 11;
+    public const int ExpertPortfolioImage12Id = 12;
+    public const int ExpertPortfolioImage13Id = 13;
+    public const int ExpertPortfolioImage14Id = 14;
+    public const int ExpertPortfolioImage15Id = 15;
     #endregion
 }

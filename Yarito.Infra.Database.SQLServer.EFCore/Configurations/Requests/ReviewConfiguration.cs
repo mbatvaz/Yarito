@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Yarito.Domain.Core.Entities.Requests;
 using Yarito.Domain.Core.Enums.Requests;
-using static Yarito.Infra.Database.SQLServer.EFCore.Configurations.SeedDataGuids;
 
 namespace Yarito.Infra.Database.SQLServer.EFCore.Configurations.Requests;
 
@@ -10,15 +9,17 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
 {
     public void Configure(EntityTypeBuilder<Review> builder)
     {
+        // Primary Key
         builder.HasKey(r => r.Id);
 
-        builder.HasIndex(r => new {r.RequestId, r.BidId })
+        // Indexes
+        builder.HasIndex(r => r.RequestId)
             .IsUnique();
         
         builder.HasIndex(r => r.ExpertId);
 
-        builder.HasIndex(r => r.CustomerId);
 
+        // Property Configurations
         builder.Property(r => r.Rating)
             .IsRequired();
 
@@ -26,14 +27,13 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasMaxLength(1000)
             .IsUnicode();
 
+        builder.Property(r => r.ReviewStatus)
+            .HasDefaultValue(ReviewStatusEnum.Pending);
+
+        // Relationships
         builder.HasOne(r => r.Request)
             .WithOne(req => req.Review)
             .HasForeignKey<Review>(r => r.RequestId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.HasOne(r => r.Bid)
-            .WithOne(b => b.Review)
-            .HasForeignKey<Review>(r => r.BidId)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne(r => r.Customer)
@@ -46,70 +46,107 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
             .HasForeignKey(r => r.ExpertId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Query Filter
         builder.HasQueryFilter(x => !x.IsDeleted);
 
-        var now = DateTime.UtcNow;
-
-        // SeedData - نظرات مشتریان برای درخواست‌های تکمیل شده
+        // Seed Data
         builder.HasData(
-            // نظر برای درخواست 6 - رنگ‌آمیزی اتاق توسط محمد صادقی
-            new Review 
-            { 
-                Id = Guid.Parse("90000000-0000-0000-0000-000000000001"), 
-                RequestId = Request6Id, 
-                BidId = Bid2Id, 
-                CustomerId = Customer2Id, 
-                ExpertId = Expert2Id, 
-                Rating = 5, 
-                Comment = "کار بسیار عالی و تمیز انجام شد. آقای صادقی بسیار دقیق و حرفه‌ای هستند. رنگ دیوار یکدست و بدون هیچ لکه‌ای شد. از دقت و وقت‌شناسی ایشان بسیار راضی هستم.",
+            // Review for Request 1 (سیم‌کشی آشپزخانه)
+            new Review
+            {
+                Id = SeedDataIds.Review1Id,
+                Rating = 5,
+                Comment = "کار بسیار عالی و حرفه‌ای انجام شد. آقای برقکار بسیار دقیق و وقت‌شناس بودند. پیشنهاد می‌کنم.",
                 ReviewStatus = ReviewStatusEnum.Approved,
-                IsDeleted = false, 
-                CreatedAt = now.AddDays(-19)
+                RequestId = SeedDataIds.Request1Id,
+                CustomerId = SeedDataIds.Customer1Id,
+                ExpertId = SeedDataIds.Expert1Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-18)
             },
 
-            // نظر برای درخواست 7 - تعمیر یخچال توسط فاطمه موسوی
-            new Review 
-            { 
-                Id = Guid.Parse("90000000-0000-0000-0000-000000000002"), 
-                RequestId = Request7Id, 
-                BidId = Bid6Id, 
-                CustomerId = Customer3Id, 
-                ExpertId = Expert3Id, 
-                Rating = 4, 
-                Comment = "خانم موسوی کار خوبی انجام دادند. یخچال به خوبی کار می‌کند اما کمی زمان بیشتری نسبت به وعده داده شده طول کشید. در کل راضی هستم.",
+            // Review for Request 2 (تعمیر شیر آب)
+            new Review
+            {
+                Id = SeedDataIds.Review2Id,
+                Rating = 4,
+                Comment = "کار خوبی انجام شد. فقط کمی دیرتر از موعد مقرر آمدند.",
                 ReviewStatus = ReviewStatusEnum.Approved,
-                IsDeleted = false, 
-                CreatedAt = now.AddDays(-17)
+                RequestId = SeedDataIds.Request2Id,
+                CustomerId = SeedDataIds.Customer2Id,
+                ExpertId = SeedDataIds.Expert2Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-13)
             },
 
-            // نظر برای درخواست 8 - آرایشگری توسط مریم یزدانی
-            new Review 
-            { 
-                Id = Guid.Parse("90000000-0000-0000-0000-000000000003"), 
-                RequestId = Request8Id, 
-                BidId = Bid14Id, 
-                CustomerId = Customer5Id, 
-                ExpertId = Expert7Id, 
-                Rating = 5, 
-                Comment = "خانم یزدانی فوق‌العاده حرفه‌ای هستند. مدل موی من دقیقاً همان چیزی بود که می‌خواستم. رنگ مو هم عالی شد. خیلی مهربان و با ذوق هستند. قطعاً دوباره از خدمات ایشان استفاده می‌کنم.",
+            // Review for Request 3 (نظافت منزل)
+            new Review
+            {
+                Id = SeedDataIds.Review3Id,
+                Rating = 5,
+                Comment = "نظافت فوق‌العاده دقیق و تمیز. خانم نظافتچی بسیار محترم و مودب بودند.",
                 ReviewStatus = ReviewStatusEnum.Approved,
-                IsDeleted = false, 
-                CreatedAt = now.AddDays(-14)
+                RequestId = SeedDataIds.Request3Id,
+                CustomerId = SeedDataIds.Customer3Id,
+                ExpertId = SeedDataIds.Expert3Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-8)
             },
 
-            // نظر برای درخواست 9 - تعویض لوله‌ها توسط سعید حیدری
-            new Review 
-            { 
-                Id = Guid.Parse("90000000-0000-0000-0000-000000000004"), 
-                RequestId = Request9Id, 
-                BidId = Bid17Id, 
-                CustomerId = Customer4Id, 
-                ExpertId = Expert8Id, 
-                Rating = 5, 
-                Comment = "آقای حیدری واقعاً متخصص هستند. کار را با دقت و سرعت بالا انجام دادند. لوله‌های قدیمی رو تعویض کردند و همه چیز عالی کار می‌کنه. قیمت هم منصفانه بود. پیشنهاد می‌کنم.",
+            // Review for Request 10 (تعمیر ماشین لباسشویی)
+            new Review
+            {
+                Id = SeedDataIds.Review4Id,
+                Rating = 5,
+                Comment = "خانم تعمیرکار بسیار متخصص و حرفه‌ای بودند. مشکل به سرعت حل شد.",
                 ReviewStatus = ReviewStatusEnum.Approved,
-                IsDeleted = false, 
-                CreatedAt = now.AddDays(-11)
+                RequestId = SeedDataIds.Request10Id,
+                CustomerId = SeedDataIds.Customer5Id,
+                ExpertId = SeedDataIds.Expert5Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-6)
+            },
+
+            // Review with Pending status
+            new Review
+            {
+                Id = SeedDataIds.Review5Id,
+                Rating = 3,
+                Comment = "کار خوب بود ولی قیمت کمی بالا بود نسبت به بازار.",
+                ReviewStatus = ReviewStatusEnum.Pending,
+                RequestId = SeedDataIds.Request4Id,
+                CustomerId = SeedDataIds.Customer4Id,
+                ExpertId = SeedDataIds.Expert4Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-1)
+            },
+
+            // Review with Rejected status
+            new Review
+            {
+                Id = SeedDataIds.Review6Id,
+                Rating = 2,
+                Comment = "متاسفانه کار طبق توافق انجام نشد. از کیفیت راضی نیستم.",
+                ReviewStatus = ReviewStatusEnum.Rejected,
+                RequestId = SeedDataIds.Request5Id,
+                CustomerId = SeedDataIds.Customer5Id,
+                ExpertId = SeedDataIds.Expert5Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-10)
+            },
+
+            // Another Approved review
+            new Review
+            {
+                Id = SeedDataIds.Review7Id,
+                Rating = 4,
+                Comment = "به طور کلی راضی هستم. کار خوبی انجام شد و قیمت مناسب بود.",
+                ReviewStatus = ReviewStatusEnum.Approved,
+                RequestId = SeedDataIds.Request6Id,
+                CustomerId = SeedDataIds.Customer1Id,
+                ExpertId = SeedDataIds.Expert1Id,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-5)
             }
         );
     }

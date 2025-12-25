@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Yarito.Domain.Core.Entities.Cities;
-using static Yarito.Infra.Database.SQLServer.EFCore.Configurations.SeedDataGuids;
 
 namespace Yarito.Infra.Database.SQLServer.EFCore.Configurations.Cities;
 
@@ -9,81 +8,125 @@ public class CityConfiguration : IEntityTypeConfiguration<City>
 {
     public void Configure(EntityTypeBuilder<City> builder)
     {
+        // Primary Key
         builder.HasKey(ci => ci.Id);
 
+        // Property Configurations
         builder.Property(ci => ci.Name)
             .IsRequired()
             .HasMaxLength(50)
             .IsUnicode();
 
+        // Relationships
         builder.HasOne(ci => ci.Parent)
             .WithMany(ci => ci.Children)
             .HasForeignKey(ci => ci.ParentId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        // Query Filter
         builder.HasQueryFilter(x => !x.IsDeleted);
 
-        // SeedData - استان‌های ایران
+        // Seed Data
         builder.HasData(
-            new City { Id = TehranProvinceId, Name = "تهران", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = IsfahanProvinceId, Name = "اصفهان", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = KhorasanProvinceId, Name = "خراسان رضوی", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = FarsProvinceId, Name = "فارس", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = AzerbaijanProvinceId, Name = "آذربایجان شرقی", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = KhuzestanProvinceId, Name = "خوزستان", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = GilanProvinceId, Name = "گیلان", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = MazandaranProvinceId, Name = "مازندران", ParentId = null, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان تهران
-        builder.HasData(
-            new City { Id = TehranCityId, Name = "تهران", ParentId = TehranProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = KarajCityId, Name = "کرج", ParentId = TehranProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = ReyCityId, Name = "ری", ParentId = TehranProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان اصفهان
-        builder.HasData(
-            new City { Id = IsfahanCityId, Name = "اصفهان", ParentId = IsfahanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = KashanCityId, Name = "کاشان", ParentId = IsfahanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = NajafAbadCityId, Name = "نجف‌آباد", ParentId = IsfahanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان خراسان رضوی
-        builder.HasData(
-            new City { Id = MashhadCityId, Name = "مشهد", ParentId = KhorasanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = NeishaborCityId, Name = "نیشابور", ParentId = KhorasanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = SabzevarCityId, Name = "سبزوار", ParentId = KhorasanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان فارس
-        builder.HasData(
-            new City { Id = ShirazCityId, Name = "شیراز", ParentId = FarsProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = MarvDashtCityId, Name = "مرودشت", ParentId = FarsProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان آذربایجان شرقی
-        builder.HasData(
-            new City { Id = TabrizCityId, Name = "تبریز", ParentId = AzerbaijanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = MaragheCityId, Name = "مراغه", ParentId = AzerbaijanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان خوزستان
-        builder.HasData(
-            new City { Id = AhvazCityId, Name = "اهواز", ParentId = KhuzestanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = AbadanCityId, Name = "آبادان", ParentId = KhuzestanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان گیلان
-        builder.HasData(
-            new City { Id = RashtCityId, Name = "رشت", ParentId = GilanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = AnzaliCityId, Name = "انزلی", ParentId = GilanProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
-        );
-
-        // SeedData - شهرهای استان مازندران
-        builder.HasData(
-            new City { Id = SariCityId, Name = "ساری", ParentId = MazandaranProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow },
-            new City { Id = BabolCityId, Name = "بابل", ParentId = MazandaranProvinceId, IsDeleted = false, CreatedAt = DateTime.UtcNow }
+            new City
+            {
+                Id = SeedDataIds.TehranProvinceId,
+                Name = "تهران",
+                ParentId = null,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.IsfahanProvinceId,
+                Name = "اصفهان",
+                ParentId = null,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.ShirazProvinceId,
+                Name = "فارس",
+                ParentId = null,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+        // شهرهای تهران
+            new City
+            {
+                Id = SeedDataIds.TehranCityId,
+                Name = "تهران",
+                ParentId = SeedDataIds.TehranProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.KarajCityId,
+                Name = "کرج",
+                ParentId = SeedDataIds.TehranProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.RayCityId,
+                Name = "ری",
+                ParentId = SeedDataIds.TehranProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+        // شهرهای اصفهان
+            new City
+            {
+                Id = SeedDataIds.IsfahanCityId,
+                Name = "اصفهان",
+                ParentId = SeedDataIds.IsfahanProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.NajafabadCityId,
+                Name = "نجف‌آباد",
+                ParentId = SeedDataIds.IsfahanProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.KashanCityId,
+                Name = "کاشان",
+                ParentId = SeedDataIds.IsfahanProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+        // شهرهای فارس
+            new City
+            {
+                Id = SeedDataIds.ShirazCityId,
+                Name = "شیراز",
+                ParentId = SeedDataIds.ShirazProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.MarvsdashtCityId,
+                Name = "مرودشت",
+                ParentId = SeedDataIds.ShirazProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            },
+            new City
+            {
+                Id = SeedDataIds.JahromCityId,
+                Name = "جهرم",
+                ParentId = SeedDataIds.ShirazProvinceId,
+                IsDeleted = false,
+                CreatedAt = SeedDataIds.SeedDataBaseDate
+            }
         );
     }
 }

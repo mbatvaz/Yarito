@@ -15,6 +15,7 @@
   </Folder>
   <Folder Name="/src/02_Infrastructure/Database/">
     <Project Path="Yarito.Infra.Database.SQLServer.EFCore/Yarito.Infra.Database.SQLServer.EFCore.csproj" />
+    <Project Path="Yarito.Infra.Database.SQLServer.Identity/Yarito.Infra.Database.SQLServer.Identity.csproj" Id="82bbfbc6-f728-4e4c-9a43-420c097a7d10" />
   </Folder>
   <Folder Name="/src/03_Endpoint/">
     <Project Path="Yarito.Endpoint.WebApp.MVC/Yarito.Endpoint.WebApp.MVC.csproj" />

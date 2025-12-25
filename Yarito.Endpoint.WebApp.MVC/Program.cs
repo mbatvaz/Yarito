@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
+using Yarito.Infra.Database.SQLServer.Identity.DatabaseContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +13,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDbContext<IdentityDbContext>(options =>
+builder.Services.AddDbContext<IdentityAppDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection")));
+        builder.Configuration.GetConnectionString("IdentityConnection")));
 
 
 

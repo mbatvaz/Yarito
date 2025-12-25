@@ -10,16 +10,16 @@ namespace Yarito.Domain.Core.Entities.Images;
 /// <para>این کلاس برای ذخیره اطلاعات تصاویر آپلودشده برای درخواست در سیستم استفاده می‌شود.</para>
 /// <para>پراپرتی‌ها:</para>
 /// <list type="bullet">
-/// <item><description><b>Url:</b> آدرس کامل تصویر</description></item>
+/// <item><description><b>ImgPath:</b> مسیر تصویر</description></item>
 /// </list>
 /// </remarks>
 public class RequestImage : BaseEntity
 {
     // Properties
-    public string Url { get; set; } = string.Empty;
+    public required string ImgPath { get; set; }
 
     // Foreign Keys
-    public Guid RequestId { get; set; }
+    public int RequestId { get; set; }
 
     // Navigation Properties
     public Request Request { get; set; } = null!;

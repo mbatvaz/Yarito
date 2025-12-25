@@ -25,7 +25,7 @@ public class City : BaseEntity
     public required string Name { get; set; }
 
     // Foreign Keys
-    public Guid? ParentId { get; set; }
+    public int? ParentId { get; set; }
 
     // Navigation Properties
     public City? Parent { get; set; }
