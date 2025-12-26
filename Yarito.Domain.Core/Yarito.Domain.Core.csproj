@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Contracts\Cities\AppServices\" />
+    <Folder Include="Contracts\Cities\Services\" />
+    <Folder Include="Contracts\Images\AppServices\" />
+    <Folder Include="Contracts\Images\Repository\" />
+    <Folder Include="Contracts\Images\Services\" />
+    <Folder Include="Contracts\Requests\AppServices\" />
+    <Folder Include="Contracts\Requests\Services\" />
+    <Folder Include="Contracts\Users\AppServices\" />
+    <Folder Include="Contracts\Users\Services\" />
+    <Folder Include="Contracts\Works\AppServices\" />
+    <Folder Include="Contracts\Works\Services\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,14 @@
-using Microsoft.EntityFrameworkCore;
-using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 using Yarito.Infra.Database.SQLServer.Identity.DatabaseContext;
+using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
+using Yarito.Domain.Core.Contracts.Requests.Repository;
+using Yarito.Domain.Core.Contracts.Cities.Repository;
+using Yarito.Domain.Core.Contracts.Works.Repository;
+using Yarito.Domain.Core.Contracts.Users.Repository;
+using Yarito.Infra.DataAccess.EFCore.Requests;
+using Yarito.Infra.DataAccess.EFCore.Cities;
+using Yarito.Infra.DataAccess.EFCore.Works;
+using Yarito.Infra.DataAccess.EFCore.Users;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +24,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddDbContext<IdentityAppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("IdentityConnection")));
+
+
+// Dependency Injection for AppServices
+
+// Dependency Injection for Services
+
+// Dependency Injection for Repositories
+builder.Services.AddScoped<ICityRepo, CityRepo>();
+builder.Services.AddScoped<IBidRepo, BidRepo>();
+builder.Services.AddScoped<IRequestRepo, RequestRepo>();
+builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
+builder.Services.AddScoped<IExpertRepo, ExpertRepo>();
+builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
+builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 
 
 
