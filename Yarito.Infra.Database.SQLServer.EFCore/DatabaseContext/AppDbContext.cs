@@ -43,7 +43,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Category> Categories { get; set; }
     public DbSet<Work> Works { get; set; }
     public DbSet<RequestImage> RequestImages { get; set; }
-    public DbSet<ExpertPortfolioImage> ExpertPortfolioImages { get; set; }
     public DbSet<Request> Requests { get; set; }
     public DbSet<Bid> Bids { get; set; }
     public DbSet<Review> Reviews { get; set; }

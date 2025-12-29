@@ -18,11 +18,6 @@ public class ExpertConfiguration : IEntityTypeConfiguration<Expert>
             .HasForeignKey(r => r.ExpertId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(e => e.ExpertImages)
-            .WithOne(ei => ei.Expert)
-            .HasForeignKey(ei => ei.ExpertId)
-            .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(e => e.Works)
             .WithMany(w => w.Experts)
             .UsingEntity(j => j.ToTable("ExpertWorks").HasData(

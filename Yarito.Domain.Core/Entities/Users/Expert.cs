@@ -20,7 +20,6 @@ public class Expert : AppUser
 {
     // Navigation Properties
     public ICollection<Work> Works { get; set; } = [];
-    public ICollection<ExpertPortfolioImage> ExpertImages { get; set; } = [];
     public ICollection<Bid> Bids { get; set; } = [];
     public ICollection<Review> Reviews { get; set; } = [];
 }
