@@ -1,0 +1,33 @@
+﻿@using System.Text.Encodings.Web
+@using Newtonsoft.Json
+@using Yarito.Domain.Core.Entities._Common
+@using Yarito.Domain.Core.Enums._Common
+@{
+    var notificationJson = TempData["Notification"]?.ToString();
+    Result<string>? result = null;
+
+    if (!string.IsNullOrWhiteSpace(notificationJson))
+        result = JsonConvert.DeserializeObject<Result<string>>(notificationJson);
+
+    var safeMessage = JavaScriptEncoder.Default.Encode(result?.Message ?? "");
+}
+@if (result != null)
+{
+    <div id="notification-container" class="notification-container"></div>
+
+    <script src="~/js/notification.js"></script>
+    <script>
+            @switch (result.Status)
+            {
+                case ResultStatusEnum.Success:
+                    @:showNotification('success', 'موفقیت آمیز', '@safeMessage');
+                    break;
+                case ResultStatusEnum.Warning:
+                    @:showNotification('warning', 'هشدار!', '@safeMessage');
+                    break;
+                case ResultStatusEnum.Failure:
+                    @:showNotification('error', 'خطا!', '@safeMessage');
+                    break;
+            }
+    </script>
+}

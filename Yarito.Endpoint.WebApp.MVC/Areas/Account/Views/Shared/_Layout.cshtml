@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>احرازهویت | یاریتو</title>
+    <meta name="description" content="یاریتو - خدمات فنی منزل، سریع و مطمئن">
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+
+<body>
+    <partial name="_Notifications" />
+<main class="auth">
+    <!-- Form Panel (Right on Desktop in RTL) -->
+    <div class="auth__panel">
+        @RenderBody()
+    </div>
+    <!-- Visual Panel (Left on Desktop in RTL) -->
+    <div class="auth__panel auth__panel--visual">
+        <img
+            src="~/Images/Frontend/AuthenticationPageBanner.jpg"
+            alt=""
+            class="img-placeholder"
+            aria-hidden="true">
+        <div class="auth__panel--visual-overlay">
+            <h2>یاریتو</h2>
+            <p>خدمات فنی منزل، سریع و مطمئن</p>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>
+

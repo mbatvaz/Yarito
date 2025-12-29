@@ -4,7 +4,7 @@
    ========================================================================== */
 @font-face {
   font-family: 'Vazir';
-  src: url('../font/Vazir-Thin.ttf') format('truetype');
+  src: url('~/font/Vazir-Thin.ttf') format('truetype');
   font-weight: 100;
   font-style: normal;
   font-display: swap;
@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'Vazir';
-  src: url('../font/Vazir-Light.ttf') format('truetype');
+  src: url('~/font/Vazir-Light.ttf') format('truetype');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -20,7 +20,7 @@
 
 @font-face {
   font-family: 'Vazir';
-  src: url('../font/Vazir.ttf') format('truetype');
+  src: url('~/font/Vazir.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -28,7 +28,7 @@
 
 @font-face {
   font-family: 'Vazir';
-  src: url('../font/Vazir-Medium.ttf') format('truetype');
+  src: url('~/font/Vazir-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -36,7 +36,7 @@
 
 @font-face {
   font-family: 'Vazir';
-  src: url('../font/Vazir-Bold.ttf') format('truetype');
+  src: url('~/font/Vazir-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -3947,4 +3947,181 @@ button {
     padding: var(--space-xs) var(--space-sm);
     font-size: 0.75rem;
   }
+}
+
+/* ==========================================================================
+   Notification Popup Styles
+   ========================================================================== */
+
+/* Container for notifications - positioned at top-left for RTL */
+.notification-container {
+    position: fixed;
+    top: 24px;
+    left: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+    width: calc(100% - 48px);
+    pointer-events: none;
+}
+
+/* Base Notification Styles */
+.notification {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 16px 20px;
+    background: var(--color-surface, #FFFFFF);
+    border-radius: var(--radius-md, 16px);
+    box-shadow: var(--shadow-lg, 0 20px 50px rgba(15, 23, 42, 0.12));
+    overflow: hidden;
+    pointer-events: auto;
+    animation: notification-slide-in 0.4s ease forwards;
+    font-family: var(--font-family, 'Vazir', system-ui, sans-serif);
+    border-right: 8px solid transparent;
+}
+
+    .notification.hiding {
+        animation: notification-slide-out 0.3s ease forwards;
+    }
+
+/* Content */
+.notification__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification__title {
+    margin: 0 0 4px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text, #0F172A);
+    line-height: 1.4;
+}
+
+.notification__message {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-muted, #64748B);
+    line-height: 1.6;
+}
+
+/* Progress Bar */
+.notification__progress {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background: currentColor;
+    opacity: 0.3;
+    transform-origin: right;
+    animation: notification-progress 5s linear forwards;
+}
+
+/* ==========================================================================
+   Notification Types
+   ========================================================================== */
+
+/* Success Notification */
+.notification--success {
+    border-right-color: var(--color-success, #5ED39A);
+}
+
+    .notification--success .notification__progress {
+        color: var(--color-success, #5ED39A);
+    }
+
+/* Warning Notification */
+.notification--warning {
+    border-right-color: #F59E0B;
+}
+
+    .notification--warning .notification__progress {
+        color: #F59E0B;
+    }
+
+/* Error Notification */
+.notification--error {
+    border-right-color: #EF4444;
+}
+
+    .notification--error .notification__progress {
+        color: #EF4444;
+    }
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+@keyframes notification-slide-in {
+    from {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes notification-slide-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+}
+
+@keyframes notification-progress {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 480px) {
+    .notification-container {
+        left: 12px;
+        right: 12px;
+        top: 12px;
+        width: auto;
+        max-width: none;
+    }
+
+    .notification {
+        padding: 14px 16px;
+    }
+
+    .notification__icon {
+        width: 36px;
+        height: 36px;
+    }
+
+        .notification__icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+    .notification__title {
+        font-size: 14px;
+    }
+
+    .notification__message {
+        font-size: 12px;
+    }
 }

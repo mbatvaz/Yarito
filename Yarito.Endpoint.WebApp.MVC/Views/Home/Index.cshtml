@@ -1,8 +1,255 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model HomeViewModel
+@{
+    Layout = "_Layout";
 }
+<!-- Header -->
+<div class="header-wrapper">
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__brand">
+                <a asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index"
+                   class="header__logo">یاریتو</a>
+            </div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+            <nav class="header__nav" aria-label="منوی اصلی">
+                <ul>
+                    <li><a href="#hero">خانه</a></li>
+                    <li><a href="#services">خدمات</a></li>
+                    <li><a href="#testimonials">نظرات کاربران</a></li>
+                </ul>
+            </nav>
+
+            <div class="header__actions">
+                @if (User.Identity is { IsAuthenticated: true })
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="Admin.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                    }
+                    else if (User.IsInRole("Customer"))
+                    {
+                        <a href="Customer.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                    }
+                    else if(User.IsInRole("Expert"))
+                    {
+                        <a href="Expert.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                    }
+                    <a asp-area="Account"
+                       asp-controller="Authentication"
+                       asp-action="Logout"
+                       class="btn btn--danger btn--sm">خروج</a>
+                }
+                else
+                {
+                    <a asp-area="Account"
+                       asp-controller="Authentication"
+                       asp-action="Login"
+                       class="btn btn--primary btn--sm">ورود</a>
+                }
+            </div>
+
+            <!-- Mobile Menu Toggle (CSS-only) -->
+            <input type="checkbox" id="mobile-menu-checkbox">
+            <label for="mobile-menu-checkbox" class="mobile-menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+
+            <nav class="mobile-menu">
+                <ul>
+                    <li><a href="#hero">خانه</a></li>
+                    <li><a href="#services">خدمات</a></li>
+                    <li><a href="#testimonials">نظرات کاربران</a></li>
+                </ul>
+                <div class="mobile-menu__actions">
+                    @if (User.Identity is { IsAuthenticated: true })
+                    {
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="Admin.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        }
+                        else if (User.IsInRole("Customer"))
+                        {
+                            <a href="Customer.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        }
+                        else if(User.IsInRole("Expert"))
+                        {
+                            <a href="Expert.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        }
+                        <a asp-area="Account"
+                           asp-controller="Authentication"
+                           asp-action="Logout"
+                           class="btn btn--danger btn--sm">خروج</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Account"
+                           asp-controller="Authentication"
+                           asp-action="Login"
+                           class="btn btn--primary btn--sm">ورود</a>
+                    }
+                </div>
+            </nav>
+        </div>
+    </header>
 </div>
+
+<main>
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero__bg">
+            <img src="~/Images/Frontend/IndexPageBanner.jpg"
+                 alt=""
+                 class="img-placeholder"
+                 aria-hidden="true">
+        </div>
+        <div class="hero__overlay"></div>
+        <div class="hero__content">
+            <h1>یاریتو؛ راه ساده‌ی گرفتن خدمات فنی منزل</h1>
+            <p>درخواست تو ثبت کن، از بین پیشنهادات متخصص ها، بهترین گزینه رو انتخاب کن</p>
+            <div class="hero__buttons">
+                @if (User.Identity is { IsAuthenticated: true })
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a href="Admin.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                    }
+                    else if (User.IsInRole("Customer"))
+                    {
+                        <a href="Customer.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                    }
+                    else if (User.IsInRole("Expert"))
+                    {
+                        <a href="Expert.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                    }
+                }
+                else
+                {
+                    <a asp-area="Account"
+                       asp-controller="Authentication"
+                       asp-action="Register"
+                       class="btn btn--primary-strong">ثبت نام</a>
+                    <a asp-area="Account"
+                       asp-controller="Authentication"
+                       asp-action="Login"
+                       class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+        <div class="container">
+            <div class="section-title">
+                <h2>خدمات یاریتو</h2>
+                <p>دسته‌بندی کاملی از خدمات فنی منزل برای رفع نیازهای روزمره شما</p>
+            </div>
+
+            <div class="services-grid">
+                @foreach (var c in @Model.Categories)
+                {
+                <article class="card service-card">
+                    <div class="service-card__line"></div>
+                    <h3>@c.Title</h3>
+                    <p class="service-card__desc clamp-2">@c.Description</p>
+                    <ul class="service-list">
+                        @foreach (var w in c.WorksTitle)
+                        {
+                        <li>@w</li>
+                        }
+                    </ul>
+                </article>
+                }
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials section">
+        <div class="container">
+            <div class="section-title">
+                <h2>نظرات کاربران</h2>
+                <p>آنچه کاربران و متخصصان درباره یاریتو می‌گویند</p>
+            </div>
+
+            <div class="testimonials-grid">
+                @foreach (var r in Model.Reviews)
+                {
+                <article class="card testimonial-card">
+                    <div class="testimonial-card__header">
+                        <h4>@r.FirstName</h4>
+                        <div class="testimonial-card__rating">
+                            @for(var i = 0; i < 5; i++)
+                            {
+                                if(i < r.Rating)
+                                {
+                                    <span class="star star--filled"></span>
+                                }
+                                else
+                                {
+                                    <span class="star star--empty"></span>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <p class="testimonial-card__comment clamp-3">@r.Comment</p>
+                </article>
+                }
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <!-- About Column -->
+            <div class="footer__col">
+                <h4>درباره یاریتو</h4>
+                <p>یاریتو پلی بین مشتری و متخصص برای انجام خدمات فنی منزل است. با ما، خدمات فنی سریع‌تر و مطمئن‌تر از همیشه خواهد بود.</p>
+            </div>
+
+            <!-- Quick Links Column -->
+            <div class="footer__col">
+                <h4>لینک‌های سریع</h4>
+                <ul>
+                    <li><a href="#hero">خانه</a></li>
+                    <li><a href="#services">خدمات</a></li>
+                    <li><a href="#testimonials">نظرات کاربران</a></li>
+                    <li><a href="auth/register.html">ثبت نام</a></li>
+                    <li><a href="auth/login.html">ورود</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Column -->
+            <div class="footer__col">
+                <h4>راه‌های ارتباطی</h4>
+                <ul>
+                    <li>ایمیل: info@yarito.ir</li>
+                    <li>تلفن: ۰۲۱-۱۲۳۴۵۶۷۸</li>
+                    <li>آدرس: تهران، خیابان آزادی</li>
+                </ul>
+            </div>
+
+            <!-- Social Column -->
+            <div class="footer__col">
+                <h4>شبکه‌های اجتماعی</h4>
+                <ul>
+                    <li><a href="#">اینستاگرام</a></li>
+                    <li><a href="#">تلگرام</a></li>
+                    <li><a href="#">توییتر</a></li>
+                    <li><a href="#">لینکدین</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer__bottom">
+            <p>© تمامی حقوق برای یاریتو محفوظ است.</p>
+        </div>
+    </div>
+</footer>

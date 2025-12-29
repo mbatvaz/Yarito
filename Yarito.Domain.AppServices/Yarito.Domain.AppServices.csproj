@@ -10,4 +10,10 @@
     <ProjectReference Include="..\Yarito.Domain.Core\Yarito.Domain.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Cities\" />
+    <Folder Include="Images\" />
+    <Folder Include="Users\" />
+  </ItemGroup>
+
 </Project>

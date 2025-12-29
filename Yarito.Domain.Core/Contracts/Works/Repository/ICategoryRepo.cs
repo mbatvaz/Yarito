@@ -1,4 +1,5 @@
-﻿using Yarito.Domain.Core.Entities.Works;
+﻿using Yarito.Domain.Core.DTOs.Works;
+using Yarito.Domain.Core.Entities.Works;
 
 namespace Yarito.Domain.Core.Contracts.Works.Repository
 {
@@ -6,5 +7,6 @@ namespace Yarito.Domain.Core.Contracts.Works.Repository
     {
         Task<bool> AddAsync(Category newCategory, CancellationToken ct);
         Task<bool> DeleteAsync(int categoryId, CancellationToken ct);
+        Task<IReadOnlyList<CategoryStringDataDto>> GetAllCategoriesNamesAsync(CancellationToken ct);
     }
 }

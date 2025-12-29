@@ -23,6 +23,12 @@ namespace Yarito.Domain.Core.Enums.Requests
         /// نظر ثبت شده توسط ادمین رد شده است。
         /// </summary>
         [Display(Name = "رد")]
-        Rejected = 2
+        Rejected = 2,
+
+        /// <summary>
+        /// همه نظرات。
+        /// </summary>
+        [Display(Name = "همه")]
+        All = 3,
     }
 }

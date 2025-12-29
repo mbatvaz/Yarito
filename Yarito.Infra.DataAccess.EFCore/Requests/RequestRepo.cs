@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
+using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities.Requests;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 
@@ -8,6 +10,7 @@ namespace Yarito.Infra.DataAccess.EFCore.Requests;
 
 public class RequestRepo(AppDbContext _db) : IRequestRepo
 {
+    
     public async Task<bool> AddAsync(Request newRequest, CancellationToken ct)
     {
         _db.Requests.Add(newRequest);
@@ -46,4 +49,6 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             .ExecuteUpdateAsync(r => r
                     .SetProperty(request => request.Status, newStatus), ct) > 0;
     }
+
+
 }

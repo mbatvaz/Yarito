@@ -7,18 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\Images\**" />
-    <Content Remove="wwwroot\Images\**" />
-    <EmbeddedResource Remove="wwwroot\Images\**" />
-    <None Remove="wwwroot\Images\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +23,14 @@
     <ProjectReference Include="..\Yarito.Infra.DataAccess.EFCore\Yarito.Infra.DataAccess.EFCore.csproj" />
     <ProjectReference Include="..\Yarito.Infra.Database.SQLServer.EFCore\Yarito.Infra.Database.SQLServer.EFCore.csproj" />
     <ProjectReference Include="..\Yarito.Infra.Database.SQLServer.Identity\Yarito.Infra.Database.SQLServer.Identity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Account\Data\" />
+    <Folder Include="Areas\Account\Models\" />
+    <Folder Include="wwwroot\Images\Frontend\" />
+    <Folder Include="wwwroot\Images\Request\" />
+    <Folder Include="wwwroot\Images\Profile\" />
   </ItemGroup>
 
 </Project>

@@ -1,25 +1,31 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Yarito.Domain.Core.Contracts.Requests.AppServices;
+using Yarito.Domain.Core.Contracts.Works.AppServices;
+using Yarito.Domain.Core.DTOs.Requests;
+using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Endpoint.WebApp.MVC.Models;
 
 namespace Yarito.Endpoint.WebApp.MVC.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController(
+        IReviewsAppServices reviewsAppServices,
+        ICategoryAppServices categoryAppServices) : Controller
     {
-        public IActionResult Index()
+        public async Task<IActionResult> Index(CancellationToken ct)
         {
-            return View();
-        }
+            var model = new HomeViewModel()
+            {
+                Reviews = await reviewsAppServices.GetReviewsForHomePageAsync(new ReviewReqDto() 
+                {
+                    ApprovalStatus = ReviewStatusEnum.Approved,
+                    MinRating = 4,
+                    PageSize = 6
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+                }, ct),
+                Categories = await categoryAppServices.GetAllCategoriesNamesAsync(ct)
+            };
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(model);
         }
     }
 }
