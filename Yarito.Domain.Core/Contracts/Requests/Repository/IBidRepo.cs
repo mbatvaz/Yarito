@@ -5,6 +5,7 @@ namespace Yarito.Domain.Core.Contracts.Requests.Repository
 {
     public interface IBidRepo
     {
+        Task<int> GetCountAsync(CancellationToken ct);
         Task<bool> AddAsync(Bid newBid, CancellationToken ct);
         Task<bool> UpdateAsync(Bid newBid, CancellationToken ct);
         Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct);

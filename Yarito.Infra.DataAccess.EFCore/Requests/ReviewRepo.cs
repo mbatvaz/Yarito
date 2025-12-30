@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
+using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Requests;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
@@ -12,13 +13,11 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
 {
     private IQueryable<Review> ApplyingFiltersToQueries(ReviewReqDto q)
     {
-        var query = _db.Reviews.AsNoTracking();
+        var query = _db.Reviews.AsNoTracking().AsQueryable();
 
         // Status filter
         query = q.ApprovalStatus switch
         {
-            ReviewStatusEnum.All => query.Where(r
-                => r.ReviewStatus == ReviewStatusEnum.All),
             ReviewStatusEnum.Pending => query.Where(r
                 => r.ReviewStatus == ReviewStatusEnum.Pending),
             ReviewStatusEnum.Approved => query.Where(r
@@ -57,28 +56,29 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
             query = query.Where(r => r.CreatedAt <= q.To.Value);
 
         if (q.TextSearch is not null)
-            query = query.Where(r => r.Comment.Contains(q.TextSearch));
+        {
+            query = query.Where(r => r.Comment.Contains(q.TextSearch) 
+                                        || r.Customer.FirstName.Contains(q.TextSearch)
+                                        || r.Customer.LastName.Contains(q.TextSearch));
+        }
 
         // Sorting
-        if (q.Sort is not null)
+        var sortBy = q.Sort?.SortBy ?? ReviewSortableEnum.CreatedAt;
+        var dir = q.Sort?.Direction ?? SortDirectionEnum.Descending;
+
+        query = (sortBy, dir) switch
         {
-            query = (q.Sort.SortBy, q.Sort.Direction) switch
-            {
-                (ReviewSortableEnum.Rating, SortDirectionEnum.Ascending)
-                    => query.OrderBy(r => r.Rating),
+            (ReviewSortableEnum.Rating, SortDirectionEnum.Ascending)
+                => query.OrderBy(r => r.Rating),
 
-                (ReviewSortableEnum.Rating, SortDirectionEnum.Descending)
-                    => query.OrderByDescending(r => r.Rating),
+            (ReviewSortableEnum.Rating, SortDirectionEnum.Descending)
+                => query.OrderByDescending(r => r.Rating),
 
-                (ReviewSortableEnum.CreatedAt, SortDirectionEnum.Ascending)
-                    => query.OrderBy(r => r.CreatedAt),
+            (ReviewSortableEnum.CreatedAt, SortDirectionEnum.Ascending)
+                => query.OrderBy(r => r.CreatedAt),
                 
-                (ReviewSortableEnum.CreatedAt, SortDirectionEnum.Descending)
-                    => query.OrderByDescending(r => r.CreatedAt),
-
-                _ => query
-            };
-        }
+            _ => query.OrderByDescending(r => r.CreatedAt),
+        };
 
         return query;
     }
@@ -119,15 +119,44 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
                 .SetProperty(reviews => reviews.ReviewStatus, newStatus), ct) > 0;
     }
 
-    public async Task<IReadOnlyList<HomePageReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)
+    public async Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)
     {
         return await ApplyingFiltersToQueries(q)
             .Take(q.PageSize)
-            .Select(r => new HomePageReviewDto()
+            .Select(r => new HomeViewReviewDto()
             {
                 FirstName = r.Customer.FirstName ?? "ناشناس",
                 Rating = r.Rating,
                 Comment = r.Comment ?? "عالی",
-            }).ToArrayAsync(ct);
+            }).ToListAsync(ct);
+    }
+
+    public async Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto q, CancellationToken ct)
+    {
+        var query = ApplyingFiltersToQueries(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(r => new ReviewFullDto()
+            {
+                ReviewId = r.Id,
+                BidId = r.Request.AcceptedBidId ?? 0,
+                FirstName = r.Customer.FirstName,
+                LastName = r.Customer.LastName,
+                Rating = r.Rating,
+                ReviewStatus = r.ReviewStatus,
+                Comment = r.Comment,
+                CreateAt = r.CreatedAt
+            }).ToListAsync(ct);
+
+        return new PagedResult<ReviewFullDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
     }
 }

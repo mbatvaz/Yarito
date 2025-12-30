@@ -13,7 +13,6 @@
   <ItemGroup>
     <Folder Include="Cities\" />
     <Folder Include="Images\" />
-    <Folder Include="Users\" />
   </ItemGroup>
 
 </Project>

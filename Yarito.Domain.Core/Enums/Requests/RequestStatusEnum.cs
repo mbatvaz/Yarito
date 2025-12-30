@@ -29,5 +29,5 @@ public enum RequestStatusEnum
     /// درخواست توسط مشتری یا سیستم لغو شده است。
     /// </summary>
     [Display(Name = "لغو شده")]
-    Cancelled = 3
+    Cancelled = 3,
 }

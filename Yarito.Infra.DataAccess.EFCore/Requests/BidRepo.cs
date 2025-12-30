@@ -7,6 +7,12 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 namespace Yarito.Infra.DataAccess.EFCore.Requests;
 public class BidRepo(AppDbContext _db) : IBidRepo
 {
+    public async Task<int> GetCountAsync(CancellationToken ct)
+    {
+        return await _db.Bids.AsNoTracking()
+            .CountAsync(ct);
+    }
+
     public async Task<bool> AddAsync(Bid newBid, CancellationToken ct)
     {
         _db.Bids.Add(newBid);
@@ -44,4 +50,5 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                 .SetProperty(b => b.Status, newStatus),
                 ct) > 0;
     }
+
 }

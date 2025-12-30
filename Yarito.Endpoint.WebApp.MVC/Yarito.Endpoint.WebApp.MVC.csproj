@@ -27,7 +27,13 @@
 
   <ItemGroup>
     <Folder Include="Areas\Account\Data\" />
-    <Folder Include="Areas\Account\Models\" />
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Customer\Data\" />
+    <Folder Include="Areas\Customer\Models\" />
+    <Folder Include="Areas\Customer\Views\Shared\" />
+    <Folder Include="Areas\Expert\Data\" />
+    <Folder Include="Areas\Expert\Models\" />
+    <Folder Include="Areas\Expert\Views\Shared\" />
     <Folder Include="wwwroot\Images\Frontend\" />
     <Folder Include="wwwroot\Images\Request\" />
     <Folder Include="wwwroot\Images\Profile\" />

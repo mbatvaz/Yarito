@@ -1452,12 +1452,12 @@ button {
 }
 
 .admin-sidebar__header-bg {
-  position: absolute;
-  inset: 0;
-  background-image: url('3.jpg');
-  background-size: cover;
-  background-position: center;
-  z-index: 0;
+    position: absolute;
+    inset: 0;
+    background-image: url('../Images/Frontend/AdminPageDashboard.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: 0;
 }
 
 .admin-sidebar__header-overlay {
@@ -4124,4 +4124,9 @@ button {
     .notification__message {
         font-size: 12px;
     }
+}
+
+.validation-error {
+    color: crimson;
+    font-size: 12px;
 }

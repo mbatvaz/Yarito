@@ -5,7 +5,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Models
 {
     public class HomeViewModel
     {
-        public required IReadOnlyList<HomePageReviewDto> Reviews { get; set; }
+        public required IReadOnlyList<HomeViewReviewDto> Reviews { get; set; }
         public required IReadOnlyList<CategoryStringDataDto> Categories { get; set; }
     }
 }

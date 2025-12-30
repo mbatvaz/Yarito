@@ -1,6 +1,6 @@
 ﻿namespace Yarito.Domain.Core.DTOs.Requests
 {
-    public class HomePageReviewDto
+    public class HomeViewReviewDto
     {
         public required string FirstName { get; set; }
         public required int Rating { get; set; }

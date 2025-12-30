@@ -1,50 +1,56 @@
-﻿@model HomeViewModel
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Account.Models.LoginViewModel
 @{
-    Layout = "_Layout";
+    Layout = "_AuthenticationViewLayout";
 }
-<form id="login-form" class="auth__form" action="#" method="post">
+<form asp-area="Account"
+      asp-controller="Authentication"
+      asp-action="Login"
+      class="auth__form"
+      method="post">
+    @Html.AntiForgeryToken()
     <div class="auth__form-header">
         <h1>خوش آمدید</h1>
         <p>برای ورود، شماره موبایل و رمز عبور را وارد کنید.</p>
     </div>
 
     <div class="form-group">
-        <label for="phone">شماره موبایل</label>
-        <input 
-            type="tel" 
-            id="phone" 
-            name="phone" 
-            dir="ltr" 
-            inputmode="numeric" 
-            placeholder="09xxxxxxxxx"
-            autocomplete="tel"
-            required
-        >
+        <label asp-for="PhoneNumber">شماره موبایل</label>
+        <input asp-for="PhoneNumber"
+               type="tel"
+               dir="ltr"
+               inputmode="numeric"
+               placeholder="09xxxxxxxxx"
+               autocomplete="username">
+        <span asp-validation-for="PhoneNumber" class="validation-error"></span>
     </div>
 
     <div class="form-group">
-        <label for="password">رمز عبور</label>
-        <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            placeholder="رمز عبور خود را وارد کنید"
-            autocomplete="current-password"
-            required
-        >
+        <label asp-for="Password">رمز عبور</label>
+        <input asp-for="Password"
+               type="password"
+               placeholder="رمز عبور خود را وارد کنید"
+               autocomplete="current-password">
+        <span asp-validation-for="Password" class="validation-error"></span>
     </div>
 
     <div class="auth__links--inline">
         <div class="form-group form-group--checkbox">
-            <input type="checkbox" id="remember" name="remember">
-            <label for="remember">مرا به خاطر بسپار</label>
+            <input asp-for="RememberMe" type="checkbox" />
+            <label asp-for="RememberMe">مرا به خاطر بسپار</label>
         </div>
         <a href="#">فراموشی رمز عبور؟</a>
     </div>
 
+
     <button type="submit" class="btn btn--primary btn--block btn--lg">ورود</button>
 
     <div class="auth__links">
-        <p>حساب کاربری ندارید؟ <a href="register.html">ثبت نام</a></p>
+        <p>حساب کاربری ندارید؟ <a asp-area="Account"
+                                  asp-controller="Authentication"
+                                  asp-action="Register">ثبت نام</a>
+        </p>
     </div>
 </form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,85 +1,91 @@
-﻿@{
-    Layout = "_Layout";
+﻿@using Yarito.Domain.Core.Enums.Users
+@model Yarito.Endpoint.WebApp.MVC.Areas.Account.Models.RegisterViewModel
+@{
+    Layout = "_AuthenticationViewLayout";
 }
-<form id="register-form" class="auth__form auth__form--wide" action="#" method="post">
+<form asp-area="Account"
+      asp-controller="Authentication"
+      asp-action="Register"
+      class="auth__form auth__form--wide"
+      method="post">
+    @Html.AntiForgeryToken()
     <div class="auth__form-header">
         <p>برای شروع، اطلاعات خود را وارد کنید.</p>
     </div>
 
     <div class="form-row">
         <div class="form-group">
-            <label for="firstName">نام</label>
-            <input type="text"
-                   id="firstName"
-                   name="firstName"
-                   placeholder="نام خود را وارد کنید"
-                   autocomplete="given-name"
-                   required>
+            <label asp-for="FirstName">نام</label>
+            <input asp-for="FirstName"
+                   type="text"
+                   placeholder="نام خود را وارد کنید">
+            <span asp-validation-for="FirstName" class="validation-error"></span>
         </div>
 
         <div class="form-group">
-            <label for="lastName">نام خانوادگی</label>
-            <input type="text"
-                   id="lastName"
-                   name="lastName"
-                   placeholder="نام خانوادگی خود را وارد کنید"
-                   autocomplete="family-name"
-                   required>
+            <label asp-for="LastName">نام خانوادگی</label>
+            <input asp-for="LastName" 
+                   type="text"
+                   placeholder="نام خانوادگی خود را وارد کنید">
+            <span asp-validation-for="LastName" class="validation-error"></span>
         </div>
     </div>
 
     <div class="form-row">
         <div class="form-group">
-            <label for="phone">شماره موبایل</label>
-            <input type="tel"
-                   id="phone"
-                   name="phone"
+            <label asp-for="PhoneNumber">شماره موبایل</label>
+            <input asp-for="PhoneNumber" 
+                   type="tel"
                    dir="ltr"
                    inputmode="numeric"
-                   placeholder="09xxxxxxxxx"
-                   autocomplete="tel"
-                   required>
+                   placeholder="09xxxxxxxxx">
+            <span asp-validation-for="PhoneNumber" class="validation-error"></span>
         </div>
 
         <div class="form-group">
-            <label for="password">رمز عبور</label>
-            <input type="password"
-                   id="password"
-                   name="password"
-                   placeholder="یک رمز عبور امن انتخاب کنید"
-                   autocomplete="new-password"
-                   required>
+            <label asp-for="Password">رمز عبور</label>
+            <input asp-for="Password"
+                   type="password"
+                   placeholder="یک رمز عبور امن انتخاب کنید">
+            <span asp-validation-for="Password" class="validation-error"></span>
         </div>
     </div>
 
     <fieldset class="form-group form-group--radio form-group--radio-inline">
         <legend style="font-size: 0.875rem; font-weight: 500; margin-bottom: 8px;">نوع کاربری را انتخاب کنید:</legend>
 
-        <label class="radio-option radio-option--simple">
-            <input type="radio"
-                   name="userType"
-                   value="customer"
-                   required>
+        <label asp-for="UserType" class="radio-option radio-option--simple">
+            <input asp-for="UserType"
+                   type="radio"
+                   value="@UserTypeEnum.Customer">
             <div class="radio-option__content">
                 <div class="radio-option__title">مشتری</div>
                 <div class="radio-option__desc">درخواست ثبت می‌کند و از خدمات متخصصان استفاده می‌کند.</div>
             </div>
         </label>
 
-        <label class="radio-option radio-option--simple">
-            <input type="radio"
+        <label asp-for="UserType" class="radio-option radio-option--simple">
+            <input asp-for="UserType" 
+                   type="radio"
                    name="userType"
-                   value="expert">
+                   value="@UserTypeEnum.Expert">
             <div class="radio-option__content">
                 <div class="radio-option__title">متخصص</div>
                 <div class="radio-option__desc">خدمات ارائه می‌دهد و به درخواست‌های مشتریان پاسخ می‌دهد.</div>
             </div>
         </label>
+        <span asp-validation-for="UserType" class="validation-error"></span>
     </fieldset>
 
     <button type="submit" class="btn btn--primary btn--block btn--lg">ثبت نام</button>
 
     <div class="auth__links">
-        <p>حساب دارید؟ <a href="login.html">ورود</a></p>
+        <p>حساب دارید؟ <a asp-area="Account"
+                          asp-controller="Authentication"
+                          asp-action="Login">ورود</a>
+        </p>
     </div>
 </form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -22,6 +22,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
             .IsUnique();
 
         // Property Configurations
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+
         builder.Property(u => u.FirstName)
             .HasMaxLength(50)
             .IsUnicode();

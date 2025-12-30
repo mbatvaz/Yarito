@@ -29,7 +29,7 @@ public class Review : BaseEntity
     // Properties
     public int Rating { get; set; }
     public string? Comment { get; set; }
-    public ReviewStatusEnum ReviewStatus { get; set; }
+    public ReviewStatusEnum ReviewStatus { get; set; } = ReviewStatusEnum.Pending;
 
     // Foreign Keys
     public int RequestId { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Yarito.Domain.Core.DTOs.Requests;
+using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Requests;
 using Yarito.Domain.Core.Enums.Requests;
 
@@ -10,7 +11,8 @@ namespace Yarito.Domain.Core.Contracts.Requests.Repository
         Task<bool> UpdateAsync(Review newReview, CancellationToken ct);
         Task<bool> DeleteAsync(int reviewId, CancellationToken ct);
         Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct);
-        Task<IReadOnlyList<HomePageReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct);
+        Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct);
+        Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto q, CancellationToken ct);
 
     }
 }

@@ -12,8 +12,8 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251229112457_Remove-ExpertPortfolioImage")]
-    partial class RemoveExpertPortfolioImage
+    [Migration("20251230133957_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -921,10 +921,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Users.AppUser", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CityId")
                         .HasColumnType("int");

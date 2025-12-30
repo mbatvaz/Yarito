@@ -1,17 +1,23 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.AppServices.Requests;
+using Yarito.Domain.AppServices.Users;
 using Yarito.Domain.AppServices.Works;
 using Yarito.Domain.Core.Contracts.Cities.Repository;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
+using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.Contracts.Users.Repository;
+using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.Contracts.Works.AppServices;
 using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Services.Requests;
+using Yarito.Domain.Services.Users;
 using Yarito.Domain.Services.Works;
+using Yarito.Framework;
 using Yarito.Infra.DataAccess.EFCore.Cities;
 using Yarito.Infra.DataAccess.EFCore.Requests;
 using Yarito.Infra.DataAccess.EFCore.Users;
@@ -56,7 +62,9 @@ builder.Services
         options.SignIn.RequireConfirmedPhoneNumber = false;
     })
     .AddEntityFrameworkStores<IdentityAppDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders()
+    .AddErrorDescriber<PersianIdentityErrors>();
+
 
 
 
@@ -76,20 +84,34 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 
+// Global Anti Forgery Token Validation
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+});
+
+
 
 // Dependency Injection for AppServices
 builder.Services.AddScoped<IReviewsAppServices, ReviewsAppServices>();
 builder.Services.AddScoped<ICategoryAppServices, CategoryAppServices>();
+builder.Services.AddScoped<IAuthenticationAppServices, AuthenticationAppServices>();
+builder.Services.AddScoped<IAppUserAppServices, AppUserAppServices>();
+builder.Services.AddScoped<IRequestAppServices, RequestAppServices>();
 
 // Dependency Injection for Services
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();
 builder.Services.AddScoped<IReviewsServices, ReviewsServices>();
+builder.Services.AddScoped<IAppUserServices, AppUserServices>();
+builder.Services.AddScoped<IRequestServices, RequestServices>();
+builder.Services.AddScoped<IBidServices, BidServices>();
 
 // Dependency Injection for Repositories
 builder.Services.AddScoped<ICityRepo, CityRepo>();
 builder.Services.AddScoped<IBidRepo, BidRepo>();
 builder.Services.AddScoped<IRequestRepo, RequestRepo>();
 builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
+builder.Services.AddScoped<IAppUserRepo, AppUserRepo>();
 builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
 builder.Services.AddScoped<IExpertRepo, ExpertRepo>();
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();

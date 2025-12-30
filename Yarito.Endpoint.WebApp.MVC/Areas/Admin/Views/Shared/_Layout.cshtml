@@ -1,0 +1,111 @@
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>داشبورد مدیریت | یاریتو</title>
+    <meta name="description" content="پنل مدیریت یاریتو - داشبورد">
+    <link rel="stylesheet" href="~/css/site.css">
+</head>
+
+<body>
+<partial name="_Notifications" />
+<div class="admin-layout">
+    <!-- Mobile Sidebar Toggle -->
+    <input type="checkbox" id="sidebar-toggle" class="admin-sidebar-checkbox" aria-label="باز کردن منوی کناری">
+    <label for="sidebar-toggle" class="admin-sidebar-toggle" aria-label="منوی کناری">
+        <span></span>
+        <span></span>
+        <span></span>
+    </label>
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="admin-sidebar__header">
+            <div class="admin-sidebar__header-bg"></div>
+            <div class="admin-sidebar__header-overlay"></div>
+            <h1>پنل مدیریت یاریتو</h1>
+        </div>
+        <nav class="admin-sidebar__nav" aria-label="منوی مدیریت">
+            <ul>
+                <li>
+                        <a href="admin-dashboard.html" class="admin-sidebar__link @(controller == "Dashboard" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/DashboardIcon.png" alt="">
+                        </div>
+                        <span>داشبورد</span>
+                    </a>
+                </li>
+                <li>
+                        <a href="admin-users.html" class="admin-sidebar__link @(controller == "Users" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/UsersIcon.png" alt="">
+                        </div>
+                        <span>کاربران</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin-services.html" class="admin-sidebar__link @(controller == "Services" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/ServicesIcon.png" alt="">
+                        </div>
+                        <span>سرویس‌ها</span>
+                    </a>
+                </li>
+                <li>
+                        <a href="admin-categories.html" class="admin-sidebar__link @(controller == "Categories" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/CategoriesIcon.png" alt="">
+                        </div>
+                        <span>دسته‌بندی</span>
+                    </a>
+                </li>
+                <li>
+                        <a href="admin-requests.html" class="admin-sidebar__link @(controller == "Requests" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/RequestsIcon.png" alt="">
+                        </div>
+                        <span>درخواست‌ها</span>
+                    </a>
+                </li>
+                <li>
+                        <a href="admin-comments.html" class="admin-sidebar__link @(controller == "Comments" ? "is-active" : "")">
+                        <div class="admin-sidebar__link-icon">
+                            <img src="~/Images/Frontend/CommentsIcon.png" alt="">
+                        </div>
+                        <span>نظرات</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="admin-sidebar__help">
+            <h4>نیاز به کمک دارید؟</h4>
+            <p>با پشتیبانی تماس بگیرید</p>
+            <a href="#" class="btn btn--secondary btn--sm btn--block">پشتیبانی</a>
+            <a asp-area=""
+               asp-controller="Home"
+               asp-action="Index"
+               class="btn btn--ghost btn--sm btn--block"
+               style="margin-top: var(--space-sm);">مشاهده سایت</a>
+            <a asp-area="Account"
+               asp-controller="Authentication"
+               asp-action="Logout"
+               class="btn btn--danger btn--sm btn--block"
+               style="margin-top: var(--space-sm);">خروج</a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="admin-content">
+        @RenderBody();
+    </main>
+</div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

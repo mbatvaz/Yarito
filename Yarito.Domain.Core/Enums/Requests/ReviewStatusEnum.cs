@@ -24,11 +24,5 @@ namespace Yarito.Domain.Core.Enums.Requests
         /// </summary>
         [Display(Name = "رد")]
         Rejected = 2,
-
-        /// <summary>
-        /// همه نظرات。
-        /// </summary>
-        [Display(Name = "همه")]
-        All = 3,
     }
 }

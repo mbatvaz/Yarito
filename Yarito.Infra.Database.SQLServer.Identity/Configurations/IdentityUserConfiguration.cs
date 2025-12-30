@@ -14,8 +14,8 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<IdentityUser<i
         var admin = new IdentityUser<int>
         {
             Id = 11,
-            UserName = "admin",
-            NormalizedUserName = "ADMIN",
+            UserName = "09214507392",
+            NormalizedUserName = "09214507392",
             Email = "admin@yarito.com",
             NormalizedEmail = "ADMIN@YARITO.COM",
             EmailConfirmed = true,

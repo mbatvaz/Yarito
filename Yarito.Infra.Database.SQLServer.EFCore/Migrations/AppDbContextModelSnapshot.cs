@@ -918,10 +918,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Users.AppUser", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CityId")
                         .HasColumnType("int");

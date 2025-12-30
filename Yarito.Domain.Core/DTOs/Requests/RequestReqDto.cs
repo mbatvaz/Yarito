@@ -1,0 +1,28 @@
+﻿using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums.Requests;
+
+namespace Yarito.Domain.Core.DTOs.Requests
+{
+    public class RequestReqDto : PageRequest
+    {
+        public RequestStatusEnum? Status { get; init; }
+
+        public decimal? MinProposedPrice { get; init; }
+        public decimal? MaxProposedPrice { get; init; }
+
+        public int? CustomerId { get; init; }
+        public int? ExpertId { get; init; }
+        public int? WorkId { get; init; }
+
+        public DateTime? From { get; init; }
+        public DateTime? To { get; init; }
+
+        public DateTime? PreferredFrom { get; init; }
+        public DateTime? PreferredTo { get; init; }
+
+        public string? TextSearch { get; set; }
+        public string? City { get; set; }
+
+        public SortRequest<RequestSortableEnum>? Sort { get; init; }
+    }
+}

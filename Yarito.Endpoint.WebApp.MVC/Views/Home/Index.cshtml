@@ -26,15 +26,24 @@
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                        <a href="Admin.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        <a asp-area="Admin"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary btn--sm">پنل کاربری</a>
                     }
                     else if (User.IsInRole("Customer"))
                     {
-                        <a href="Customer.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        <a asp-area="Customer"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary btn--sm">پنل کاربری</a>
                     }
                     else if(User.IsInRole("Expert"))
                     {
-                        <a href="Expert.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                        <a asp-area="Expert"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary btn--sm">پنل کاربری</a>
                     }
                     <a asp-area="Account"
                        asp-controller="Authentication"
@@ -69,15 +78,24 @@
                     {
                         @if (User.IsInRole("Admin"))
                         {
-                            <a href="Admin.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                            <a asp-area="Admin"
+                               asp-controller="Dashboard"
+                               asp-action="index"
+                               class="btn btn--secondary btn--sm">پنل کاربری</a>
                         }
                         else if (User.IsInRole("Customer"))
                         {
-                            <a href="Customer.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                            <a asp-area="Customer"
+                               asp-controller="Dashboard"
+                               asp-action="index"
+                               class="btn btn--secondary btn--sm">پنل کاربری</a>
                         }
                         else if(User.IsInRole("Expert"))
                         {
-                            <a href="Expert.html" class="btn btn--secondary btn--sm">پنل کاربری</a>
+                            <a asp-area="Expert"
+                               asp-controller="Dashboard"
+                               asp-action="index"
+                               class="btn btn--secondary btn--sm">پنل کاربری</a>
                         }
                         <a asp-area="Account"
                            asp-controller="Authentication"
@@ -115,15 +133,24 @@
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                        <a href="Admin.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                        <a asp-area="Admin"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary-light">ورود به پنل کاربری</a>
                     }
                     else if (User.IsInRole("Customer"))
                     {
-                        <a href="Customer.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                        <a asp-area="Customer"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary-light">ورود به پنل کاربری</a>
                     }
                     else if (User.IsInRole("Expert"))
                     {
-                        <a href="Expert.html" class="btn btn--secondary-light">ورود به پنل کاربری</a>
+                        <a asp-area="Expert"
+                           asp-controller="Dashboard"
+                           asp-action="index"
+                           class="btn btn--secondary-light">ورود به پنل کاربری</a>
                     }
                 }
                 else
@@ -152,17 +179,17 @@
             <div class="services-grid">
                 @foreach (var c in @Model.Categories)
                 {
-                <article class="card service-card">
-                    <div class="service-card__line"></div>
-                    <h3>@c.Title</h3>
-                    <p class="service-card__desc clamp-2">@c.Description</p>
-                    <ul class="service-list">
-                        @foreach (var w in c.WorksTitle)
-                        {
-                        <li>@w</li>
-                        }
-                    </ul>
-                </article>
+                    <article class="card service-card">
+                        <div class="service-card__line"></div>
+                        <h3>@c.Title</h3>
+                        <p class="service-card__desc clamp-2">@c.Description</p>
+                        <ul class="service-list">
+                            @foreach (var w in c.WorksTitle)
+                            {
+                                <li>@w</li>
+                            }
+                        </ul>
+                    </article>
                 }
             </div>
         </div>
@@ -179,25 +206,25 @@
             <div class="testimonials-grid">
                 @foreach (var r in Model.Reviews)
                 {
-                <article class="card testimonial-card">
-                    <div class="testimonial-card__header">
-                        <h4>@r.FirstName</h4>
-                        <div class="testimonial-card__rating">
-                            @for(var i = 0; i < 5; i++)
-                            {
-                                if(i < r.Rating)
+                    <article class="card testimonial-card">
+                        <div class="testimonial-card__header">
+                            <h4>@r.FirstName</h4>
+                            <div class="testimonial-card__rating">
+                                @for (var i = 0; i < 5; i++)
                                 {
-                                    <span class="star star--filled"></span>
+                                    if (i < r.Rating)
+                                    {
+                                        <span class="star star--filled"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="star star--empty"></span>
+                                    }
                                 }
-                                else
-                                {
-                                    <span class="star star--empty"></span>
-                                }
-                            }
+                            </div>
                         </div>
-                    </div>
-                    <p class="testimonial-card__comment clamp-3">@r.Comment</p>
-                </article>
+                        <p class="testimonial-card__comment clamp-3">@r.Comment</p>
+                    </article>
                 }
             </div>
         </div>

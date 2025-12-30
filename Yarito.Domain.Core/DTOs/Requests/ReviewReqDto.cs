@@ -5,7 +5,7 @@ namespace Yarito.Domain.Core.DTOs.Requests
 {
     public class ReviewReqDto : PageRequest
     {
-        public ReviewStatusEnum ApprovalStatus { get; init; } = ReviewStatusEnum.All;
+        public ReviewStatusEnum? ApprovalStatus { get; init; }
 
         public int? Rating { get; init; }
         public int? MinRating { get; init; }

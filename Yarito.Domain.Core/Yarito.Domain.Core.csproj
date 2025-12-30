@@ -12,11 +12,9 @@
     <Folder Include="Contracts\Images\AppServices\" />
     <Folder Include="Contracts\Images\Repository\" />
     <Folder Include="Contracts\Images\Services\" />
-    <Folder Include="Contracts\Users\AppServices\" />
-    <Folder Include="Contracts\Users\Services\" />
     <Folder Include="DTOs\Cities\" />
     <Folder Include="DTOs\Images\" />
-    <Folder Include="DTOs\Users\" />
+    <Folder Include="DTOs\Result\" />
   </ItemGroup>
 
 </Project>

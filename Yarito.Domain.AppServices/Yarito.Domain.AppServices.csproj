@@ -8,12 +8,17 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Yarito.Domain.Core\Yarito.Domain.Core.csproj" />
+    <ProjectReference Include="..\Yarito.Framework\Yarito.Framework.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Cities\" />
     <Folder Include="Images\" />
-    <Folder Include="Users\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.1" />
   </ItemGroup>
 
 </Project>
