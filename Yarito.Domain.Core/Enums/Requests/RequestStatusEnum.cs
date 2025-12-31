@@ -8,19 +8,19 @@ namespace Yarito.Domain.Core.Enums.Requests;
 public enum RequestStatusEnum
 {
     /// <summary>
-    /// درخواست ثبت شده و در انتظار بررسی یا پذیرش توسط متخصصان است。
+    /// درخواست ثبت شده و در انتظار بررسی یا پذیرش توسط متخصصان است.
     /// </summary>
-    [Display(Name = "در انتظار")]
+    [Display(Name = "دریافت پیشنهاد")]
     Pending = 0,
 
     /// <summary>
-    /// درخواست توسط یک متخصص پذیرفته شده و در حال انجام است。
+    /// درخواست توسط یک متخصص پذیرفته شده و در حال انجام است.
     /// </summary>
-    [Display(Name = "جاری")]
+    [Display(Name = "در انتظار انجام")]
     InProgress = 1,
 
     /// <summary>
-    /// کار مربوط به درخواست با موفقیت به پایان رسیده است。
+    /// کار مربوط به درخواست با موفقیت به پایان رسیده است.
     /// </summary>
     [Display(Name = "تکمیل شده")]
     Completed = 2,

@@ -1,0 +1,163 @@
+﻿@using Yarito.Domain.Core.Enums.Users
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.UsersViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>کاربران</h2>
+    <a href="#" class="btn btn--primary">افزودن کاربر جدید</a>
+</div>
+
+<!-- Filters -->
+<div class="admin-customer-info-wrapper">
+    <section class="card admin-box">
+        <form asp-area="Admin"
+              asp-controller="Users"
+              asp-action="Index"
+              class="admin-filter-bar admin-filter-bar--row"
+              method="get">
+            <div class="admin-filter-bar__fields">
+                <div class="form-group form-group--search">
+                    <label asp-for="Search">جستجو</label>
+                    <input asp-for="Search" type="text" placeholder="نام، شماره تلفن...">
+                </div>
+                <div class="form-group form-group--compact">
+                    <label asp-for="UserType">نقش</label>
+                    <select asp-for="UserType" asp-items="Html.GetEnumSelectList<UserTypeEnum>()">
+                        <option value="">همه</option>
+                    </select>
+                </div>
+            </div>
+            <div class="admin-filter-bar__actions">
+                <button type="submit" class="btn btn--primary">اعمال فیلتر</button>
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   class="btn btn--ghost">پاک کردن</a>
+            </div>
+        </form>
+    </section>
+</div>
+
+<!-- Users List -->
+<section class="card admin-box">
+    @if (Model.TotalCount > 0)
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>شناسه</th>
+                    <th>تصویر</th>
+                    <th>نام و نام خانوادگی</th>
+                    <th>شماره تلفن</th>
+                    <th>نقش</th>
+                    <th class="text-left">عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model.UserList)
+                    {
+                        <tr>
+                            <td>#@u.Id.ToString().ToPersianNum()</td>
+                            <td><img src="@u.ProfileImgPath" alt="تصویر پروفایل" class="avatar avatar--sm"></td>
+                            <td>@u.FirstName @u.LastName</td>
+                            <td dir="ltr">@u.PhoneNumber.ToPersianNum()</td>
+                            <td>
+                                <span class="badge @(u.UserType switch
+                                                   {
+                                                       UserTypeEnum.Expert => "badge--secondary",
+                                                       _ => "",
+                                                   })">@Html.DisplayFor(_ => u.UserType)</span></td>
+                            <td class="admin-table__actions text-left">
+                                <a asp-area="Admin"
+                                   asp-controller="Users"
+                                   asp-action="@(u.UserType == UserTypeEnum.Customer ? "CustomerDetails" : "ExpertDetails")"
+                                   asp-route-id="@u.Id"
+                                   class="btn btn--secondary btn--sm">جزئیات</a>
+                                @* <a href="#" class="btn btn--ghost btn--sm">ویرایش</a> *@
+                                <form asp-area="Admin"
+                                      asp-controller="Users"
+                                      asp-action="Delete"
+                                      asp-route-id="@u.Id"
+                                      method="post"
+                                      style="display:inline;"
+                                      onsubmit="return confirm('آیا از حذف این کاربر مطمئن هستید؟');">
+                                    <button type="submit" class="btn btn--danger btn--sm">حذف</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="admin-empty-state">
+            <p>هیچ کاربری یافت نشد.</p>
+        </div>
+    }
+
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="admin-pagination">
+            <!-- Previous page -->
+            @if(Model.Page > 1)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-userType="@Model.UserType"
+                   class="admin-pagination__btn">قبلی</a>
+            }
+            @if (Model.Page > 1)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   asp-route-page="1"
+                   asp-route-search="@Model.Search"
+                   asp-route-userType="@Model.UserType"
+                   class="admin-pagination__page">@("1".ToPersianNum())</a>
+            }
+            <div class="admin-pagination__pages">
+                @if(Model.Page > 2)
+                {
+                    <span class="admin-pagination__page">...</span>
+                }
+                <span href="#" class="admin-pagination__page is-active">@Model.Page.ToString().ToPersianNum()</span>
+                @if (Model.Page < Model.TotalPages - 1)
+                {
+                    <span class="admin-pagination__page">...</span>
+                }
+            </div>
+            <!-- Next page -->
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   asp-route-page="@(Model.TotalPages)"
+                   asp-route-search="@Model.Search"
+                   asp-route-userType="@Model.UserType"
+                   class="admin-pagination__page">@Model.TotalPages.ToString().ToPersianNum()</a>
+            }
+            @if(Model.Page < Model.TotalPages)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="Index"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-userType="@Model.UserType"
+                   class="admin-pagination__btn">بعدی</a>
+            }
+        </nav>
+    }
+</section>

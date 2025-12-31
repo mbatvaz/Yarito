@@ -1,20 +1,22 @@
-﻿namespace Yarito.Domain.Core.Entities._Common
+﻿namespace Yarito.Domain.Core.Entities._Common;
+
+/// <summary>
+/// کلاس پایه برای درخواست‌های صفحه‌بندی شده.
+/// </summary>
+public class PageRequest
 {
-    public class PageRequest
+    private const int MaxPageSize = 100;
+    private readonly int _basePageSize = 10;
+
+    public int Page { get; init; } = 1;
+
+    public int PageSize
     {
-        private const int MaxPageSize = 100;
-        private readonly int _basePageSize = 10;
-
-        public int Page { get; init; } = 1;
-
-        public int PageSize
-        {
-            get => _basePageSize;
-            init => _basePageSize = value <= 0 
-                ? 10 
-                : (value > MaxPageSize 
-                    ? MaxPageSize 
-                    : value);
-        }
+        get => _basePageSize;
+        init => _basePageSize = value <= 0 
+            ? 10 
+            : (value > MaxPageSize 
+                ? MaxPageSize 
+                : value);
     }
 }

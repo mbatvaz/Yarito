@@ -1,23 +1,26 @@
-﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.DashboardViewModel
+﻿@using Yarito.Domain.Core.Enums.Requests
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.DashboardViewModel
+
 @{
     Layout = "_Layout";
 }
+
 <!-- KPI Grid -->
 <section class="admin-kpi-grid">
     <article class="card admin-kpi-card">
-        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfCustomers</div>
+        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfCustomers.ToString().ToPersianNum()</div>
         <div class="admin-kpi-card__label">تعداد مشتریان</div>
     </article>
     <article class="card admin-kpi-card">
-        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfExperts</div>
+        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfExperts.ToString().ToPersianNum()</div>
         <div class="admin-kpi-card__label">تعداد متخصصین</div>
     </article>
     <article class="card admin-kpi-card">
-        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfRequests</div>
+        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfRequests.ToString().ToPersianNum()</div>
         <div class="admin-kpi-card__label">تعداد درخواست ثبت شده</div>
     </article>
     <article class="card admin-kpi-card">
-        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfBid</div>
+        <div class="admin-kpi-card__value">@Model.AppStatistics.NumberOfBid.ToString().ToPersianNum()</div>
         <div class="admin-kpi-card__label">تعداد پیشنهادات ثبت شده</div>
     </article>
 </section>
@@ -45,51 +48,23 @@
                 @foreach (var r in Model.RequestsSummary)
                 {
                     <tr>
-                        <td><a href="#">#@r.Id</a></td>
+                        <td><a href="#">#@r.Id.ToString().ToPersianNum()</a></td>
                         <td>@r.Title</td>
                         <td>@r.ServicesTitle</td>
                         <td>@r.CityName</td>
-                        <td>@r.CreateAt</td>
-                        <td><span class="badge badge--receiving">@r.Status.ToString()</span></td>
+                        <td>@r.CreateAt.CompleteShamsiDate("dn, dd mn yyyy")</td>
+                        <td><span class="badge
+                            @(r.Status switch
+                            {
+                                RequestStatusEnum.Pending    => "badge--receiving",
+                                RequestStatusEnum.Completed  => "badge--completed",
+                                RequestStatusEnum.Cancelled  => "badge--cancelled",
+                                RequestStatusEnum.InProgress => "badge--waiting",
+                                _                            => ""
+                            }) badge--receiving">@Html.DisplayFor(_ => r.Status)</span></td>
                         <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
                     </tr>
                 }
-            @* <tr>
-                <td><a href="admin-request-details.html?id=2">#۱۲۳۵</a></td>
-                <td>سرویس کولر گازی</td>
-                <td>تهویه مطبوع</td>
-                <td>اصفهان</td>
-                <td>۱۴۰۲/۱۰/۱۴</td>
-                <td><span class="badge badge--waiting">در انتظار انجام</span></td>
-                <td class="text-left"><a href="admin-request-details.html?id=2" class="btn btn--ghost btn--sm">مشاهده</a></td>
-            </tr>
-            <tr>
-                <td><a href="admin-request-details.html?id=3">#۱۲۳۶</a></td>
-                <td>نصب پریز برق</td>
-                <td>برقکاری</td>
-                <td>شیراز</td>
-                <td>۱۴۰۲/۱۰/۱۳</td>
-                <td><span class="badge badge--completed">اتمام</span></td>
-                <td class="text-left"><a href="admin-request-details.html?id=3" class="btn btn--ghost btn--sm">مشاهده</a></td>
-            </tr>
-            <tr>
-                <td><a href="admin-request-details.html?id=4">#۱۲۳۷</a></td>
-                <td>رنگ آمیزی اتاق</td>
-                <td>نقاشی ساختمان</td>
-                <td>مشهد</td>
-                <td>۱۴۰۲/۱۰/۱۲</td>
-                <td><span class="badge badge--cancelled">کنسل شده</span></td>
-                <td class="text-left"><a href="admin-request-details.html?id=4" class="btn btn--ghost btn--sm">مشاهده</a></td>
-            </tr>
-            <tr>
-                <td><a href="admin-request-details.html?id=5">#۱۲۳۸</a></td>
-                <td>تعمیر یخچال</td>
-                <td>تعمیر لوازم خانگی</td>
-                <td>تبریز</td>
-                <td>۱۴۰۲/۱۰/۱۱</td>
-                <td><span class="badge badge--receiving">در حال دریافت پیشنهاد</span></td>
-                <td class="text-left"><a href="admin-request-details.html?id=5" class="btn btn--ghost btn--sm">مشاهده</a></td>
-            </tr> *@
             </tbody>
         </table>
     </div>
@@ -102,12 +77,12 @@
         <a href="#" class="btn btn--ghost btn--sm">مشاهده همه</a>
     </div>
     <div class="admin-comments-cards">
-        @foreach(var c in @Model.CommentsAwaitingApproval)
+        @foreach(var c in Model.CommentsAwaitingApproval)
         {
             <article class="card admin-box admin-comment-card">
-                <span class="badge badge--pending admin-comment-card__status">@c.ReviewStatus.ToString()</span>
+                <span class="badge badge--pending admin-comment-card__status">@Html.DisplayFor(_ => c.ReviewStatus)</span>
                 <div class="admin-comment-card__header">
-                    <span class="admin-comment-card__date">@c.CreateAt</span>
+                    <span class="admin-comment-card__date">@c.CreateAt.CompleteShamsiDate("dd mn yyyy")</span>
                     <div class="admin-comment-card__rating" aria-label="امتیاز ۵ از ۵">
                         @for (var i = 0; i < 5; i++)
                         {
@@ -135,53 +110,5 @@
                 </div>
             </article>
         }
-        @* <article class="card admin-box admin-comment-card">
-            <span class="badge badge--pending admin-comment-card__status">در انتظار</span>
-            <div class="admin-comment-card__header">
-                <span class="admin-comment-card__date">۱۴۰۲/۱۰/۱۴</span>
-                <div class="admin-comment-card__rating" aria-label="امتیاز ۴ از ۵">
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--empty"></span>
-                </div>
-                <span class="admin-comment-card__customer">سارا احمدی</span>
-            </div>
-            <p class="admin-comment-card__text">خوب بود ولی کمی دیر آمد.</p>
-            <div class="admin-comment-card__footer">
-                <div class="admin-comment-card__links">
-                    <a href="admin-offer-details.html?id=2" class="btn btn--ghost btn--sm">جزئیات پیشنهاد</a>
-                </div>
-                <div class="admin-comment-card__actions">
-                    <button type="button" class="btn btn--primary btn--sm">تایید</button>
-                    <button type="button" class="btn btn--danger btn--sm">رد</button>
-                </div>
-            </div>
-        </article>
-        <article class="card admin-box admin-comment-card">
-            <span class="badge badge--pending admin-comment-card__status">در انتظار</span>
-            <div class="admin-comment-card__header">
-                <span class="admin-comment-card__date">۱۴۰۲/۱۰/۱۳</span>
-                <div class="admin-comment-card__rating" aria-label="امتیاز ۵ از ۵">
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                    <span class="star star--filled"></span>
-                </div>
-                <span class="admin-comment-card__customer">مریم حسینی</span>
-            </div>
-            <p class="admin-comment-card__text">بسیار راضی هستم. سریع و با کیفیت.</p>
-            <div class="admin-comment-card__footer">
-                <div class="admin-comment-card__links">
-                    <a href="admin-offer-details.html?id=3" class="btn btn--ghost btn--sm">جزئیات پیشنهاد</a>
-                </div>
-                <div class="admin-comment-card__actions">
-                    <button type="button" class="btn btn--primary btn--sm">تایید</button>
-                    <button type="button" class="btn btn--danger btn--sm">رد</button>
-                </div>
-            </div>
-        </article> *@
     </div>
 </section>

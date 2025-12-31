@@ -98,6 +98,7 @@ builder.Services.AddScoped<ICategoryAppServices, CategoryAppServices>();
 builder.Services.AddScoped<IAuthenticationAppServices, AuthenticationAppServices>();
 builder.Services.AddScoped<IAppUserAppServices, AppUserAppServices>();
 builder.Services.AddScoped<IRequestAppServices, RequestAppServices>();
+builder.Services.AddScoped<IBidAppServices, BidAppServices>();
 
 // Dependency Injection for Services
 builder.Services.AddScoped<ICategoryServices, CategoryServices>();

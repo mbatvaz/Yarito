@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Yarito.Domain.Core.Entities.Users;
+using Yarito.Domain.Core.Enums.Users;
 
 namespace Yarito.Infra.Database.SQLServer.EFCore.Configurations.Users;
 
@@ -11,9 +12,9 @@ public class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
         builder.ToTable("AppUsers");
 
         // Table Per Hierarchy (TPH) Configuration
-        builder.HasDiscriminator<string>("UserType")
-            .HasValue<Customer>("Customer")
-            .HasValue<Expert>("Expert");
+        builder.HasDiscriminator<UserTypeEnum>("UserType")
+            .HasValue<Customer>(UserTypeEnum.Customer)
+            .HasValue<Expert>(UserTypeEnum.Expert);
 
         builder.HasKey(u => u.Id);
 

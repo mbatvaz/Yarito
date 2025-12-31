@@ -34,7 +34,10 @@
         <nav class="admin-sidebar__nav" aria-label="منوی مدیریت">
             <ul>
                 <li>
-                        <a href="admin-dashboard.html" class="admin-sidebar__link @(controller == "Dashboard" ? "is-active" : "")">
+                    <a asp-area="Admin"
+                       asp-controller="Dashboard"
+                       asp-action="Index"
+                       class="admin-sidebar__link @(controller == "Dashboard" ? "is-active" : "")">
                         <div class="admin-sidebar__link-icon">
                             <img src="~/Images/Frontend/DashboardIcon.png" alt="">
                         </div>
@@ -42,7 +45,10 @@
                     </a>
                 </li>
                 <li>
-                        <a href="admin-users.html" class="admin-sidebar__link @(controller == "Users" ? "is-active" : "")">
+                    <a asp-area="Admin"
+                       asp-controller="Users"
+                       asp-action="Index"
+                       class="admin-sidebar__link @(controller == "Users" ? "is-active" : "")">
                         <div class="admin-sidebar__link-icon">
                             <img src="~/Images/Frontend/UsersIcon.png" alt="">
                         </div>
@@ -102,7 +108,7 @@
 
     <!-- Main Content -->
     <main class="admin-content">
-        @RenderBody();
+        @RenderBody()
     </main>
 </div>
     @await RenderSectionAsync("Scripts", required: false)

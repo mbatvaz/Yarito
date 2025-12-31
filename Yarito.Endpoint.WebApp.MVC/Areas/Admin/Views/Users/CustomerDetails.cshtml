@@ -1,0 +1,179 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.CustomerDetailsViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>جزئیات مشتری</h2>
+    <a asp-area="Admin"
+       asp-controller="Users"
+       asp-action="Index"
+       class="btn btn--ghost">بازگشت</a>
+</div>
+
+<!-- Customer Info Box -->
+<div class="admin-customer-info-wrapper">
+    <section class="card admin-box admin-customer-info-box">
+        <div class="admin-profile-combined">
+            <div class="admin-profile-combined__avatar">
+                <img src="@Model.Customer.ProfileImgPath" class="avatar avatar--xl" alt="تصویر پروفایل">
+            </div>
+            <div class="admin-profile-combined__info">
+                <h2 class="admin-profile-combined__name">@Model.Customer.FirstName @Model.Customer.LastName</h2>
+                <span class="badge">@(Html.DisplayFor(_ => Model.Customer.UserType))</span>
+            </div>
+        </div>
+        <div class="admin-info-columns">
+            <div class="admin-info-columns__right">
+                <dl class="admin-details-list admin-details-list--vertical">
+                    <div class="admin-details-list__item">
+                        <dt>تاریخ عضویت</dt>
+                        <dd>@Model.Customer.CreatedAt.CompleteShamsiDate("dd mn yyyy")</dd>
+                    </div>
+                    <div class="admin-details-list__item">
+                        <dt>شهر</dt>
+                        <dd>@(Model.Customer.CityName ?? "ثبت نشده")</dd>
+                    </div>
+                    <div class="admin-details-list__item">
+                        <dt>موجودی حساب</dt>
+                        <dd><strong style="color: var(--color-primary);">@Model.Customer.WalletBalance.ToString("N0").ToPersianNum() تومان</strong></dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="admin-info-columns__left">
+                <dl class="admin-details-list admin-details-list--vertical">
+                    <div class="admin-details-list__item">
+                        <dt>شماره تلفن</dt>
+                        <dd dir="ltr">@Model.Customer.PhoneNumber.ToPersianNum()</dd>
+                    </div>
+                    <div class="admin-details-list__item">
+                        <dt>ایمیل</dt>
+                        <dd dir="ltr">@(Model.Customer.Email ?? "ثبت نشده")</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="admin-info-columns__full">
+                <dl class="admin-details-list admin-details-list--vertical">
+                    <div class="admin-details-list__item">
+                        <dt>آدرس</dt>
+                        <dd>@(Model.Customer.Address ?? "آدرسی ثبت نشده")</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Customer Requests -->
+<section class="card admin-box">
+    <div class="admin-box__header">
+        <h3>لیست درخواست‌ها</h3>
+        <div class="admin-box__search">
+            <form asp-area="Admin"
+                  asp-controller="Users"
+                  asp-action="CustomerDetails"
+                  method="get">
+                <input type="hidden" asp-for="CustomerId" />
+                <input asp-for="Search" type="text" placeholder="جستجو..." class="admin-search-input">
+                <button type="submit" class="btn btn--primary btn--sm">جستجو</button>
+            </form>
+        </div>
+    </div>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>کد درخواست</th>
+                    <th>عنوان درخواست</th>
+                    <th>سرویس</th>
+                    <th>تاریخ</th>
+                    <th>وضعیت</th>
+                    <th class="text-left">عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var r in Model.Requests)
+            {
+                <tr>
+                    <td><a href="#">#@r.Id.ToString().ToPersianNum()</a></td>
+                    <td>@r.Title</td>
+                    <td>@r.ServicesTitle</td>
+                    <td>@r.CreateAt.CompleteShamsiDate("yyyy/mm/dd")</td>
+                    <td><span class="badge
+                            @(r.Status switch
+                              {
+                                  RequestStatusEnum.Pending => "badge--receiving",
+                                  RequestStatusEnum.Completed => "badge--completed",
+                                  RequestStatusEnum.Cancelled => "badge--cancelled",
+                                  RequestStatusEnum.InProgress => "badge--waiting",
+                                  _ => ""
+                              }) badge--receiving">@Html.DisplayFor(_ => r.Status)</span>
+                    </td>
+                    <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="admin-pagination">
+            <!-- Previous page -->
+            @if (Model.Page > 1)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="CustomerDetails"
+                   asp-route-page="@(Model.Page - 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-customerId="@Model.CustomerId"
+                   class="admin-pagination__btn">قبلی</a>
+            }
+            @if (Model.Page > 1)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="CustomerDetails"
+                   asp-route-page="1"
+                   asp-route-search="@Model.Search"
+                   asp-route-customerId="@Model.CustomerId"
+                   class="admin-pagination__page">@("1".ToPersianNum())</a>
+            }
+            <div class="admin-pagination__pages">
+                @if (Model.Page > 2)
+                {
+                    <span class="admin-pagination__page">...</span>
+                }
+                <span href="#" class="admin-pagination__page is-active">@Model.Page.ToString().ToPersianNum()</span>
+                @if (Model.Page < Model.TotalPages - 1)
+                {
+                    <span class="admin-pagination__page">...</span>
+                }
+            </div>
+            <!-- Next page -->
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="CustomerDetails"
+                   asp-route-page="@(Model.TotalPages)"
+                   asp-route-search="@Model.Search"
+                   asp-route-customerId="@Model.CustomerId"
+                   class="admin-pagination__page">@Model.TotalPages.ToString().ToPersianNum()</a>
+            }
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Users"
+                   asp-action="CustomerDetails"
+                   asp-route-page="@(Model.Page + 1)"
+                   asp-route-search="@Model.Search"
+                   asp-route-customerId="@Model.CustomerId"
+                   class="admin-pagination__btn">بعدی</a>
+            }
+        </nav>
+    }
+</section>

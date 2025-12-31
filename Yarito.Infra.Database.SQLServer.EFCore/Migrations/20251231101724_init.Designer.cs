@@ -12,7 +12,7 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251230133957_init")]
+    [Migration("20251231101724_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -934,6 +934,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("FirstName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
@@ -942,6 +943,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(50)");
@@ -956,10 +958,8 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
+                    b.Property<int>("UserType")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("WalletBalance")
                         .ValueGeneratedOnAdd()
@@ -975,7 +975,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
 
                     b.ToTable("AppUsers", (string)null);
 
-                    b.HasDiscriminator<string>("UserType").HasValue("AppUser");
+                    b.HasDiscriminator<int>("UserType");
 
                     b.UseTphMappingStrategy();
                 });
@@ -1231,7 +1231,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         .IsUnicode(true)
                         .HasColumnType("nvarchar(500)");
 
-                    b.HasDiscriminator().HasValue("Customer");
+                    b.HasDiscriminator().HasValue(0);
 
                     b.HasData(
                         new
@@ -1310,7 +1310,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                 {
                     b.HasBaseType("Yarito.Domain.Core.Entities.Users.AppUser");
 
-                    b.HasDiscriminator().HasValue("Expert");
+                    b.HasDiscriminator().HasValue(1);
 
                     b.HasData(
                         new

@@ -65,5 +65,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Yarito.Domain.Core\Yarito.Domain.Core.csproj" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Configurations\Enums\" />
+  </ItemGroup>
 
 </Project>

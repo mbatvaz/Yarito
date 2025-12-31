@@ -3,6 +3,7 @@ using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Requests;
+using Yarito.Domain.Core.Entities.Users;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
@@ -16,15 +17,9 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
     {
         var query = _db.Requests.AsNoTracking().AsQueryable();
 
-        //Status filters
-        query = q.Status switch
-        {
-            RequestStatusEnum.Pending => query.Where(r => r.Status == RequestStatusEnum.Pending),
-            RequestStatusEnum.InProgress => query.Where(r => r.Status == RequestStatusEnum.InProgress),
-            RequestStatusEnum.Cancelled => query.Where(r => r.Status == RequestStatusEnum.Cancelled),
-            RequestStatusEnum.Completed => query.Where(r => r.Status == RequestStatusEnum.Completed),
-            _ => query
-        };
+        // Status filter
+        if (q.Status is not null)
+            query = query.Where(r => r.Status == q.Status);
 
         // Price filters
         if (q.MinProposedPrice is not null)

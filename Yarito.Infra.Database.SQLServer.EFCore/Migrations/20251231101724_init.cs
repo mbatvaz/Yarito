@@ -79,14 +79,14 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     PhoneNumber = table.Column<string>(type: "nchar(11)", fixedLength: true, maxLength: 11, nullable: false),
                     WalletBalance = table.Column<decimal>(type: "decimal(18,0)", nullable: false, defaultValue: 0m),
                     ProfileImgPath = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     CityId = table.Column<int>(type: "int", nullable: true),
-                    UserType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
+                    UserType = table.Column<int>(type: "int", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
@@ -311,11 +311,11 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                 columns: new[] { "Id", "Address", "CityId", "CreatedAt", "Email", "FirstName", "IsDeleted", "LastName", "PhoneNumber", "ProfileImgPath", "UserType", "WalletBalance" },
                 values: new object[,]
                 {
-                    { 1, "تهران، خیابان ولیعصر، پلاک 123", 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "ali.mohammadi@example.com", "علی", false, "محمدی", "09121234567", "/images/profiles/customer1.jpg", "Customer", 5000000m },
-                    { 2, "اصفهان، خیابان چهارباغ، پلاک 45", 7, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "zahra.ahmadi@example.com", "زهرا", false, "احمدی", "09131234567", "/images/profiles/customer2.jpg", "Customer", 3000000m },
-                    { 3, "شیراز، خیابان زند، پلاک 78", 10, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "mohammad.rezaei@example.com", "محمد", false, "رضایی", "09141234567", "/images/profiles/customer3.jpg", "Customer", 8000000m },
-                    { 4, "کرج، میدان آزادگان، پلاک 56", 5, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "fatemeh.hosseini@example.com", "فاطمه", false, "حسینی", "09151234567", "/images/profiles/customer4.jpg", "Customer", 2000000m },
-                    { 5, "کاشان، خیابان کمال الملک، پلاک 90", 9, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "hossein.karimi@example.com", "حسین", false, "کریمی", "09161234567", "/images/profiles/customer5.jpg", "Customer", 10000000m }
+                    { 1, "تهران، خیابان ولیعصر، پلاک 123", 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "ali.mohammadi@example.com", "علی", false, "محمدی", "09121234567", "/images/profiles/customer1.jpg", 0, 5000000m },
+                    { 2, "اصفهان، خیابان چهارباغ، پلاک 45", 7, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "zahra.ahmadi@example.com", "زهرا", false, "احمدی", "09131234567", "/images/profiles/customer2.jpg", 0, 3000000m },
+                    { 3, "شیراز، خیابان زند، پلاک 78", 10, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "mohammad.rezaei@example.com", "محمد", false, "رضایی", "09141234567", "/images/profiles/customer3.jpg", 0, 8000000m },
+                    { 4, "کرج، میدان آزادگان، پلاک 56", 5, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "fatemeh.hosseini@example.com", "فاطمه", false, "حسینی", "09151234567", "/images/profiles/customer4.jpg", 0, 2000000m },
+                    { 5, "کاشان، خیابان کمال الملک، پلاک 90", 9, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "hossein.karimi@example.com", "حسین", false, "کریمی", "09161234567", "/images/profiles/customer5.jpg", 0, 10000000m }
                 });
 
             migrationBuilder.InsertData(
@@ -323,11 +323,11 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                 columns: new[] { "Id", "CityId", "CreatedAt", "Email", "FirstName", "IsDeleted", "LastName", "PhoneNumber", "ProfileImgPath", "UserType", "WalletBalance" },
                 values: new object[,]
                 {
-                    { 6, 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "reza.bargkar@example.com", "رضا", false, "برقکار", "09171234567", "/images/profiles/expert1.jpg", "Expert", 15000000m },
-                    { 7, 7, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "mehdi.loolehkesh@example.com", "مهدی", false, "لوله‌کش", "09181234567", "/images/profiles/expert2.jpg", "Expert", 12000000m },
-                    { 8, 10, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "sara.nezafatchi@example.com", "سارا", false, "نظافتچی", "09191234567", "/images/profiles/expert3.jpg", "Expert", 8000000m },
-                    { 9, 5, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "ahmad.naghash@example.com", "احمد", false, "نقاش", "09201234567", "/images/profiles/expert4.jpg", "Expert", 20000000m },
-                    { 10, 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "narges.tamirkar@example.com", "نرگس", false, "تعمیرکار", "09211234567", "/images/profiles/expert5.jpg", "Expert", 18000000m }
+                    { 6, 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "reza.bargkar@example.com", "رضا", false, "برقکار", "09171234567", "/images/profiles/expert1.jpg", 1, 15000000m },
+                    { 7, 7, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "mehdi.loolehkesh@example.com", "مهدی", false, "لوله‌کش", "09181234567", "/images/profiles/expert2.jpg", 1, 12000000m },
+                    { 8, 10, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "sara.nezafatchi@example.com", "سارا", false, "نظافتچی", "09191234567", "/images/profiles/expert3.jpg", 1, 8000000m },
+                    { 9, 5, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "ahmad.naghash@example.com", "احمد", false, "نقاش", "09201234567", "/images/profiles/expert4.jpg", 1, 20000000m },
+                    { 10, 4, new DateTime(2025, 12, 25, 0, 0, 0, 0, DateTimeKind.Utc), "narges.tamirkar@example.com", "نرگس", false, "تعمیرکار", "09211234567", "/images/profiles/expert5.jpg", 1, 18000000m }
                 });
 
             migrationBuilder.InsertData(

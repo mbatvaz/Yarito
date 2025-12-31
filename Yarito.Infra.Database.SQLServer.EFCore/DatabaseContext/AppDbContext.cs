@@ -38,6 +38,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
         return await base.SaveChangesAsync(cancellationToken);
     }
 
+    // Main Entities
     public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<City> Cities { get; set; }
     public DbSet<Category> Categories { get; set; }

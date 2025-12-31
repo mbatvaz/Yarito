@@ -3,12 +3,12 @@
     public enum SortDirectionEnum
     {
         /// <summary>
-        /// مرتب سازی نزولی
+        /// مرتب سازی صعودی
         /// </summary>
         Ascending,
 
         /// <summary>
-        /// مرتب سازی صعودی
+        /// مرتب سازی نزولی
         /// </summary>
         Descending
     }
