@@ -54,21 +54,22 @@
     <fieldset class="form-group form-group--radio form-group--radio-inline">
         <legend style="font-size: 0.875rem; font-weight: 500; margin-bottom: 8px;">نوع کاربری را انتخاب کنید:</legend>
 
-        <label asp-for="UserType" class="radio-option radio-option--simple">
+        <label class="radio-option radio-option--simple">
             <input asp-for="UserType"
                    type="radio"
-                   value="@UserTypeEnum.Customer">
+                   value="@UserTypeEnum.Customer"
+                   checked="@(Model.UserType == UserTypeEnum.Customer)">
             <div class="radio-option__content">
                 <div class="radio-option__title">مشتری</div>
                 <div class="radio-option__desc">درخواست ثبت می‌کند و از خدمات متخصصان استفاده می‌کند.</div>
             </div>
         </label>
 
-        <label asp-for="UserType" class="radio-option radio-option--simple">
+        <label class="radio-option radio-option--simple">
             <input asp-for="UserType" 
                    type="radio"
-                   name="userType"
-                   value="@UserTypeEnum.Expert">
+                   value="@UserTypeEnum.Expert"
+                   checked="@(Model.UserType == UserTypeEnum.Expert)">
             <div class="radio-option__content">
                 <div class="radio-option__title">متخصص</div>
                 <div class="radio-option__desc">خدمات ارائه می‌دهد و به درخواست‌های مشتریان پاسخ می‌دهد.</div>

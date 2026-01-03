@@ -1,0 +1,129 @@
+﻿@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.CategoriesViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>دسته‌بندی</h2>
+    <div class="admin-page-header__actions">
+        <a asp-area="Admin"
+           asp-controller="Works"
+           asp-action="Create"
+           class="btn btn--secondary">افزودن سرویس</a>
+        <a asp-area="Admin"
+           asp-controller="Categories"
+           asp-action="Create"
+           class="btn btn--primary">افزودن دسته‌بندی</a>
+    </div>
+</div>
+
+<!-- Search -->
+<section class="card admin-box admin-category-search">
+    <form asp-area="Admin"
+          asp-controller="Categories" 
+          asp-action="Index" 
+          class="admin-filter-bar admin-filter-bar--simple" 
+          method="get">
+        <div class="form-group">
+            <label asp-for="Search" class="sr-only">جستجو</label>
+            <input asp-for="Search" type="text" value="@Model.Search" placeholder="جستجوی دسته‌بندی...">
+        </div>
+        <button type="submit" class="btn btn--primary">جستجو</button>
+    </form>
+</section>
+
+<!-- Categories List -->
+<section>
+    @if (Model.Categories.Count > 0)
+    {
+        <div class="admin-category-list">
+            @foreach (var category in Model.Categories)
+            {
+                <article class="card admin-box admin-category-card">
+                    <div class="admin-category-card__header">
+                        <h4>@category.CategoryTitle</h4>
+                        <div class="admin-category-card__actions">
+                            <a asp-area="Admin"
+                               asp-controller="Categories"
+                               asp-action="Edit"
+                               asp-route-id="@category.Id"
+                               class="btn btn--ghost btn--sm">ویرایش</a>
+                            <form asp-area="Admin"
+                                  asp-controller="Categories"
+                                  asp-action="Delete"
+                                  asp-route-id="@category.Id"
+                                  method="post"
+                                  style="display: inline;"
+                                  onsubmit="return confirm('آیا از حذف این دسته‌بندی مطمئن هستید؟');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn--danger btn--sm">حذف</button>
+                            </form>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(category.Description))
+                    {
+                        <p class="muted" style="font-size: 0.875rem; margin-top: var(--space-xs);">@category.Description</p>
+                    }
+                    @if (category.Works.Count > 0)
+                    {
+                        <details class="admin-category-card__details">
+                            <summary>مشاهده سرویس‌ها (@category.Works.Count.ToString().ToPersianNum() سرویس)</summary>
+                            <ul class="admin-category-card__services">
+                                @foreach (var work in category.Works)
+                                {
+                                    <li>
+                                        <span class="service-name">@work.Title</span>
+                                        <span class="service-price">@work.BasePrice.ToString("N0").ToPersianNum() تومان</span>
+                                        <span class="service-actions">
+                                            <a asp-area="Admin"
+                                               asp-controller="Works"
+                                               asp-action="Edit"
+                                               asp-route-id="@work.Id"
+                                               class="btn btn--ghost btn--xs">ویرایش</a>
+                                            <form asp-area="Admin"
+                                                  asp-controller="Works"
+                                                  asp-action="Delete"
+                                                  asp-route-id="@work.Id"
+                                                  method="post"
+                                                  style="display: inline;"
+                                                  onsubmit="return confirm('آیا از حذف این سرویس مطمئن هستید؟');">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn--icon btn--danger-icon" title="حذف">×</button>
+                                            </form>
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        </details>
+                    }
+                    else
+                    {
+                        <p class="muted" style="margin-top: var(--space-md); font-size: 0.875rem;">هیچ سرویسی ثبت نشده است.</p>
+                    }
+                </article>
+            }
+        </div>
+
+        <!-- Pagination -->
+        @await Html.PartialAsync("_Pagination", new PaginationViewModel()
+        {
+            Page = Model.Page,
+            TotalPages = Model.TotalPages,
+            Area = "Admin",
+            Controller = "Categories",
+            Action = "Index",
+            RouteValues = new Dictionary<string, string?>
+            {
+                ["search"] = Model.Search
+            }
+        })
+    }
+    else
+    {
+        <!-- Empty State -->
+        <div class="admin-empty-state">
+            <p>هیچ دسته‌بندی‌ای یافت نشد.</p>
+        </div>
+    }
+</section>

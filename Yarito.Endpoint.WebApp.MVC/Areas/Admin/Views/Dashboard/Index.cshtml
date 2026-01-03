@@ -31,43 +31,52 @@
         <h2>درخواست‌های اخیر</h2>
         <a href="#" class="btn btn--ghost btn--sm">مشاهده همه</a>
     </div>
-    <div class="admin-table-wrapper">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>کد درخواست</th>
-                    <th>عنوان درخواست</th>
-                    <th>سرویس</th>
-                    <th>شهر</th>
-                    <th>تاریخ</th>
-                    <th>وضعیت</th>
-                    <th class="text-left">عملیات</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var r in Model.RequestsSummary)
-                {
+    @if (Model.RequestsSummary.Count > 0)
+    {
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
                     <tr>
-                        <td><a href="#">#@r.Id.ToString().ToPersianNum()</a></td>
-                        <td>@r.Title</td>
-                        <td>@r.ServicesTitle</td>
-                        <td>@r.CityName</td>
-                        <td>@r.CreateAt.CompleteShamsiDate("dn, dd mn yyyy")</td>
-                        <td><span class="badge
-                            @(r.Status switch
-                            {
-                                RequestStatusEnum.Pending    => "badge--receiving",
-                                RequestStatusEnum.Completed  => "badge--completed",
-                                RequestStatusEnum.Cancelled  => "badge--cancelled",
-                                RequestStatusEnum.InProgress => "badge--waiting",
-                                _                            => ""
-                            }) badge--receiving">@Html.DisplayFor(_ => r.Status)</span></td>
-                        <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                        <th>کد درخواست</th>
+                        <th>عنوان درخواست</th>
+                        <th>سرویس</th>
+                        <th>شهر</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                        <th class="text-left">عملیات</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.RequestsSummary)
+                    {
+                        <tr>
+                            <td><a href="#">#@r.Id.ToString().ToPersianNum()</a></td>
+                            <td>@r.Title</td>
+                            <td>@r.ServicesTitle</td>
+                            <td>@r.CityName</td>
+                            <td>@r.CreateAt.CompleteShamsiDate("dn, dd mn yyyy")</td>
+                            <td><span class="badge
+                                @(r.Status switch
+                                {
+                                    RequestStatusEnum.Pending    => "badge--receiving",
+                                    RequestStatusEnum.Completed  => "badge--completed",
+                                    RequestStatusEnum.Cancelled  => "badge--cancelled",
+                                    RequestStatusEnum.InProgress => "badge--waiting",
+                                    _                            => ""
+                                })">@Html.DisplayFor(_ => r.Status)</span></td>
+                            <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="admin-empty-state">
+            <p>هیچ درخواستی ثبت نشده است.</p>
+        </div>
+    }
 </section>
 
 <!-- Pending Comments -->
@@ -76,39 +85,48 @@
         <h2>کامنت‌های در انتظار تایید</h2>
         <a href="#" class="btn btn--ghost btn--sm">مشاهده همه</a>
     </div>
-    <div class="admin-comments-cards">
-        @foreach(var c in Model.CommentsAwaitingApproval)
-        {
-            <article class="card admin-box admin-comment-card">
-                <span class="badge badge--pending admin-comment-card__status">@Html.DisplayFor(_ => c.ReviewStatus)</span>
-                <div class="admin-comment-card__header">
-                    <span class="admin-comment-card__date">@c.CreateAt.CompleteShamsiDate("dd mn yyyy")</span>
-                    <div class="admin-comment-card__rating" aria-label="امتیاز ۵ از ۵">
-                        @for (var i = 0; i < 5; i++)
-                        {
-                            if (i < c.Rating)
+    @if (Model.CommentsAwaitingApproval.Count > 0)
+    {
+        <div class="admin-comments-cards">
+            @foreach(var c in Model.CommentsAwaitingApproval)
+            {
+                <article class="card admin-box admin-comment-card">
+                    <span class="badge badge--pending admin-comment-card__status">@Html.DisplayFor(_ => c.ReviewStatus)</span>
+                    <div class="admin-comment-card__header">
+                        <span class="admin-comment-card__date">@c.CreateAt.CompleteShamsiDate("dd mn yyyy")</span>
+                        <div class="admin-comment-card__rating" aria-label="امتیاز ۵ از ۵">
+                            @for (var i = 0; i < 5; i++)
                             {
-                                <span class="star star--filled"></span>
+                                if (i < c.Rating)
+                                {
+                                    <span class="star star--filled"></span>
+                                }
+                                else
+                                {
+                                    <span class="star star--empty"></span>
+                                }
                             }
-                            else
-                            {
-                                <span class="star star--empty"></span>
-                            }
-                        }
+                        </div>
+                        <span class="admin-comment-card__customer">@c.FirstName @c.LastName</span>
                     </div>
-                    <span class="admin-comment-card__customer">@c.FirstName @c.LastName</span>
-                </div>
-                <p class="admin-comment-card__text">@c.Comment</p>
-                <div class="admin-comment-card__footer">
-                    <div class="admin-comment-card__links">
-                        <a href="#" class="btn btn--ghost btn--sm">جزئیات پیشنهاد</a>
+                    <p class="admin-comment-card__text">@c.Comment</p>
+                    <div class="admin-comment-card__footer">
+                        <div class="admin-comment-card__links">
+                            <a href="#" class="btn btn--ghost btn--sm">جزئیات پیشنهاد</a>
+                        </div>
+                        <div class="admin-comment-card__actions">
+                            <button type="button" class="btn btn--primary btn--sm">تایید</button>
+                            <button type="button" class="btn btn--danger btn--sm">رد</button>
+                        </div>
                     </div>
-                    <div class="admin-comment-card__actions">
-                        <button type="button" class="btn btn--primary btn--sm">تایید</button>
-                        <button type="button" class="btn btn--danger btn--sm">رد</button>
-                    </div>
-                </div>
-            </article>
-        }
-    </div>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="admin-empty-state">
+            <p>هیچ کامنتی در انتظار تایید وجود ندارد.</p>
+        </div>
+    }
 </section>

@@ -1,4 +1,5 @@
 ﻿@using Yarito.Domain.Core.Enums.Users
+@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
 @model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.UsersViewModel
 @{
     Layout = "_Layout";
@@ -6,7 +7,10 @@
 <!-- Page Header -->
 <div class="admin-page-header">
     <h2>کاربران</h2>
-    <a href="#" class="btn btn--primary">افزودن کاربر جدید</a>
+    <a asp-area="Admin"
+       asp-controller="Users"
+       asp-action="UserForm"
+       class="btn btn--primary">افزودن کاربر جدید</a>
 </div>
 
 <!-- Filters -->
@@ -84,6 +88,7 @@
                                       method="post"
                                       style="display:inline;"
                                       onsubmit="return confirm('آیا از حذف این کاربر مطمئن هستید؟');">
+                                    @Html.AntiForgeryToken()
                                     <button type="submit" class="btn btn--danger btn--sm">حذف</button>
                                 </form>
                             </td>
@@ -102,62 +107,17 @@
 
 
     <!-- Pagination -->
-    @if (Model.TotalPages > 1)
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel
     {
-        <nav class="admin-pagination">
-            <!-- Previous page -->
-            @if(Model.Page > 1)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="Index"
-                   asp-route-page="@(Model.Page - 1)"
-                   asp-route-search="@Model.Search"
-                   asp-route-userType="@Model.UserType"
-                   class="admin-pagination__btn">قبلی</a>
-            }
-            @if (Model.Page > 1)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="Index"
-                   asp-route-page="1"
-                   asp-route-search="@Model.Search"
-                   asp-route-userType="@Model.UserType"
-                   class="admin-pagination__page">@("1".ToPersianNum())</a>
-            }
-            <div class="admin-pagination__pages">
-                @if(Model.Page > 2)
-                {
-                    <span class="admin-pagination__page">...</span>
-                }
-                <span href="#" class="admin-pagination__page is-active">@Model.Page.ToString().ToPersianNum()</span>
-                @if (Model.Page < Model.TotalPages - 1)
-                {
-                    <span class="admin-pagination__page">...</span>
-                }
-            </div>
-            <!-- Next page -->
-            @if (Model.Page < Model.TotalPages)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="Index"
-                   asp-route-page="@(Model.TotalPages)"
-                   asp-route-search="@Model.Search"
-                   asp-route-userType="@Model.UserType"
-                   class="admin-pagination__page">@Model.TotalPages.ToString().ToPersianNum()</a>
-            }
-            @if(Model.Page < Model.TotalPages)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="Index"
-                   asp-route-page="@(Model.Page + 1)"
-                   asp-route-search="@Model.Search"
-                   asp-route-userType="@Model.UserType"
-                   class="admin-pagination__btn">بعدی</a>
-            }
-        </nav>
-    }
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Area = "Admin",
+        Controller = "Users",
+        Action = "Index",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["search"] = Model.Search ?? "",
+            ["userType"] = Model.UserType.ToString()
+        }
+    })
 </section>

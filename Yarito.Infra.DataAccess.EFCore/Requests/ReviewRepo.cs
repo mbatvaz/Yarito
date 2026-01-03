@@ -11,7 +11,7 @@ namespace Yarito.Infra.DataAccess.EFCore.Requests;
 
 public class ReviewRepo(AppDbContext _db) : IReviewRepo
 {
-    private IQueryable<Review> ApplyingFiltersToQueries(ReviewReqDto q)
+    private IQueryable<Review> ApplyFilters(ReviewReqDto q)
     {
         var query = _db.Reviews.AsNoTracking().AsQueryable();
 
@@ -121,7 +121,7 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
 
     public async Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)
     {
-        return await ApplyingFiltersToQueries(q)
+        return await ApplyFilters(q)
             .Take(q.PageSize)
             .Select(r => new HomeViewReviewDto()
             {
@@ -133,7 +133,7 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
 
     public async Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto q, CancellationToken ct)
     {
-        var query = ApplyingFiltersToQueries(q);
+        var query = ApplyFilters(q);
         var total = await query.CountAsync(ct);
         var skip = (q.Page - 1) * q.PageSize;
         var items = await query

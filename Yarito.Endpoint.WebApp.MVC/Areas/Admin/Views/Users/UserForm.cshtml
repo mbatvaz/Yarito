@@ -1,0 +1,149 @@
+﻿@using Yarito.Domain.Core.Enums.Users
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.UserFormViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>افزودن کاربر جدید</h2>
+</div>
+
+<form asp-area="Admin"
+      asp-controller="Users"
+      asp-action="UserForm"
+      enctype="multipart/form-data"
+      method="post">
+    @Html.AntiForgeryToken()
+    <!-- Two Column Layout: Basic Info Right, Role/Profile Left -->
+    <div class="admin-user-form-grid">
+        <!-- Basic Info Card (Right) -->
+        <section class="card admin-box">
+            <div class="admin-box__header">
+                <h3>اطلاعات پایه</h3>
+            </div>
+            <div class="admin-form-fields">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="FirstName">نام</label>
+                        <input asp-for="FirstName" type="text" placeholder="نام کاربر" required>
+                        <span asp-validation-for="FirstName" class="validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName">نام خانوادگی</label>
+                        <input asp-for="LastName" type="text" placeholder="نام خانوادگی کاربر" required>
+                        <span asp-validation-for="LastName" class="validation-error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber">شماره موبایل</label>
+                        <input asp-for="PhoneNumber" type="tel" dir="ltr" inputmode="numeric" placeholder="09xxxxxxxxx" required>
+                        <span asp-validation-for="PhoneNumber" class="validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Email">ایمیل</label>
+                        <input asp-for="Email" type="email" dir="ltr" placeholder="email@example.com">
+                        <span asp-validation-for="Email" class="validation-error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="Password">رمز عبور</label>
+                        <input asp-for="Password" type="password" placeholder="رمز عبور">
+                        <small class="form-helper">اگر خالی باشد، تغییر نمی‌کند (در حالت ویرایش)</small>
+                        <span asp-validation-for="Password" class="validation-error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CityId">شهر</label>
+                        <select asp-for="CityId" id="city">
+                            <option value="">انتخاب شهر</option>
+                            @if (Model.CityList != null)
+                            {
+                                @foreach (var c in Model.CityList.Where(c => c != null))
+                                {
+                                    <option value="@c!.Id" selected="@(Model.CityId == c.Id)">@c.Name - @c.ParentName</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label asp-for="BaseWalletBalance">موجودی اولیه (تومان)</label>
+                        <input asp-for="BaseWalletBalance" type="number" placeholder="@Model.BaseWalletBalance.ToString("N0").ToPersianNum()" min="0">
+                        <span asp-validation-for="BaseWalletBalance" class="validation-error"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Address">آدرس</label>
+                    <textarea asp-for="Address" rows="3" placeholder="آدرس کامل..."></textarea>
+                    <small class="form-helper">وارد کردن آدرس فقط برای مشتری مورد نیاز است.</small>
+                    <span asp-for="Address" class="validation-error"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Role and Profile Cards Stacked (Left) -->
+        <div class="admin-user-form-side">
+            <!-- Role Card -->
+            <section class="card admin-box">
+                <div class="admin-box__header">
+                    <h3>نقش و دسترسی</h3>
+                </div>
+                <fieldset class="form-group form-group--radio form-group--radio-simple">
+                    <legend class="sr-only">نوع کاربری را انتخاب کنید</legend>
+
+                    <label class="radio-option radio-option--simple">
+                        <input asp-for="UserType" type="radio" value="@UserTypeEnum.Customer" checked="@(Model.UserType == UserTypeEnum.Customer)" required>
+                        <div class="radio-option__content">
+                            <div class="radio-option__title">مشتری</div>
+                            <div class="radio-option__desc">درخواست ثبت می‌کند و از خدمات متخصصان استفاده می‌کند.</div>
+                        </div>
+                    </label>
+
+                    <label class="radio-option radio-option--simple">
+                        <input asp-for="UserType" type="radio" value="@UserTypeEnum.Expert" checked="@(Model.UserType == UserTypeEnum.Expert)">
+                        <div class="radio-option__content">
+                            <div class="radio-option__title">متخصص</div>
+                            <div class="radio-option__desc">خدمات ارائه می‌دهد و به درخواست‌های مشتریان پاسخ می‌دهد.</div>
+                        </div>
+                    </label>
+                    <span asp-validation-for="UserType" class="validation-error"></span>
+                </fieldset>
+            </section>
+
+            <!-- Profile Image Card -->
+            <section class="card admin-box">
+                <div class="admin-box__header">
+                    <h3>تصویر پروفایل</h3>
+                </div>
+                <div class="admin-profile-upload">
+                    <div class="admin-profile-upload__preview admin-profile-upload__preview--large">
+                        <img class="avatar avatar--xl" src="~/Images/Profile/default.png" alt="پیش‌نمایش تصویر پروفایل">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ProfileImage" for="profileImage">انتخاب تصویر</label>
+                        <input asp-for="ProfileImage" type="file" id="profileImage" accept="image/*">
+                        <span asp-validation-for="ProfileImage" class="validation-error"></span>
+                        @* <small class="form-helper">فرمت‌های مجاز: JPG, PNG, GIF. حداکثر حجم: ۲ مگابایت</small> *@
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Actions - Centered and Wider -->
+    <div class="admin-form-actions admin-form-actions--centered">
+        <button type="submit" class="btn btn--primary btn--lg">ذخیره</button>
+        <a asp-area="Admin"
+           asp-controller="Users"
+           asp-action="Index"
+           class="btn btn--ghost btn--lg">بازگشت</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/city-select2.js"></script>
+    <script src="~/js/profile-preview.js"></script>
+}

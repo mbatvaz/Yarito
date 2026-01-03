@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.Core.Contracts.Cities.Repository;
+using Yarito.Domain.Core.DTOs.Cities;
 using Yarito.Domain.Core.Entities.Cities;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 
@@ -17,7 +18,7 @@ public class CityRepo(AppDbContext _db) : ICityRepo
     {
         var dbCity = await _db.Cities.FindAsync([newCity.Id], ct);
         if (dbCity is null) return false;
-        
+
         dbCity.Name = newCity.Name;
         dbCity.ParentId = newCity.ParentId;
 
@@ -31,5 +32,22 @@ public class CityRepo(AppDbContext _db) : ICityRepo
             .Where(c => c.Id == cityId && c.IsDeleted == false)
             .ExecuteUpdateAsync(c => c
                 .SetProperty(city => city.IsDeleted, true), ct) > 0;
+    }
+
+    public async Task<bool> IsExistAsync(int cityId, CancellationToken ct)
+    {
+        return await _db.Cities.AnyAsync(c => c.Id == cityId && c.Parent != null, ct);
+    }
+
+    public async Task<IReadOnlyList<CityFullDto>> GetAllAsync(CancellationToken ct)
+    {
+        return await _db.Cities.AsNoTracking()
+            .Where(c => c.Parent != null)
+            .Select(c => new CityFullDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                ParentName = c.Parent!.Name
+            }).ToListAsync(ct);
     }
 }

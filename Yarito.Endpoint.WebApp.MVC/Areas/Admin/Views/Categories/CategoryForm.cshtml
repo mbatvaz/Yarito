@@ -1,0 +1,54 @@
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.CategoryFormViewModel
+@{
+    Layout = "_Layout";
+    var pageTitle = Model.IsEditMode ? "ویرایش دسته‌بندی" : "افزودن دسته‌بندی";
+    var actionName = Model.IsEditMode ? "Edit" : "Create";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>@pageTitle</h2>
+</div>
+
+<form asp-area="Admin"
+      asp-controller="Categories"
+      asp-action="@actionName"
+      method="post"
+      class="admin-category-form-wrapper">
+    @Html.AntiForgeryToken()
+    
+    @if (Model.IsEditMode)
+    {
+        <input type="hidden" asp-for="Id" />
+    }
+    
+    <section class="card admin-box">
+        <div class="admin-box__header">
+            <h3>اطلاعات دسته‌بندی</h3>
+        </div>
+        <div class="admin-form-fields">
+            <div class="form-group">
+                <label asp-for="Title">عنوان دسته‌بندی</label>
+                <input asp-for="Title" type="text" placeholder="عنوان دسته‌بندی را وارد کنید">
+                <span asp-validation-for="Title" class="validation-error"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description">توضیحات</label>
+                <textarea asp-for="Description" rows="4" placeholder="توضیحات کوتاه درباره این دسته‌بندی..."></textarea>
+                <span asp-validation-for="Description" class="validation-error"></span>
+            </div>
+        </div>
+        
+        <!-- Actions inside box -->
+        <div class="admin-form-actions">
+            <button type="submit" class="btn btn--primary btn--lg">ذخیره</button>
+            <a asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="Index"
+               class="btn btn--ghost btn--lg">بازگشت</a>
+        </div>
+    </section>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -14,6 +14,7 @@
   <Folder Name="/src/02_Infrastructure/" />
   <Folder Name="/src/02_Infrastructure/DataAccess/">
     <Project Path="Yarito.Infra.DataAccess.EFCore/Yarito.Infra.DataAccess.EFCore.csproj" />
+    <Project Path="Yarito.Infra.DataAccess.Storage/Yarito.Infra.DataAccess.Storage.csproj" Id="c2ba7472-21ec-43cf-8b19-bde1591c9847" />
   </Folder>
   <Folder Name="/src/02_Infrastructure/Database/">
     <Project Path="Yarito.Infra.Database.SQLServer.EFCore/Yarito.Infra.Database.SQLServer.EFCore.csproj" />

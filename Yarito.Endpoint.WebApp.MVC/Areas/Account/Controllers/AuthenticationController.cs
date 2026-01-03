@@ -4,6 +4,7 @@ using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Enums._Common;
+using Yarito.Domain.Core.Enums.Users;
 using Yarito.Endpoint.WebApp.MVC.Areas.Account.Models;
 
 namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
@@ -12,6 +13,8 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
     public class AuthenticationController(
         IAuthenticationAppServices authenticationAppServices) : Controller
     {
+        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+
         public IActionResult Login()
         {
             return View();
@@ -30,7 +33,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
                 RememberMe = model.RememberMe
             }, ct);
 
-            TempData["Notification"] = JsonConvert.SerializeObject(result);
+            Notification(result);
 
             if (result.Status == ResultStatusEnum.Success)
             {
@@ -49,7 +52,14 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
 
         public IActionResult Register()
         {
-            return View();
+            return View(new RegisterViewModel
+            {
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                PhoneNumber = string.Empty,
+                Password = string.Empty,
+                UserType = UserTypeEnum.Customer // Default selection
+            });
         }
 
         [HttpPost]
@@ -67,7 +77,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
                 UserType = model.UserType
             }, ct);
 
-            TempData["Notification"] = JsonConvert.SerializeObject(result);
+            Notification(result);
             return result.Status == ResultStatusEnum.Success
                 ? RedirectToAction("Index", "Home", new { area = "" })
                 : View(model);
@@ -76,7 +86,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
         public async Task<IActionResult> Logout()
         {
             var result = await authenticationAppServices.LogoutAsync();
-            TempData["Notification"] = JsonConvert.SerializeObject(result);
+            Notification(result);
             return RedirectToAction("Index", "Home", new { area = "" });
         }
     }

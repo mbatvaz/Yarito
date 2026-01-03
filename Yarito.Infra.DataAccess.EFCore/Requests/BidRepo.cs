@@ -10,7 +10,7 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 namespace Yarito.Infra.DataAccess.EFCore.Requests;
 public class BidRepo(AppDbContext _db) : IBidRepo
 {
-    private IQueryable<Bid> ApplyingFiltersToQueries(BidReqDto q)
+    private IQueryable<Bid> ApplyFilters(BidReqDto q)
     {
         var query = _db.Bids.AsNoTracking().AsQueryable();
 
@@ -117,7 +117,7 @@ public class BidRepo(AppDbContext _db) : IBidRepo
 
     public async Task<PagedResult<BidSummaryDto>> GetBidsSummaryListAsync(BidReqDto q, CancellationToken ct)
     {
-        var query = ApplyingFiltersToQueries(q);
+        var query = ApplyFilters(q);
         var total = await query.CountAsync(ct);
         var skip = (q.Page - 1) * q.PageSize;
         var items = await query

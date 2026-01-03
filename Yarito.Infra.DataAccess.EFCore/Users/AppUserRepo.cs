@@ -81,7 +81,8 @@ namespace Yarito.Infra.DataAccess.EFCore.Users
                 {
                     PhoneNumber = dto.PhoneNumber,
                     FirstName = dto.FirstName,
-                    LastName = dto.LastName
+                    LastName = dto.LastName,
+                    Address = dto.Address
                 },
                 UserTypeEnum.Expert => new Expert
                 {
@@ -93,7 +94,10 @@ namespace Yarito.Infra.DataAccess.EFCore.Users
             };
 
             user.Id = dto.Id;
-            user.ProfileImgPath = "/Images/Profile/default.png";
+            user.ProfileImgPath = dto.ProfileImageUrl ?? "/Images/Profile/default.png";
+            user.CityId = dto.CityId;
+            user.Email = dto.Email;
+            user.WalletBalance = dto.BaseWalletBalance;
 
             _db.AppUsers.Add(user);
             return await _db.SaveChangesAsync(ct) > 0;

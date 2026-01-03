@@ -1,0 +1,62 @@
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.WorkFormViewModel
+@{
+    Layout = "_Layout";
+    var pageTitle = Model.IsEditMode ? "ویرایش سرویس" : "افزودن سرویس";
+    var actionName = Model.IsEditMode ? "Edit" : "Create";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>@pageTitle</h2>
+</div>
+
+<form asp-area="Admin"
+      asp-controller="Works"
+      asp-action="@actionName"
+      class="admin-category-form-wrapper"
+      method="post">
+    @Html.AntiForgeryToken()
+    <section class="card admin-box">
+        <div class="admin-box__header">
+            <h3>جزئیات سرویس</h3>
+        </div>
+        <div class="admin-form-fields">
+            <input asp-for="Id" type="hidden"/>
+            <div class="form-group">
+                <label asp-for="Title">عنوان سرویس</label>
+                <input type="text" asp-for="Title" placeholder="عنوان سرویس را وارد کنید"/>
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId">دسته‌بندی</label>
+                <select asp-for="CategoryId" id="category" class="select2-category">
+                    <option value="">لطفا دسته‌بندی را انتخاب کنید</option>
+                    @if (Model.Categories.Count > 0)
+                    {
+                        @foreach (var c in Model.Categories)
+                        {
+                            <option value="@c.Id" selected="@(Model.CategoryId == c.Id)">@c.Title</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BasePrice">قیمت پایه (تومان)</label>
+                <input type="number" asp-for="BasePrice" placeholder="قیمت: 150000"/>
+                <span asp-validation-for="BasePrice" class="text-danger"></span>
+            </div>
+        </div>
+        <!-- Actions inside box -->
+        <div class="admin-form-actions">
+            <button type="submit" class="btn btn--primary btn--lg">تایید</button>
+            <a asp-area="Admin"
+               asp-controller="Categories"
+               asp-action="Index"
+               class="btn btn--ghost btn--lg">بازگشت</a>
+        </div>
+    </section>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/Category-select2.js"></script>
+}

@@ -13,7 +13,7 @@ namespace Yarito.Infra.DataAccess.EFCore.Requests;
 public class RequestRepo(AppDbContext _db) : IRequestRepo
 {
 
-    private IQueryable<Request> ApplyingFiltersToQueries(RequestReqDto q)
+    private IQueryable<Request> ApplyFilters(RequestReqDto q)
     {
         var query = _db.Requests.AsNoTracking().AsQueryable();
 
@@ -143,7 +143,7 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
 
     public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct)
     {
-        var query = ApplyingFiltersToQueries(q);
+        var query = ApplyFilters(q);
         var total = await query.CountAsync(ct);
         var skip = (q.Page - 1) * q.PageSize;
         var items = await query

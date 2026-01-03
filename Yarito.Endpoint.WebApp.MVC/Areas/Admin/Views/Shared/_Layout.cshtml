@@ -11,6 +11,7 @@
     <title>داشبورد مدیریت | یاریتو</title>
     <meta name="description" content="پنل مدیریت یاریتو - داشبورد">
     <link rel="stylesheet" href="~/css/site.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -56,15 +57,10 @@
                     </a>
                 </li>
                 <li>
-                    <a href="admin-services.html" class="admin-sidebar__link @(controller == "Services" ? "is-active" : "")">
-                        <div class="admin-sidebar__link-icon">
-                            <img src="~/Images/Frontend/ServicesIcon.png" alt="">
-                        </div>
-                        <span>سرویس‌ها</span>
-                    </a>
-                </li>
-                <li>
-                        <a href="admin-categories.html" class="admin-sidebar__link @(controller == "Categories" ? "is-active" : "")">
+                    <a asp-area="Admin"
+                       asp-controller="Categories"
+                       asp-action="Index"
+                       class="admin-sidebar__link @(controller == "Categories" ? "is-active" : "")">
                         <div class="admin-sidebar__link-icon">
                             <img src="~/Images/Frontend/CategoriesIcon.png" alt="">
                         </div>
@@ -112,6 +108,8 @@
     </main>
 </div>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </body>
 
 </html>

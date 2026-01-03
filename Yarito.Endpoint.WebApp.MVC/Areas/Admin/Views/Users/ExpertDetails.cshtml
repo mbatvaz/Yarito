@@ -1,4 +1,5 @@
 ﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
 @model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.ExpertDetailsViewModel
 @{
     Layout = "_Layout";
@@ -16,45 +17,20 @@
 <div class="admin-offer-users-grid">
     <!-- Expert Info Box -->
     <section class="card admin-box admin-customer-info-box">
-        <div class="admin-profile-combined">
-            <div class="admin-profile-combined__avatar">
-                <img src="@Model.Expert.ProfileImgPath" class="avatar avatar--xl" alt="تصویر پروفایل متخصص">
-            </div>
-            <div class="admin-profile-combined__info">
-                <h2 class="admin-profile-combined__name">@Model.Expert.FirstName @Model.Expert.LastName</h2>
-                <span class="badge badge--secondary">@(Html.DisplayFor(_ => Model.Expert.UserType))</span>
-            </div>
-        </div>
-        <div class="admin-info-columns">
-            <div class="admin-info-columns__right">
-                <dl class="admin-details-list admin-details-list--vertical">
-                    <div class="admin-details-list__item">
-                        <dt>تاریخ عضویت</dt>
-                        <dd>@Model.Expert.CreatedAt.CompleteShamsiDate("dd mn yyyy")</dd>
-                    </div>
-                    <div class="admin-details-list__item">
-                        <dt>شهر</dt>
-                        <dd>@(Model.Expert.CityName ?? "ثبت نشده")</dd>
-                    </div>
-                    <div class="admin-details-list__item">
-                        <dt>موجودی حساب</dt>
-                        <dd><strong style="color: var(--color-primary);">@Model.Expert.WalletBalance.ToString("N0").ToPersianNum() تومان</strong></dd>
-                    </div>
-                </dl>
-            </div>
-            <div class="admin-info-columns__left">
-                <dl class="admin-details-list admin-details-list--vertical">
-                    <div class="admin-details-list__item">
-                        <dt>شماره تلفن</dt>
-                        <dd dir="ltr">@Model.Expert.PhoneNumber.ToPersianNum()</dd>
-                    </div>
-                    <div class="admin-details-list__item">
-                        <dt>ایمیل</dt>
-                        <dd dir="ltr">@(Model.Expert.Email ?? "ثبت نشده")</dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
+        @await Html.PartialAsync("_UserDetailsPartial", new UserDetailsViewModel()
+        { 
+            Id = Model.UserDetails.Id,
+            ProfileImgPath = Model.UserDetails.ProfileImgPath,
+            FirstName = Model.UserDetails.FirstName,
+            LastName = Model.UserDetails.LastName,
+            UserType = Model.UserDetails.UserType,
+            CreatedAt = Model.UserDetails.CreatedAt,
+            PhoneNumber = Model.UserDetails.PhoneNumber,
+            CityName = Model.UserDetails.CityName,
+            Email = Model.UserDetails.Email,
+            WalletBalance = Model.UserDetails.WalletBalance,
+            Address = Model.UserDetails.Address
+        })
     </section>
 
     <!-- Services by Category -->
@@ -62,20 +38,29 @@
         <div class="admin-box__header">
             <h3>خدمات ارائه شده</h3>
         </div>
-        <div class="admin-expert-services">
-            @foreach (var c in Model.ExpertWorks)
-            {
-                <div class="admin-expert-services__category">
-                    <h4>@c.CategoryTitle</h4>
-                    <div class="admin-services-badges">
-                        @foreach (var w in c.Works)
-                        {
-                            <span class="badge">@w.Title</span>
-                        }
+        @if (Model.ExpertWorks.Count > 0)
+        {
+            <div class="admin-expert-services">
+                @foreach (var c in Model.ExpertWorks)
+                {
+                    <div class="admin-expert-services__category">
+                        <h4>@c.CategoryTitle</h4>
+                        <div class="admin-services-badges">
+                            @foreach (var w in c.Works)
+                            {
+                                <span class="badge">@w.Title</span>
+                            }
+                        </div>
                     </div>
-                </div>
-            }
-        </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="admin-empty-state">
+                <p>هیچ خدماتی ثبت نشده است.</p>
+            </div>
+        }
     </section>
 </div>
 
@@ -94,99 +79,64 @@
             </form>
         </div>
     </div>
-    <div class="admin-table-wrapper">
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>کد پیشنهاد</th>
-                    <th>سرویس</th>
-                    <th>قیمت</th>
-                    <th>تاریخ</th>
-                    <th>وضعیت</th>
-                    <th class="text-left">عملیات</th>
-                </tr>
-            </thead>
-            <tbody>
-            @foreach (var b in Model.Bids)
-            {
-                <tr>
-                    <td><a href="#">#@b.Id.ToString().ToPersianNum()</a></td>
-                    <td>@b.ServiceTitle</td>
-                    <td>@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
-                    <td>@b.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
-                    <td><span class="badge @(b.Status switch
-                                           {
-                                               BidStatusEnum.Pending  => "badge--waiting",
-                                               BidStatusEnum.Accepted => "badge--completed",
-                                               BidStatusEnum.Rejected => "badge--cancelled",
-                                               _ => ""
-                                           })">
-                            @Html.DisplayFor(_ => b.Status)
-                        </span></td>
-                    <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Pagination -->
-    @if (Model.TotalPages > 1)
+    
+    @if (Model.Bids.Count > 0)
     {
-        <nav class="admin-pagination">
-            <!-- Previous page -->
-            @if (Model.Page > 1)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="ExpertDetails"
-                   asp-route-page="@(Model.Page - 1)"
-                   asp-route-search="@Model.Search"
-                   asp-route-expertId="@Model.ExpertId"
-                   class="admin-pagination__btn">قبلی</a>
-            }
-            @if (Model.Page > 1)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="ExpertDetails"
-                   asp-route-page="1"
-                   asp-route-search="@Model.Search"
-                   asp-route-expertId="@Model.ExpertId"
-                   class="admin-pagination__page">@("1".ToPersianNum())</a>
-            }
-            <div class="admin-pagination__pages">
-                @if (Model.Page > 2)
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>کد پیشنهاد</th>
+                        <th>سرویس</th>
+                        <th>قیمت</th>
+                        <th>تاریخ</th>
+                        <th>وضعیت</th>
+                        <th class="text-left">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var b in Model.Bids)
                 {
-                    <span class="admin-pagination__page">...</span>
+                    <tr>
+                        <td><a href="#">#@b.Id.ToString().ToPersianNum()</a></td>
+                        <td>@b.ServiceTitle</td>
+                        <td>@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
+                        <td>@b.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
+                        <td><span class="badge @(b.Status switch
+                                               {
+                                                   BidStatusEnum.Pending  => "badge--waiting",
+                                                   BidStatusEnum.Accepted => "badge--completed",
+                                                   BidStatusEnum.Rejected => "badge--cancelled",
+                                                   _ => ""
+                                               })">
+                                @Html.DisplayFor(_ => b.Status)
+                            </span></td>
+                        <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                    </tr>
                 }
-                <span href="#" class="admin-pagination__page is-active">@Model.Page.ToString().ToPersianNum()</span>
-                @if (Model.Page < Model.TotalPages - 1)
-                {
-                    <span class="admin-pagination__page">...</span>
-                }
-            </div>
-            <!-- Next page -->
-            @if (Model.Page < Model.TotalPages)
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @await Html.PartialAsync("_Pagination", new PaginationViewModel()
+        {
+            Page = Model.Page,
+            TotalPages = Model.TotalPages,
+            Area = "Admin",
+            Controller = "Users",
+            Action = "ExpertDetails",
+            RouteValues = new Dictionary<string, string?>
             {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="ExpertDetails"
-                   asp-route-page="@(Model.TotalPages)"
-                   asp-route-search="@Model.Search"
-                   asp-route-expertId="@Model.ExpertId"
-                   class="admin-pagination__page">@Model.TotalPages.ToString().ToPersianNum()</a>
+                ["search"] = Model.Search ?? "",
+                ["id"] = Model.ExpertId.ToString()
             }
-            @if (Model.Page < Model.TotalPages)
-            {
-                <a asp-area="Admin"
-                   asp-controller="Users"
-                   asp-action="ExpertDetails"
-                   asp-route-page="@(Model.Page + 1)"
-                   asp-route-search="@Model.Search"
-                   asp-route-expertId="@Model.ExpertId"
-                   class="admin-pagination__btn">بعدی</a>
-            }
-        </nav>
+        })
+    }
+    else
+    {
+        <div class="admin-empty-state">
+            <p>هیچ پیشنهادی یافت نشد.</p>
+        </div>
     }
 </section>

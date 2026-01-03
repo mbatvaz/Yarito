@@ -7,14 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\Cities\AppServices\" />
-    <Folder Include="Contracts\Cities\Services\" />
     <Folder Include="Contracts\Images\AppServices\" />
     <Folder Include="Contracts\Images\Repository\" />
     <Folder Include="Contracts\Images\Services\" />
-    <Folder Include="DTOs\Cities\" />
+    <Folder Include="Contracts\_Common\AppServices\" />
     <Folder Include="DTOs\Images\" />
-    <Folder Include="DTOs\Result\" />
   </ItemGroup>
 
 </Project>

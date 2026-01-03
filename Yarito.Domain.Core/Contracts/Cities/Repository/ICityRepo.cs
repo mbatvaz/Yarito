@@ -1,4 +1,5 @@
-﻿using Yarito.Domain.Core.Entities.Cities;
+﻿using Yarito.Domain.Core.DTOs.Cities;
+using Yarito.Domain.Core.Entities.Cities;
 
 namespace Yarito.Domain.Core.Contracts.Cities.Repository;
 
@@ -30,4 +31,8 @@ public interface ICityRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> DeleteAsync(int cityId, CancellationToken ct);
+
+    Task<bool> IsExistAsync(int cityId, CancellationToken ct);
+
+    Task<IReadOnlyList<CityFullDto>> GetAllAsync(CancellationToken ct);
 }

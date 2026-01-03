@@ -1,0 +1,55 @@
+﻿@using Yarito.Domain.Core.Enums.Users
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.UserDetailsViewModel
+@{
+
+}
+<div class="admin-profile-combined">
+    <div class="admin-profile-combined__avatar">
+        <img src="@Model.ProfileImgPath" class="avatar avatar--xl" alt="تصویر پروفایل">
+    </div>
+    <div class="admin-profile-combined__info">
+        <h2 class="admin-profile-combined__name">@Model.FirstName @Model.LastName</h2>
+        <span class="badge @(Model.UserType == UserTypeEnum.Expert ? "badge--secondary" : "")">@(Html.DisplayFor(_ => Model.UserType))</span>
+    </div>
+</div>
+<div class="admin-info-columns">
+    <div class="admin-info-columns__right">
+        <dl class="admin-details-list admin-details-list--vertical">
+            <div class="admin-details-list__item">
+                <dt>تاریخ عضویت</dt>
+                <dd>@Model.CreatedAt.CompleteShamsiDate("dd mn yyyy")</dd>
+            </div>
+            <div class="admin-details-list__item">
+                <dt>شهر</dt>
+                <dd>@(Model.CityName ?? "ثبت نشده")</dd>
+            </div>
+            <div class="admin-details-list__item">
+                <dt>موجودی حساب</dt>
+                <dd><strong style="color: var(--color-primary);">@Model.WalletBalance.ToString("N0").ToPersianNum() تومان</strong></dd>
+            </div>
+        </dl>
+    </div>
+    <div class="admin-info-columns__left">
+        <dl class="admin-details-list admin-details-list--vertical">
+            <div class="admin-details-list__item">
+                <dt>شماره تلفن</dt>
+                <dd dir="ltr">@Model.PhoneNumber.ToPersianNum()</dd>
+            </div>
+            <div class="admin-details-list__item">
+                <dt>ایمیل</dt>
+                <dd dir="ltr">@(Model.Email ?? "ثبت نشده")</dd>
+            </div>
+        </dl>
+    </div>
+    @if (Model.UserType == UserTypeEnum.Customer)
+    {
+        <div class="admin-info-columns__full">
+            <dl class="admin-details-list admin-details-list--vertical">
+                <div class="admin-details-list__item">
+                    <dt>آدرس</dt>
+                    <dd>@(Model.Address ?? "آدرسی ثبت نشده")</dd>
+                </div>
+            </dl>
+        </div>
+    }
+</div>

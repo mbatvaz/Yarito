@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Yarito.Domain.Core.Contracts.Cities.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.DTOs.Requests;
@@ -14,14 +15,15 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
     [Area(nameof(Areas.Admin))]
     public class UsersController(
         IAppUserAppServices appUserAppServices,
+        IAuthenticationAppServices authenticationAppServices,
         IRequestAppServices requestAppServices,
-        IBidAppServices bidAppServices) : Controller
+        IBidAppServices bidAppServices,
+        ICityAppServices cityAppServices) : Controller
     {
+        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+
         public async Task<IActionResult> Index(
-            CancellationToken ct,
-            int page = 1,
-            string? search = null,
-            UserTypeEnum? userType = null)
+            CancellationToken ct, int page = 1, string? search = null, UserTypeEnum? userType = null)
         {
             var result = await appUserAppServices.GetAppUserSummaryListAsync(new AppUserReqDto()
             {
@@ -44,17 +46,12 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         }
 
         public async Task<IActionResult> CustomerDetails(
-            int id,
-            CancellationToken ct,
-            int page = 1,
-            string? search = null)
+            int id, CancellationToken ct, int page = 1, string? search = null)
         {
-            var customerResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
-            if( customerResult.Status != ResultStatusEnum.Success 
-                || customerResult.Data is null 
-                || customerResult.Data.UserType != UserTypeEnum.Customer)
+            var userResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
+            if(userResult.Status != ResultStatusEnum.Success || userResult.Data is null || userResult.Data.UserType != UserTypeEnum.Customer)
             {
-                TempData["Notification"] = JsonConvert.SerializeObject(Result<string>.Warning(customerResult.Message));
+                Notification(Result<string>.Warning(userResult.Message));
                 return RedirectToAction("Index");
             }
 
@@ -69,7 +66,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
 
             var model = new CustomerDetailsViewModel()
             {
-                Customer = customerResult.Data,
+                UserDetails = userResult.Data,
                 Requests = requestResult.Items,
                 CustomerId = id,
                 Search = search,
@@ -81,17 +78,12 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         }
 
         public async Task<IActionResult> ExpertDetails(
-            int id,
-            CancellationToken ct,
-            int page = 1,
-            string? search = null)
+            int id, CancellationToken ct, int page = 1, string? search = null)
         {
-            var expertResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
-            if (expertResult.Status != ResultStatusEnum.Success
-                || expertResult.Data is null
-                || expertResult.Data.UserType != UserTypeEnum.Expert)
+            var userResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
+            if (userResult.Status != ResultStatusEnum.Success || userResult.Data is null || userResult.Data.UserType != UserTypeEnum.Expert)
             {
-                TempData["Notification"] = JsonConvert.SerializeObject(Result<string>.Warning(expertResult.Message));
+                Notification(Result<string>.Warning(userResult.Message));
                 return RedirectToAction("Index");
             }
 
@@ -106,7 +98,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
 
             var model = new ExpertDetailsViewModel()
             {
-                Expert = expertResult.Data,
+                UserDetails = userResult.Data,
                 ExpertWorks = expertWorksResult,
                 Bids = bidResult.Items,
                 ExpertId = id,
@@ -122,8 +114,49 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
             var result = await appUserAppServices.SoftDeleteAsync(id, ct);
-            TempData["Notification"] = JsonConvert.SerializeObject(result);
+            Notification(result);
             return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> UserForm(CancellationToken ct)
+        {
+            var model = new UserFormViewModel()
+            {
+                CityList = await cityAppServices.GetAllAsync(ct)
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UserForm(UserFormViewModel model, CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.CityList = await cityAppServices.GetAllAsync(ct);
+                return View(model);
+            }
+
+            var result = await authenticationAppServices.RegisterAsync(new RegisterDto()
+            {
+                FirstName = model.FirstName!,
+                LastName = model.LastName!,
+                PhoneNumber = model.PhoneNumber!,
+                Password = model.Password!,
+                UserType = model.UserType!.Value,
+                Address = model.Address,
+                BaseWalletBalance = model.BaseWalletBalance,
+                CityId = model.CityId,
+                Email = model.Email,
+                ProfileImage = model.ProfileImage?.OpenReadStream(),
+                ProfileImageUrl = model.ProfileImage != null ? Path.GetExtension(model.ProfileImage.FileName) : null
+            }, ct);
+
+            Notification(result);
+            if (result.Status == ResultStatusEnum.Success)
+                return RedirectToAction("Index", "Users", new { area = "Admin" });
+
+            model.CityList = await cityAppServices.GetAllAsync(ct);
+            return View(model);
         }
     }
 }

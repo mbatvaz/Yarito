@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Yarito.Domain.Core.Contracts._Common.Services;
+using Yarito.Domain.Core.Contracts.Cities.Services;
 using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Users;
@@ -14,6 +16,8 @@ namespace Yarito.Domain.AppServices.Users
     public class AuthenticationAppServices(
         IAppUserServices appUserServices,
         IHttpContextAccessor httpContextAccessor,
+        IFileServices fileServices,
+        ICityServices cityServices,
         SignInManager<IdentityUser<int>> signInManager,
         UserManager<IdentityUser<int>> userManager) : IAuthenticationAppServices
     {
@@ -72,6 +76,16 @@ namespace Yarito.Domain.AppServices.Users
                 return Result<string>.Failure("نام خانوادگی وارد شده معتبر نیست");
             if (!Validation.IsValidPhoneNumber(dto.PhoneNumber))
                 return Result<string>.Failure("شماره موبایل وارد شده معتبر نیست");
+            if(dto.Email is not null && !Validation.IsValidEmail(dto.Email))
+                return Result<string>.Failure("ایمیل وارد شده معتبر نیست");
+            if(!Validation.IsValidBaseWalletBalance(dto.BaseWalletBalance))
+                return Result<string>.Failure("مقدار کیف پول پایه وارد شده معتبر نیست");
+            if(dto.Address is not null && !Validation.IsValidAddress(dto.Address))
+                return Result<string>.Failure("آدرس وارد شده معتبر نیست");
+            if(dto.ProfileImage is not null && !Validation.IsValidImageUrlOrFileName(dto.ProfileImageUrl))
+                return Result<string>.Failure("تصویر پروفایل وارد شده معتبر نیست");
+            if(dto.CityId is not null && !await cityServices.IsExistAsync(dto.CityId.Value, ct))
+                return Result<string>.Failure("شهر وارد شده معتبر نیست");
 
             var user = new IdentityUser<int>
             {
@@ -80,15 +94,26 @@ namespace Yarito.Domain.AppServices.Users
             };
 
             var identityResult = await userManager.CreateAsync(user, dto.Password);
-
             if (!identityResult.Succeeded)
                 return Result<string>.Failure(identityResult.Errors.First().Description);
-            
-            await userManager.AddToRoleAsync(user, dto.UserType == UserTypeEnum.Customer ? "Customer" : "Expert");
+
+            var roleResult = await userManager.AddToRoleAsync(user, dto.UserType == UserTypeEnum.Customer ? "Customer" : "Expert");
+            if (!roleResult.Succeeded)
+            {
+                await userManager.DeleteAsync(user);
+                return Result<string>.Failure(roleResult.Errors.First().Description);
+            }
+
+            dto.Id = user.Id;
+            string? savedImageUrl = null;
 
             try
             {
-                dto.Id = user.Id;
+                if (dto.ProfileImage is not null && dto.ProfileImageUrl is not null)
+                {
+                    savedImageUrl = await fileServices.SaveImageOnDiskAsync(dto.ProfileImage, "/Images/Profile", dto.ProfileImageUrl, ct);
+                    dto.ProfileImageUrl = savedImageUrl;
+                }
                 var registerUser = await appUserServices.AddAsync(dto, ct);
                 return !registerUser 
                     ? throw new Exception("خطایی رخ داد لطفا دوباره امتحان کنید") 
@@ -96,6 +121,9 @@ namespace Yarito.Domain.AppServices.Users
             }
             catch (Exception ex)
             {
+                if (!string.IsNullOrWhiteSpace(savedImageUrl))
+                        await fileServices.DeleteImageOnDiskAsync(savedImageUrl, ct);
+
                 await userManager.DeleteAsync(user);
                 return Result<string>.Failure(ex.Message);
             }

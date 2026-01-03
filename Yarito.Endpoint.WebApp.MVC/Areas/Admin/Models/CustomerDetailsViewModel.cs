@@ -1,13 +1,12 @@
 ﻿using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Users;
-using Yarito.Domain.Core.Enums.Users;
 
 namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
 {
     public class CustomerDetailsViewModel
     {
         // Data
-        public required AppUserFullDto Customer { get; init; }
+        public required AppUserFullDto UserDetails { get; init; }
         public IReadOnlyList<RequestsSummaryDto> Requests { get; init; } = [];
 
         // Filters
