@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
+using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Requests;
 using Yarito.Domain.Core.Entities.Users;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
+using Yarito.Domain.Core.Enums.Users;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 
 namespace Yarito.Infra.DataAccess.EFCore.Requests;
@@ -38,8 +40,8 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         if (q.ExpertId is not null)
             query = query.Where(r => r.AcceptedBid != null && r.AcceptedBid.ExpertId == q.ExpertId.Value);
 
-        if (!string.IsNullOrWhiteSpace(q.City))
-            query = query.Where(r => r.Customer.City != null && r.Customer.City.Name.Contains(q.City));
+        if (q.CityId is not null)
+            query = query.Where(r => r.Customer.CityId == q.CityId.Value);
 
         // Date filters
         if (q.From is not null)
@@ -166,5 +168,81 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             PageSize = q.PageSize,
             TotalCount = total
         };
+    }
+
+    public async Task<PagedResult<RequestCardDto>> GetRequestsCardListAsync(RequestReqDto q, CancellationToken ct)
+    {
+        var query = ApplyFilters(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(r => new RequestCardDto()
+            {
+                Id = r.Id,
+                Title = r.Title,
+                Status = r.Status,
+                FirstName = r.Customer.FirstName,
+                LastName = r.Customer.LastName,
+                CityName = r.Customer.City!.Name ,
+                CreatedAt = r.CreatedAt,
+                CustomerProfileImagePath = r.Customer.ProfileImgPath,
+                Description = r.Description,
+                BidCount = r.Bids.Count(b =>b.Expert.IsDeleted==false)
+            }).ToListAsync(ct);
+
+        return new PagedResult<RequestCardDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
+    }
+
+    public async Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
+    {
+        return await _db.Requests.AsNoTracking()
+            .Where(r => r.Id == requestId)
+            .Select(r => new RequestFullDto()
+            {
+                Id = r.Id,
+                Title = r.Title,
+                Description = r.Description,
+                ProposedPrice = r.ProposedPrice ?? 0,
+                Address = r.Address,
+                PreferredVisitDateTime = r.PreferredVisitDateTime,
+                CreatedAt = r.CreatedAt,
+                Status = r.Status,
+                CustomerInfo = new AppUserFullDto()
+                {
+                    Id = r.Customer.Id,
+                    ProfileImgPath = r.Customer.ProfileImgPath ?? "/Images/Profile/default.png",
+                    FirstName = r.Customer.FirstName,
+                    LastName = r.Customer.LastName,
+                    UserType = UserTypeEnum.Customer,
+                    CreatedAt = r.Customer.CreatedAt,
+                    PhoneNumber = r.Customer.PhoneNumber,
+                    CityName = r.Customer.City != null ? r.Customer.City.Name : null,
+                    Email = r.Customer.Email,
+                    WalletBalance = r.Customer.WalletBalance,
+                    Address = r.Customer.Address
+                },
+                AcceptedBid = r.AcceptedBid != null ? new BidSummaryDto()
+                {
+                    Id = r.AcceptedBid.Id,
+                    ExpertFirstName = r.AcceptedBid.Expert.FirstName,
+                    ExpertLastName = r.AcceptedBid.Expert.LastName,
+                    ExpertPhoneNumber = r.AcceptedBid.Expert.PhoneNumber,
+                    ExpertId = r.AcceptedBid.ExpertId,
+                    ServiceTitle = r.Work.Title,
+                    ProposedPrice = r.AcceptedBid.ProposedPrice,
+                    Status = r.AcceptedBid.Status,
+                    ProposedVisitDate = r.AcceptedBid.ProposedVisitDateTime
+                } : null,
+                RequestImagesPath = r.RequestImages.Select(i => i.ImgPath).ToList()
+            })
+            .FirstOrDefaultAsync(ct);
     }
 }

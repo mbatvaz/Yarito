@@ -5,8 +5,8 @@
 /// </summary>
 public class WorkDto
 {
-    public int? Id { get; set; }
-    public required string Title { get; set; }
-    public decimal BasePrice { get; set; }
-    public int CategoryId { get; set; }
+    public int? Id { get; init; }
+    public string Title { get; set; }
+    public decimal BasePrice { get; init; }
+    public int CategoryId { get; init; }
 }

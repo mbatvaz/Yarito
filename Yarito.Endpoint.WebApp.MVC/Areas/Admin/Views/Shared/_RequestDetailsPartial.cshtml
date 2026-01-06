@@ -1,0 +1,69 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.RequestDetailsPartialViewModel
+@{
+    var action = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+}
+<div class="admin-box__header">
+    <h3>اطلاعات درخواست</h3>
+    <span class="badge @(Model.Status switch {
+                           RequestStatusEnum.Pending => "badge--receiving",
+                           RequestStatusEnum.Completed => "badge--completed",
+                           RequestStatusEnum.Cancelled => "badge--cancelled",
+                           RequestStatusEnum.InProgress => "badge--waiting",
+                           _ => "" })">@Html.DisplayFor(_ => Model.Status)</span>
+    @if (action != "RequestDetails")
+    {
+        <a asp-area="Admin"
+           asp-controller="Requests"
+           asp-action="RequestDetails"
+           asp-route-id="@Model.Id"
+           class="btn btn--ghost btn--sm">مشاهده</a>
+    }
+</div>
+<div class="admin-info-columns">
+    <div class="admin-info-columns__right">
+        <dl class="admin-details-list admin-details-list--vertical">
+            <div class="admin-details-list__item">
+                <dt>تاریخ ثبت</dt>
+                <dd>@Model.CreatedAt.CompleteShamsiDate("dn, dd mn yyyy - HH:MM")</dd>
+            </div>
+            <div class="admin-details-list__item">
+                <dt>عنوان درخواست</dt>
+                <dd>@Model.Title.ToPersianNum()</dd>
+            </div>
+        </dl>
+    </div>
+    <div class="admin-info-columns__left">
+        <dl class="admin-details-list admin-details-list--vertical">
+            <div class="admin-details-list__item">
+                <dt>تاریخ درخواست مراجعه</dt>
+                @if (Model.PreferredVisitDateTime is null)
+                {
+                    <dd>تاریخی تعیین نشده</dd>
+                }
+                else
+                {
+                    <dd>@Model.PreferredVisitDateTime.Value.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                }
+            </div>
+            <div class="admin-details-list__item">
+                <dt>قیمت پیشنهادی</dt>
+                <dd><strong style="color: var(--color-primary);">@Model.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+            </div>
+        </dl>
+    </div>
+</div>
+<dl class="admin-details-list admin-details-list--vertical">
+            
+    <div class="admin-details-list__item">
+        <dt>آدرس درخواست</dt>
+        <dd>@Model.Address.ToPersianNum()</dd>
+    </div>
+    @if (Model.Description is not null)
+    {
+        <div class="admin-details-list__item">
+            <dt>توضیحات درخواست</dt>
+            <dd>@Model.Description.ToPersianNum()</dd>
+        </div>
+    }
+</dl>

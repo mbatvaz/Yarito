@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Yarito.Domain.Core.Contracts.Cities.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
@@ -18,9 +19,19 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         IAuthenticationAppServices authenticationAppServices,
         IRequestAppServices requestAppServices,
         IBidAppServices bidAppServices,
-        ICityAppServices cityAppServices) : Controller
+        ICityAppServices cityAppServices,
+        IMapper mapper) : Controller
     {
-        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+        private void Notification<T>(Result<T> result)
+        {
+            var r = result.Status switch
+            {
+                ResultStatusEnum.Failure => Result<string>.Failure(result.Message),
+                ResultStatusEnum.Warning => Result<string>.Warning(result.Message),
+                _ => Result<string>.Success(result.Message),
+            };
+            TempData["Notification"] = JsonConvert.SerializeObject(r);
+        }
 
         public async Task<IActionResult> Index(
             CancellationToken ct, int page = 1, string? search = null, UserTypeEnum? userType = null)
@@ -33,28 +44,20 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 Page = page
             }, ct);
 
-            var model = new UsersViewModel()
-            {
-                UserList = result.Items,
-                UserType = userType,
-                Search = search,
-                Page = page,
-                TotalCount = result.TotalCount,
-                TotalPages = (int)Math.Ceiling(result.TotalCount / (double)result.PageSize)
-            };
+            var model = mapper.Map<UsersViewModel>(result);
+            model.Search = search;
+            model.UserType = userType;
+
             return View(model);
         }
 
-        public async Task<IActionResult> CustomerDetails(
-            int id, CancellationToken ct, int page = 1, string? search = null)
+        public async Task<IActionResult> CustomerDetails(int id, CancellationToken ct, int page = 1, string? search = null)
         {
             var userResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
             if(userResult.Status != ResultStatusEnum.Success || userResult.Data is null || userResult.Data.UserType != UserTypeEnum.Customer)
-            {
-                Notification(Result<string>.Warning(userResult.Message));
                 return RedirectToAction("Index");
-            }
 
+            Notification(userResult);
             var requestResult = await requestAppServices.GetRequestsSummaryListAsync(new RequestReqDto()
             {
                 PageSize = 5,
@@ -64,16 +67,10 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 
             }, ct);
 
-            var model = new CustomerDetailsViewModel()
-            {
-                UserDetails = userResult.Data,
-                Requests = requestResult.Items,
-                CustomerId = id,
-                Search = search,
-                Page = page,
-                TotalCount = requestResult.TotalCount,
-                TotalPages = (int)Math.Ceiling(requestResult.TotalCount / (double)requestResult.PageSize)
-            };
+            var model = mapper.Map<CustomerDetailsViewModel>(requestResult);
+            model.UserDetails = userResult.Data;
+            model.Search = search;
+
             return View(model);
         }
 
@@ -82,11 +79,9 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         {
             var userResult = await appUserAppServices.GetAppUserFullByIdAsync(id, ct);
             if (userResult.Status != ResultStatusEnum.Success || userResult.Data is null || userResult.Data.UserType != UserTypeEnum.Expert)
-            {
-                Notification(Result<string>.Warning(userResult.Message));
                 return RedirectToAction("Index");
-            }
 
+            Notification(userResult);
             var expertWorksResult = await appUserAppServices.GetExpertCategoryWorksListDto(id, ct);
             var bidResult = await bidAppServices.GetBidsSummaryListAsync(new BidReqDto()
             {
@@ -96,17 +91,12 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 Page = page,
             }, ct);
 
-            var model = new ExpertDetailsViewModel()
-            {
-                UserDetails = userResult.Data,
-                ExpertWorks = expertWorksResult,
-                Bids = bidResult.Items,
-                ExpertId = id,
-                Search = search,
-                Page = page,
-                TotalCount = bidResult.TotalCount,
-                TotalPages = (int)Math.Ceiling(bidResult.TotalCount / (double)bidResult.PageSize)
-            };
+            var model = mapper.Map<ExpertDetailsViewModel>(bidResult);
+            model.UserDetails = userResult.Data;
+            model.ExpertWorks = expertWorksResult;
+            model.ExpertId = id;
+            model.Search = search;
+
             return View(model);
         }
 
@@ -136,20 +126,8 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var result = await authenticationAppServices.RegisterAsync(new RegisterDto()
-            {
-                FirstName = model.FirstName!,
-                LastName = model.LastName!,
-                PhoneNumber = model.PhoneNumber!,
-                Password = model.Password!,
-                UserType = model.UserType!.Value,
-                Address = model.Address,
-                BaseWalletBalance = model.BaseWalletBalance,
-                CityId = model.CityId,
-                Email = model.Email,
-                ProfileImage = model.ProfileImage?.OpenReadStream(),
-                ProfileImageUrl = model.ProfileImage != null ? Path.GetExtension(model.ProfileImage.FileName) : null
-            }, ct);
+            var registerDto = mapper.Map<RegisterDto>(model);
+            var result = await authenticationAppServices.RegisterAsync(registerDto, ct);
 
             Notification(result);
             if (result.Status == ResultStatusEnum.Success)

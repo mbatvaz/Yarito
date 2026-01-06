@@ -2,56 +2,45 @@
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
-using Yarito.Framework;
+using Yarito.Domain.Core.Enums._Common;
 
 namespace Yarito.Domain.AppServices.Works;
 
 public class WorkAppServices(IWorkServices workServices) : IWorkAppServices
 {
-    public async Task<Result<string>> AddAsync(WorkDto newWork, CancellationToken ct)
-    {
-        if (!Validation.IsValidText(newWork.Title, 100))
-            return Result<string>.Failure("طول عنوان نباید بیشتر از 100 کاراکتر باشد");
-
-        if (newWork.BasePrice < 0)
-            return Result<string>.Failure("قیمت پایه نمی‌تواند منفی باشد");
-
-        if (newWork.CategoryId <= 0)
-            return Result<string>.Failure("دسته‌بندی نامعتبر است");
-
-        return await workServices.AddAsync(newWork, ct)
-            ? Result<string>.Success("سرویس جدید با موفقیت اضافه شد")
-            : Result<string>.Failure("اضافه کردن سرویس ناموفق بود");
-    }
-
     public async Task<Result<WorkDto>> GetByIdAsync(int workId, CancellationToken ct)
     {
-        var result = await workServices.GetByIdAsync(workId, ct);
-        return result is not null
-            ? Result<WorkDto>.Success("سرویس با موفقیت یافت شد", result)
-            : Result<WorkDto>.Warning("سرویس یافت نشد");
+        return await workServices.GetByIdAsync(workId, ct);
     }
 
-    public async Task<Result<string>> UpdateAsync(WorkDto work, CancellationToken ct)
+    public async Task<Result<WorkDto>> AddAsync(WorkDto newWork, CancellationToken ct)
     {
-        if (!Validation.IsValidText(work.Title, 100))
-            return Result<string>.Failure("طول عنوان نباید بیشتر از 100 کاراکتر باشد");
+        var validationResults = workServices.IsPropertyValid(newWork);
+        if (validationResults.Status != ResultStatusEnum.Success || validationResults.Data is null)
+            return validationResults;
 
-        if (work.BasePrice < 0)
-            return Result<string>.Failure("قیمت پایه نمی‌تواند منفی باشد");
+        var duplicationResult = await workServices.IsTitleDuplicationAsync(newWork.Title, ct);
+        if (duplicationResult.Status != ResultStatusEnum.Success)
+            return duplicationResult;
 
-        if (work.CategoryId <= 0)
-            return Result<string>.Failure("دسته‌بندی نامعتبر است");
-
-        return await workServices.UpdateAsync(work, ct)
-            ? Result<string>.Success("سرویس با موفقیت ویرایش شد")
-            : Result<string>.Failure("ویرایش سرویس ناموفق بود");
+        return await workServices.AddAsync(validationResults.Data, ct);
     }
 
-    public async Task<Result<string>> DeleteAsync(int workId, CancellationToken ct)
+    public async Task<Result<WorkDto>> UpdateAsync(WorkDto work, CancellationToken ct)
     {
-        return await workServices.DeleteAsync(workId, ct)
-            ? Result<string>.Success("سرویس با موفقیت حذف شد")
-            : Result<string>.Failure("حذف سرویس ناموفق بود");
+        var validationResults = workServices.IsPropertyValid(work);
+        if (validationResults.Status != ResultStatusEnum.Success || validationResults.Data is null)
+            return validationResults;
+
+        var duplicationResult = await workServices.IsTitleDuplicationAsync(work.Title, ct, work.Id);
+        if (duplicationResult.Status != ResultStatusEnum.Success)
+            return duplicationResult;
+
+        return await workServices.UpdateAsync(validationResults.Data, ct);
+    }
+
+    public async Task<Result<bool>> DeleteAsync(int workId, CancellationToken ct)
+    {
+        return await workServices.DeleteAsync(workId, ct);
     }
 }

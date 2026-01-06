@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
+using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Requests;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
+using Yarito.Domain.Core.Enums.Users;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 
 namespace Yarito.Infra.DataAccess.EFCore.Requests;
@@ -23,7 +25,7 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             query = query.Where(b => b.ExpertId == q.ExpertId);
 
         if (q.RequestId is not null)
-            query = query.Where(b => b.RequestId == q.RequestId.Value);
+            query = query.Where(b => b.RequestId == q.RequestId);
 
         // Date filters
         if (q.From is not null)
@@ -131,6 +133,7 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                 ExpertPhoneNumber = b.Expert.PhoneNumber,
                 ExpertFirstName = b.Expert.FirstName,
                 ExpertLastName = b.Expert.LastName,
+                ExpertId = b.ExpertId,
                 ProposedVisitDate = b.ProposedVisitDateTime,
                 Status = b.Status
             }).ToListAsync(ct);
@@ -142,5 +145,117 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             PageSize = q.PageSize,
             TotalCount = total
         };
+    }
+    public async Task<BidFullDto?> GetBidFullByIdAsync(int bidId, CancellationToken ct)
+    {
+        return await _db.Bids.AsNoTracking()
+            .Where(b => b.Id == bidId)
+            .Select(b => new BidFullDto()
+            {
+                Id = b.Id,
+                ProposedVisitDateTime = b.ProposedVisitDateTime,
+                CreatedAt = b.CreatedAt,
+                ProposedPrice = b.ProposedPrice,
+                Description = b.Description,
+                Status = b.Status,
+                Expert = new AppUserFullDto()
+                {
+                    Id = b.Expert.Id,
+                    FirstName = b.Expert.FirstName,
+                    LastName = b.Expert.LastName,
+                    PhoneNumber = b.Expert.PhoneNumber,
+                    UserType = UserTypeEnum.Expert,
+                    CreatedAt = b.Expert.CreatedAt,
+                    ProfileImgPath = b.Expert.ProfileImgPath ?? "/Images/Profile/default.png",
+                    WalletBalance = b.Expert.WalletBalance,
+                    CityName = b.Expert.City != null ? b.Expert.City.Name : null,
+                    Email = b.Expert.Email
+                }
+            })
+            .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<BidDetailsDto?> GetBidDetailsAsync(int bidId, CancellationToken ct)
+    {
+        return await _db.Bids.AsNoTracking()
+            .Where(b => b.Id == bidId)
+            .Select(b => new BidDetailsDto()
+            {
+                Bid = new BidFullDto()
+                {
+                    Id = b.Id,
+                    ProposedVisitDateTime = b.ProposedVisitDateTime,
+                    CreatedAt = b.CreatedAt,
+                    ProposedPrice = b.ProposedPrice,
+                    Description = b.Description,
+                    Status = b.Status,
+                    Expert = new AppUserFullDto()
+                    {
+                        Id = b.Expert.Id,
+                        FirstName = b.Expert.FirstName,
+                        LastName = b.Expert.LastName,
+                        PhoneNumber = b.Expert.PhoneNumber,
+                        UserType = UserTypeEnum.Expert,
+                        CreatedAt = b.Expert.CreatedAt,
+                        ProfileImgPath = b.Expert.ProfileImgPath ?? "/Images/Profile/default.png",
+                        WalletBalance = b.Expert.WalletBalance,
+                        CityName = b.Expert.City != null ? b.Expert.City.Name : null,
+                        Email = b.Expert.Email
+                    }
+                },
+                Expert = new AppUserFullDto()
+                {
+                    Id = b.Expert.Id,
+                    FirstName = b.Expert.FirstName,
+                    LastName = b.Expert.LastName,
+                    PhoneNumber = b.Expert.PhoneNumber,
+                    UserType = UserTypeEnum.Expert,
+                    CreatedAt = b.Expert.CreatedAt,
+                    ProfileImgPath = b.Expert.ProfileImgPath ?? "/Images/Profile/default.png",
+                    WalletBalance = b.Expert.WalletBalance,
+                    CityName = b.Expert.City != null ? b.Expert.City.Name : null,
+                    Email = b.Expert.Email
+                },
+                Customer = new AppUserFullDto()
+                {
+                    Id = b.Request.Customer.Id,
+                    FirstName = b.Request.Customer.FirstName,
+                    LastName = b.Request.Customer.LastName,
+                    PhoneNumber = b.Request.Customer.PhoneNumber,
+                    UserType = UserTypeEnum.Customer,
+                    CreatedAt = b.Request.Customer.CreatedAt,
+                    ProfileImgPath = b.Request.Customer.ProfileImgPath ?? "/Images/Profile/default.png",
+                    WalletBalance = b.Request.Customer.WalletBalance,
+                    CityName = b.Request.Customer.City != null ? b.Request.Customer.City.Name : null,
+                    Email = b.Request.Customer.Email,
+                    Address = b.Request.Customer.Address
+                },
+                Request = new RequestFullDto()
+                {
+                    Id = b.Request.Id,
+                    Title = b.Request.Title,
+                    Description = b.Request.Description,
+                    ProposedPrice = b.Request.ProposedPrice ?? 0,
+                    Address = b.Request.Address,
+                    PreferredVisitDateTime = b.Request.PreferredVisitDateTime,
+                    CreatedAt = b.Request.CreatedAt,
+                    Status = b.Request.Status,
+                    CustomerInfo = new AppUserFullDto()
+                    {
+                        Id = b.Request.Customer.Id,
+                        FirstName = b.Request.Customer.FirstName,
+                        LastName = b.Request.Customer.LastName,
+                        PhoneNumber = b.Request.Customer.PhoneNumber,
+                        UserType = UserTypeEnum.Customer,
+                        CreatedAt = b.Request.Customer.CreatedAt,
+                        ProfileImgPath = b.Request.Customer.ProfileImgPath ?? "/Images/Profile/default.png",
+                        WalletBalance = b.Request.Customer.WalletBalance,
+                        CityName = b.Request.Customer.City != null ? b.Request.Customer.City.Name : null,
+                        Email = b.Request.Customer.Email,
+                        Address = b.Request.Customer.Address
+                    }
+                }
+            })
+            .FirstOrDefaultAsync(ct);
     }
 }

@@ -9,52 +9,65 @@ namespace Yarito.Domain.Core.Contracts.Users.Services;
 /// </summary>
 public interface IAppUserServices
 {
+    #region Query Methods
+
     /// <summary>
     /// دریافت آمار تعداد کاربران سیستم.
     /// </summary>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>آمار تعداد مشتریان و متخصصان</returns>
     Task<AppUserStaticsDto> GetUserCountAsync(CancellationToken ct);
 
     /// <summary>
     /// دریافت نام کاربر بر اساس شناسه.
     /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نام کاربر</returns>
     Task<string> GetNameByIdAsync(int userId, CancellationToken ct);
-
-    /// <summary>
-    /// ثبت کاربر جدید در سیستم.
-    /// </summary>
-    /// <param name="dto">اطلاعات ثبت‌نام کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AddAsync(RegisterDto dto, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه کاربران با قابلیت صفحه‌بندی.
     /// </summary>
-    /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه صفحه‌بندی شده از کاربران</returns>
     Task<PagedResult<AppUserSummaryDto>> GetAppUserSummaryListAsync(AppUserReqDto q, CancellationToken ct);
 
     /// <summary>
     /// دریافت اطلاعات کامل کاربر بر اساس شناسه کاربر.
     /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>اطلاعات کامل کاربر</returns>
-    Task<AppUserFullDto?> GetAppUserFullByIdAsync(int userId, CancellationToken ct);
+    Task<Result<AppUserFullDto>> GetAppUserFullByIdAsync(int userId, CancellationToken ct);
 
+    /// <summary>
+    /// دریافت لیست دسته‌بندی و کارهای متخصص.
+    /// </summary>
     Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct);
+
+    #endregion
+
+    #region Command Methods
+
+    /// <summary>
+    /// ثبت کاربر جدید در سیستم.
+    /// </summary>
+    Task<Result<RegisterDto>> AddAsync(RegisterDto dto, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.
     /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> SoftDeleteAsync(int userId, CancellationToken ct);
+    Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct);
+
+    #endregion
+
+    #region Validation Methods
+
+    /// <summary>
+    /// اعتبارسنجی ویژگی‌های کاربر.
+    /// </summary>
+    Result<RegisterDto> IsPropertyValid(RegisterDto dto);
+
+    /// <summary>
+    /// بررسی تکراری بودن ایمیل.
+    /// </summary>
+    Task<Result<RegisterDto>> IsEmailDuplicationAsync(string email, CancellationToken ct, int? userId = null);
+
+    /// <summary>
+    /// بررسی وجود کاربر.
+    /// </summary>
+    Task<bool> IsExistsAsync(int userId, CancellationToken ct);
+
+    #endregion
 }

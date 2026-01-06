@@ -112,11 +112,37 @@
                     <p class="admin-comment-card__text">@c.Comment</p>
                     <div class="admin-comment-card__footer">
                         <div class="admin-comment-card__links">
-                            <a href="#" class="btn btn--ghost btn--sm">جزئیات پیشنهاد</a>
+                            <a asp-area="Admin"
+                               asp-controller="Requests"
+                               asp-action="RequestDetails"
+                               asp-route-id="@c.RequestId"
+                               class="btn btn--ghost btn--sm">جزئیات درخواست</a>
                         </div>
                         <div class="admin-comment-card__actions">
-                            <button type="button" class="btn btn--primary btn--sm">تایید</button>
-                            <button type="button" class="btn btn--danger btn--sm">رد</button>
+                            @if (c.ReviewStatus != ReviewStatusEnum.Approved)
+                            {
+                                <form asp-area="Admin"
+                                      asp-controller="Reviews"
+                                      asp-action="Approve"
+                                      asp-route-id="@c.ReviewId"
+                                      method="post"
+                                      style="display: inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn--primary btn--sm">تایید</button>
+                                </form>
+                            }
+                            @if (c.ReviewStatus != ReviewStatusEnum.Rejected)
+                            {
+                                <form asp-area="Admin"
+                                      asp-controller="Reviews"
+                                      asp-action="Reject"
+                                      asp-route-id="@c.ReviewId"
+                                      method="post"
+                                      style="display: inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn--danger btn--sm">رد</button>
+                                </form>
+                            }
                         </div>
                     </div>
                 </article>

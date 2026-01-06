@@ -7,9 +7,9 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models;
 public class ExpertDetailsViewModel
 {
     // Data
-    public required AppUserFullDto UserDetails { get; init; }
-    public required IReadOnlyList<CategoryFullDto> ExpertWorks { get; init; } = [];
-    public IReadOnlyList<BidSummaryDto> Bids { get; init; } = [];
+    public AppUserFullDto UserDetails { get; set; } = null!;
+    public IReadOnlyList<CategoryFullDto> ExpertWorks { get; set; } = [];
+    public IReadOnlyList<BidSummaryDto> Bids { get; set; } = [];
 
     // Filters
     public int ExpertId { get; set; }

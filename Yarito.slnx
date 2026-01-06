@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Docs/">
+    <File Path="Yarito.Framework/AdminPanelReport.md" />
+  </Folder>
   <Folder Name="/src/" />
   <Folder Name="/src/00_Framework/">
     <Project Path="Yarito.Framework/Yarito.Framework.csproj" Id="dae01fa2-2ce4-41bf-a7fc-5fdaa67199cf" />

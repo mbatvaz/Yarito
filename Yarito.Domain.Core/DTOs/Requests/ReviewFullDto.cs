@@ -9,6 +9,7 @@ public class ReviewFullDto
 {
     public int ReviewId { get; set; }
     public int? BidId { get; set; }
+    public int RequestId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public required int Rating { get; set; }

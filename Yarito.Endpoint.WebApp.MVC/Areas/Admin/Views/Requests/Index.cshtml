@@ -1,0 +1,154 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.RequestsViewModel
+@{
+    Layout = "_Layout";
+}
+
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>نمایش درخواست‌ها</h2>
+</div>
+
+<!-- Filters -->
+<section class="card admin-box">
+    <form class="admin-filter-bar admin-filter-bar--row" asp-area="Admin" asp-controller="Requests" asp-action="Index" method="get">
+        <div class="admin-filter-bar__fields">
+            <div class="form-group form-group--search">
+                <label for="search">جستجو</label>
+                <input type="text" id="search" name="search" placeholder="عنوان، توضیحات..." value="@Model.Search">
+            </div>
+            <div class="form-group form-group--select">
+                <label for="status">وضعیت</label>
+                <select id="status" name="status">
+                    <option value="">همه</option>
+                    <option value="@RequestStatusEnum.Pending" selected="@(Model.Status == RequestStatusEnum.Pending)">در حال دریافت پیشنهاد</option>
+                    <option value="@RequestStatusEnum.InProgress" selected="@(Model.Status == RequestStatusEnum.InProgress)">در انتظار انجام</option>
+                    <option value="@RequestStatusEnum.Completed" selected="@(Model.Status == RequestStatusEnum.Completed)">تکمیل شده</option>
+                    <option value="@RequestStatusEnum.Cancelled" selected="@(Model.Status == RequestStatusEnum.Cancelled)">لغو شده</option>
+                </select>
+            </div>
+            <div class="form-group form-group--select">
+                <label for="cityId">شهر</label>
+                <select id="cityId" name="cityId" class="select2-city">
+                    <option value="">همه شهرها</option>
+                    @foreach (var city in Model.Cities)
+                    {
+                        <option value="@city.Id" selected="@(Model.CityId == city.Id)">
+                            @(city.ParentName != null ? $"{city.ParentName} - {city.Name}" : city.Name)
+                        </option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="admin-filter-bar__actions">
+            <button type="submit" class="btn btn--primary btn--sm">اعمال فیلتر</button>
+            <a asp-area="Admin"
+               asp-controller="Requests"
+               asp-action="Index"
+               class="btn btn--ghost btn--sm">پاک کردن</a>
+        </div>
+    </form>
+</section>
+
+@if (Model.Requests.Count > 0)
+{
+    <!-- Requests Cards -->
+    <div class="admin-request-cards">
+        @foreach (var r in Model.Requests)
+        {
+            <article class="card admin-box admin-request-card">
+                <div class="admin-request-card__header">
+                    <div class="admin-request-card__header-right">
+                        <h3 class="admin-request-card__title">@r.Title</h3>
+                    </div>
+                    <div class="admin-request-card__header-left">
+                        <span class="badge @(r.Status switch
+                                           {
+                                               RequestStatusEnum.Pending    => "badge--receiving",
+                                               RequestStatusEnum.Completed  => "badge--completed",
+                                               RequestStatusEnum.Cancelled  => "badge--cancelled",
+                                               RequestStatusEnum.InProgress => "badge--waiting",
+                                               _                            => ""
+                                           })">@Html.DisplayFor(_ => r.Status)</span>
+                        @if (!string.IsNullOrEmpty(r.CityName))
+                        {
+                            <span class="badge badge--secondary">@r.CityName</span>
+                        }
+                    </div>
+                </div>
+                <p class="admin-request-card__desc clamp-3">@(r.Description ?? "بدون توضیحات")</p>
+                <div class="admin-request-card__meta">
+                    <span>تاریخ ثبت: @r.CreatedAt.CompleteShamsiDate("dn, dd mn yyyy - HH:MM")</span>
+                    <span>تعداد پیشنهادها: @r.BidCount.ToString().ToPersianNum()</span>
+                </div>
+                <div class="admin-request-card__footer">
+                    <div class="admin-request-card__owner">
+                        <img class="avatar avatar--sm" src="@(r.CustomerProfileImagePath ?? "/Images/Profile/default.png")" alt="تصویر مشتری">
+                        <span>@r.FirstName @r.LastName</span>
+                    </div>
+                    <div class="admin-request-card__actions">
+                        <a asp-area="Admin"
+                           asp-controller="Requests"
+                           asp-action="RequestDetails"
+                           asp-route-id="@r.Id"
+                           class="btn btn--secondary btn--sm">جزئیات</a>
+                        @if (r.Status != RequestStatusEnum.Cancelled && r.Status != RequestStatusEnum.Completed)
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Requests"
+                                  asp-action="ChangeStatus"
+                                  asp-route-id="@r.Id"
+                                  method="post">
+                                @Html.AntiForgeryToken()
+                                <div class="status-dropdown">
+                                    <button type="button" class="btn btn--primary btn--sm status-dropdown__toggle">تغییر وضعیت</button>
+                                    <ul class="status-dropdown__menu">
+                                        @if (r.Status == RequestStatusEnum.Pending)
+                                        {
+                                            <li><button type="submit" class="status-dropdown__item" data-status="waiting" name="status" value="@RequestStatusEnum.Pending">در انتظار انجام</button></li>
+                                        }
+                                        else
+                                        {
+                                            <li><button type="submit" class="status-dropdown__item" data-status="receiving" value="@RequestStatusEnum.InProgress">در حال دریافت پیشنهاد</button></li>
+                                        }
+                                        <li><button type="submit" class="status-dropdown__item" data-status="completed" name="status" value="@RequestStatusEnum.Completed">اتمام</button></li>
+                                        <li><button type="submit" class="status-dropdown__item" data-status="cancelled" name="status" value="@RequestStatusEnum.Cancelled">لغو شده</button></li>
+                                    </ul>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Area = "Admin",
+        Controller = "Requests",
+        Action = "Index",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["search"] = Model.Search,
+            ["status"] = Model.Status?.ToString(),
+            ["cityId"] = Model.CityId?.ToString()
+        }
+    })
+}
+else
+{
+    <!-- Empty State -->
+    <div class="admin-empty-state">
+        <p>هیچ درخواستی یافت نشد.</p>
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/city-select2.js"></script>
+    <script src="~/js/request-dropdown.js"></script>
+}

@@ -1,14 +1,14 @@
 ﻿using Yarito.Domain.Core.Contracts.Works.AppServices;
-using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
-using Yarito.Framework;
+using Yarito.Domain.Core.Enums._Common;
 
 namespace Yarito.Domain.AppServices.Works
 {
     public class CategoryAppServices(
-        ICategoryServices categoryServices) : ICategoryAppServices
+        ICategoryServices categoryServices,
+        IWorkServices workServices) : ICategoryAppServices
     {
         public async Task<IReadOnlyList<CategoryStringDataDto>> GetAllCategoriesNamesAsync(CancellationToken ct)
             => await categoryServices.GetAllCategoriesNamesAsync(ct);
@@ -16,17 +16,8 @@ namespace Yarito.Domain.AppServices.Works
         public async Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct)
             => await categoryServices.GetCategoriesListAsync(q, ct);
 
-        public async Task<Result<string>> AddAsync(CategoryDto newCategory, CancellationToken ct)
-        {
-            if (!Validation.IsValidText(newCategory.Title, 100))
-                return Result<string>.Failure("طول عنوان بیشتر از 100 کاراکتر است");
-            if (newCategory.Description is not null && !Validation.IsValidText(newCategory.Description, 500))
-                return Result<string>.Failure("طول توضیحات بیشتر 500 کاراکتر است");
-
-            return await categoryServices.AddAsync(newCategory, ct)
-                ? Result<string>.Success("دسته بندی جدید با موفقیت ایجاد شد")
-                : Result<string>.Failure("دسته بندی ایجاد نشد");
-        }
+        public async Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct)
+            => await categoryServices.GetJustCategoriesListAsync(ct);
 
         public async Task<Result<CategoryDto>> GetByIdAsync(int categoryId, CancellationToken ct)
         {
@@ -36,26 +27,38 @@ namespace Yarito.Domain.AppServices.Works
                 : Result<CategoryDto>.Warning("دسته بندی یافت نشد");
         }
 
-        public async Task<Result<string>> UpdateAsync(CategoryDto category, CancellationToken ct)
+        public async Task<Result<CategoryDto>> AddAsync(CategoryDto newCategory, CancellationToken ct)
         {
-            if (!Validation.IsValidText(category.Title, 100))
-                return Result<string>.Failure("طول عنوان بیشتر از 100 کاراکتر است");
-            if (category.Description is not null && !Validation.IsValidText(category.Description, 500))
-                return Result<string>.Failure("طول توضیحات بیشتر 500 کاراکتر است");
+            var validationResults = categoryServices.IsPropertyValid(newCategory);
+            if (validationResults.Status != ResultStatusEnum.Success || validationResults.Data is null)
+                return validationResults;
 
-            return await categoryServices.UpdateAsync(category, ct)
-                ? Result<string>.Success("اطلاعات دسته بندی با موفقیت بروز شد")
-                : Result<string>.Failure("اطلاعات دسته بندی بروز نشد");
+            var duplicationResult = await categoryServices.IsTitleDuplicationAsync(newCategory.Title, ct);
+            if (duplicationResult.Status != ResultStatusEnum.Success)
+                return duplicationResult;
+
+            return await categoryServices.AddAsync(validationResults.Data, ct);
+        }
+        
+        public async Task<Result<CategoryDto>> UpdateAsync(CategoryDto category, CancellationToken ct)
+        {
+            var validationResults = categoryServices.IsPropertyValid(category);
+            if (validationResults.Status != ResultStatusEnum.Success || validationResults.Data is null)
+                return validationResults;
+
+            var duplicationResult = await categoryServices.IsTitleDuplicationAsync(category.Title, ct, category.Id);
+            if (duplicationResult.Status != ResultStatusEnum.Success)
+                return duplicationResult;
+
+            return await categoryServices.UpdateAsync(validationResults.Data, ct);
         }
 
-        public async Task<Result<string>> DeleteAsync(int categoryId, CancellationToken ct)
+        public async Task<Result<bool>> DeleteAsync(int categoryId, CancellationToken ct)
         {
-            return await categoryServices.DeleteAsync(categoryId, ct)
-                ? Result<string>.Success("دسته‌بندی با موفقیت حذف شد")
-                : Result<string>.Failure("خطا در حذف دسته‌بندی");
-        }
+            if (await workServices.IsCategoryInUseAsync(categoryId, ct))
+                return Result<bool>.Warning("برای حذف دسته بندی ابتدا کار های آن را حذف کنید");
 
-        public async Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct)
-            => await categoryServices.GetJustCategoriesListAsync(ct);
+            return await categoryServices.DeleteAsync(categoryId, ct);
+        }
     }
 }

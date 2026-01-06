@@ -6,8 +6,8 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
     public class CustomerDetailsViewModel
     {
         // Data
-        public required AppUserFullDto UserDetails { get; init; }
-        public IReadOnlyList<RequestsSummaryDto> Requests { get; init; } = [];
+        public AppUserFullDto UserDetails { get; set; } = null!;
+        public IReadOnlyList<RequestsSummaryDto> Requests { get; set; } = [];
 
         // Filters
         public int CustomerId { get; set; }

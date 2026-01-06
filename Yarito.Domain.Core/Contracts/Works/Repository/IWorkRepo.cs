@@ -1,5 +1,4 @@
 ﻿using Yarito.Domain.Core.DTOs.Works;
-using Yarito.Domain.Core.Entities.Works;
 
 namespace Yarito.Domain.Core.Contracts.Works.Repository;
 
@@ -8,35 +7,50 @@ namespace Yarito.Domain.Core.Contracts.Works.Repository;
 /// </summary>
 public interface IWorkRepo
 {
+    #region Query Methods
+
     /// <summary>
     /// دریافت یک خدمت بر اساس شناسه.
     /// </summary>
-    /// <param name="workId">شناسه خدمت</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>اطلاعات خدمت یا null در صورت عدم وجود</returns>
     Task<WorkDto?> GetByIdAsync(int workId, CancellationToken ct);
+
+    #endregion
+
+    #region Command Methods
 
     /// <summary>
     /// افزودن یک خدمت جدید به دیتابیس.
     /// </summary>
-    /// <param name="newWork">موجودیت خدمت جدید</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> AddAsync(WorkDto newWork, CancellationToken ct);
 
     /// <summary>
     /// به‌روزرسانی اطلاعات یک خدمت موجود.
     /// </summary>
-    /// <param name="newWork">موجودیت خدمت با اطلاعات جدید</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> UpdateAsync(WorkDto work, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم یک خدمت از دیتابیس.
     /// </summary>
-    /// <param name="workId">شناسه خدمت</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> DeleteAsync(int workId, CancellationToken ct);
+
+    #endregion
+
+    #region Validation Methods
+
+    /// <summary>
+    /// بررسی وجود عنوان تکراری (برای افزودن).
+    /// </summary>
+    Task<bool> IsTitleExistsAsync(string title, CancellationToken ct);
+
+    /// <summary>
+    /// بررسی وجود عنوان تکراری (برای ویرایش - با استثنا کردن خدمت فعلی).
+    /// </summary>
+    Task<bool> IsTitleExistsAsync(string title, int excludeId, CancellationToken ct);
+
+    /// <summary>
+    /// بررسی استفاده از دسته‌بندی در خدمات.
+    /// </summary>
+    Task<bool> IsCategoryInUseAsync(int categoryId, CancellationToken ct);
+
+    #endregion
 }

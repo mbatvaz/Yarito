@@ -8,53 +8,60 @@ namespace Yarito.Domain.Core.Contracts.Works.Services;
 /// </summary>
 public interface ICategoryServices
 {
-    /// <summary>
-    /// دریافت لیست تمام دسته‌بندی‌ها با عناوین خدمات مربوطه.
-    /// </summary>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>لیست دسته‌بندی‌ها</returns>
-    Task<IReadOnlyList<CategoryStringDataDto>> GetAllCategoriesNamesAsync(CancellationToken ct);
-
-    /// <summary>
-    /// دریافت لیست دسته‌بندی‌ها با قابلیت صفحه‌بندی و فیلتر.
-    /// </summary>
-    /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه صفحه‌بندی شده از دسته‌بندی‌ها</returns>
-    Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct);
-
-    /// <summary>
-    /// افزودن یک دسته‌بندی جدید.
-    /// </summary>
-    /// <param name="newCategory">اطلاعات دسته‌بندی جدید</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AddAsync(CategoryDto newCategory, CancellationToken ct);
+    #region Query Methods
 
     /// <summary>
     /// دریافت یک دسته‌بندی بر اساس شناسه.
     /// </summary>
-    /// <param name="categoryId">شناسه دسته‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>اطلاعات دسته‌بندی یا null در صورت عدم وجود</returns>
     Task<CategoryDto?> GetByIdAsync(int categoryId, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت لیست تمام دسته‌بندی‌ها با عناوین خدمات مربوطه.
+    /// </summary>
+    Task<IReadOnlyList<CategoryStringDataDto>> GetAllCategoriesNamesAsync(CancellationToken ct);
+
+    /// <summary>
+    /// دریافت لیست ساده دسته‌بندی‌ها (فقط شناسه و عنوان).
+    /// </summary>
+    Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct);
+
+    /// <summary>
+    /// دریافت لیست دسته‌بندی‌ها با قابلیت صفحه‌بندی و فیلتر.
+    /// </summary>
+    Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct);
+
+    #endregion
+
+    #region Command Methods
+
+    /// <summary>
+    /// افزودن یک دسته‌بندی جدید.
+    /// </summary>
+    Task<Result<CategoryDto>> AddAsync(CategoryDto newCategory, CancellationToken ct);
 
     /// <summary>
     /// به‌روزرسانی یک دسته‌بندی موجود.
     /// </summary>
-    /// <param name="category">اطلاعات دسته‌بندی برای به‌روزرسانی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> UpdateAsync(CategoryDto category, CancellationToken ct);
+    Task<Result<CategoryDto>> UpdateAsync(CategoryDto category, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم یک دسته‌بندی.
     /// </summary>
-    /// <param name="categoryId">شناسه دسته‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> DeleteAsync(int categoryId, CancellationToken ct);
+    Task<Result<bool>> DeleteAsync(int categoryId, CancellationToken ct);
 
+    #endregion
 
-    Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct);
+    #region Validation Methods
+
+    /// <summary>
+    /// اعتبارسنجی ویژگی‌های دسته‌بندی.
+    /// </summary>
+    Result<CategoryDto> IsPropertyValid(CategoryDto dto);
+
+    /// <summary>
+    /// بررسی تکراری بودن عنوان دسته‌بندی.
+    /// </summary>
+    Task<Result<CategoryDto>> IsTitleDuplicationAsync(string title, CancellationToken ct, int? categoryId = null);
+
+    #endregion
 }

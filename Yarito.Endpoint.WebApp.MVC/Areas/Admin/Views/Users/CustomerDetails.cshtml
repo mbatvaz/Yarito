@@ -81,7 +81,13 @@
                                       _ => ""
                                   })">@Html.DisplayFor(_ => r.Status)</span>
                         </td>
-                        <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                        <td class="text-left">
+                            <a asp-area="Admin"
+                               asp-controller="Requests"
+                               asp-action="RequestDetails"
+                               asp-route-id="@r.Id"
+                               class="btn btn--ghost btn--sm">مشاهده</a>
+                        </td>
                     </tr>
                 }
                 </tbody>

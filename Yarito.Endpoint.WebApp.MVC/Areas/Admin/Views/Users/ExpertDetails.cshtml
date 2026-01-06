@@ -111,7 +111,13 @@
                                                })">
                                 @Html.DisplayFor(_ => b.Status)
                             </span></td>
-                        <td class="text-left"><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                        <td class="text-left">
+                            <a asp-area="Admin"
+                               asp-controller="Requests"
+                               asp-action="BidDetails"
+                               asp-route-id="@b.Id"
+                               class="btn btn--ghost btn--sm">مشاهده</a>
+                        </td>
                     </tr>
                 }
                 </tbody>

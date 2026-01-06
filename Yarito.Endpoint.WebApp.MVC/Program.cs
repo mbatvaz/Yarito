@@ -41,6 +41,8 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
 });
 
+// Add AutoMapper.
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 
 //Database Connection String

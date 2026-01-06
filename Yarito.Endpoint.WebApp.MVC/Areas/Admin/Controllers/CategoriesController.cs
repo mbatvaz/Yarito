@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Yarito.Domain.Core.Contracts.Works.AppServices;
 using Yarito.Domain.Core.DTOs.Works;
@@ -10,12 +11,21 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
 {
     [Area(nameof(Areas.Admin))]
     public class CategoriesController(
-        ICategoryAppServices categoryAppServices) : Controller
+        ICategoryAppServices categoryAppServices,
+        IMapper mapper) : Controller
     {
-        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+        private void Notification<T>(Result<T> result)
+        {
+            var r = result.Status switch
+            {
+                ResultStatusEnum.Failure => Result<string>.Failure(result.Message),
+                ResultStatusEnum.Warning => Result<string>.Warning(result.Message),
+                _ => Result<string>.Success(result.Message),
+            };
+            TempData["Notification"] = JsonConvert.SerializeObject(r);
+        }
 
-        public async Task<IActionResult> Index(
-            string? search, int page = 1, CancellationToken ct = default)
+        public async Task<IActionResult> Index(string? search, int page = 1, CancellationToken ct = default)
         {
             var result = await categoryAppServices.GetCategoriesListAsync(new CategoryReqDto
             {
@@ -24,17 +34,10 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 Page = page
             }, ct);
 
-            var viewModel = new CategoriesViewModel
-            {
-                Categories = result.Items,
-                Search = search,
-                Page = result.Page,
-                PageSize = result.PageSize,
-                TotalCount = result.TotalCount,
-                TotalPages = (int)Math.Ceiling((double)result.TotalCount / result.PageSize)
-            };
+            var model = mapper.Map<CategoriesViewModel>(result);
+            model.Search = search;
 
-            return View(viewModel);
+            return View(model);
         }
 
         public IActionResult Create()
@@ -48,16 +51,11 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View("CategoryForm", model);
 
-            var result = await categoryAppServices.AddAsync(new CategoryDto
-            {
-                Title = model.Title,
-                Description = model.Description
-            }, ct);
-
+            var result = await categoryAppServices.AddAsync(mapper.Map<CategoryDto>(model), ct);
             Notification(result);
 
             return result.Status == ResultStatusEnum.Success
-                ? RedirectToAction("Index", "Categories", new { area = "Admin" })
+                ? RedirectToAction(nameof(Index))
                 : View("CategoryForm", model);
         }
 
@@ -65,20 +63,12 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         {
             var result = await categoryAppServices.GetByIdAsync(id, ct);
 
+            Notification(result);
             if (result.Status != ResultStatusEnum.Success || result.Data is null)
-            {
-                Notification(Result<string>.Warning(result.Message));
                 return RedirectToAction("Index", "Categories", new { area = "Admin" });
-            }
 
-            var viewModel = new CategoryFormViewModel
-            {
-                Id = result.Data.Id,
-                Title = result.Data.Title,
-                Description = result.Data.Description
-            };
-
-            return View("CategoryForm", viewModel);
+            var model = mapper.Map<CategoryFormViewModel>(result.Data);
+            return View("CategoryForm", model);
         }
 
         [HttpPost]
@@ -87,12 +77,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
             if (!ModelState.IsValid)
                 return View("CategoryForm", model);
 
-            var result = await categoryAppServices.UpdateAsync(new CategoryDto
-            {
-                Id = model.Id,
-                Title = model.Title,
-                Description = model.Description
-            }, ct);
+            var result = await categoryAppServices.UpdateAsync(mapper.Map<CategoryDto>(model), ct);
 
             Notification(result);
             return RedirectToAction("Index", "Categories", new { area = "Admin" });

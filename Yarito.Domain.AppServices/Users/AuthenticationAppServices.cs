@@ -8,6 +8,7 @@ using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Users;
 using Yarito.Framework;
 
@@ -23,8 +24,9 @@ namespace Yarito.Domain.AppServices.Users
     {
         public async Task<Result<string>> LoginAsync(LoginDto dto, CancellationToken ct)
         {
+
             if (!Validation.IsValidPhoneNumber(dto.PhoneNumber))
-                return Result<string>.Failure("شماره موبایل وارد شده نامعتبر است");
+                return Result<string>.Warning("شماره موبایل معتبر نیست");
 
             await signInManager.SignOutAsync();
 
@@ -70,21 +72,20 @@ namespace Yarito.Domain.AppServices.Users
 
         public async Task<Result<string>> RegisterAsync(RegisterDto dto, CancellationToken ct)
         {
-            if (!Validation.IsValidName(dto.FirstName))
-                return Result<string>.Failure("نام وارد کرده معتبر نیست");
-            if (!Validation.IsValidName(dto.LastName))
-                return Result<string>.Failure("نام خانوادگی وارد شده معتبر نیست");
-            if (!Validation.IsValidPhoneNumber(dto.PhoneNumber))
-                return Result<string>.Failure("شماره موبایل وارد شده معتبر نیست");
-            if(dto.Email is not null && !Validation.IsValidEmail(dto.Email))
-                return Result<string>.Failure("ایمیل وارد شده معتبر نیست");
-            if(!Validation.IsValidBaseWalletBalance(dto.BaseWalletBalance))
-                return Result<string>.Failure("مقدار کیف پول پایه وارد شده معتبر نیست");
-            if(dto.Address is not null && !Validation.IsValidAddress(dto.Address))
-                return Result<string>.Failure("آدرس وارد شده معتبر نیست");
-            if(dto.ProfileImage is not null && !Validation.IsValidImageUrlOrFileName(dto.ProfileImageUrl))
-                return Result<string>.Failure("تصویر پروفایل وارد شده معتبر نیست");
-            if(dto.CityId is not null && !await cityServices.IsExistAsync(dto.CityId.Value, ct))
+            var validationResult = appUserServices.IsPropertyValid(dto);
+            if (validationResult.Status != ResultStatusEnum.Success || validationResult.Data is null)
+                return Result<string>.Failure(validationResult.Message);
+
+            dto = validationResult.Data;
+
+            if (dto.Email is not null)
+            {
+                var emailResult = await appUserServices.IsEmailDuplicationAsync(dto.Email, ct);
+                if (emailResult.Status != ResultStatusEnum.Success)
+                    return Result<string>.Failure(emailResult.Message);
+            }
+
+            if (dto.CityId is not null && !await cityServices.IsExistAsync(dto.CityId.Value, ct))
                 return Result<string>.Failure("شهر وارد شده معتبر نیست");
 
             var user = new IdentityUser<int>
@@ -114,15 +115,17 @@ namespace Yarito.Domain.AppServices.Users
                     savedImageUrl = await fileServices.SaveImageOnDiskAsync(dto.ProfileImage, "/Images/Profile", dto.ProfileImageUrl, ct);
                     dto.ProfileImageUrl = savedImageUrl;
                 }
-                var registerUser = await appUserServices.AddAsync(dto, ct);
-                return !registerUser 
-                    ? throw new Exception("خطایی رخ داد لطفا دوباره امتحان کنید") 
-                    : Result<string>.Success("حساب کاربری شما با موفقیت ساخته شده، اقدام به ورود به حساب کاربری خود کنید");
+
+                var registerResult = await appUserServices.AddAsync(dto, ct);
+                if (registerResult.Status != ResultStatusEnum.Success)
+                    throw new Exception(registerResult.Message ?? "خطایی رخ داد لطفا دوباره امتحان کنید");
+
+                return Result<string>.Success("حساب کاربری شما با موفقیت ساخته شده، اقدام به ورود به حساب کاربری خود کنید");
             }
             catch (Exception ex)
             {
                 if (!string.IsNullOrWhiteSpace(savedImageUrl))
-                        await fileServices.DeleteImageOnDiskAsync(savedImageUrl, ct);
+                    await fileServices.DeleteImageOnDiskAsync(savedImageUrl, ct);
 
                 await userManager.DeleteAsync(user);
                 return Result<string>.Failure(ex.Message);

@@ -11,6 +11,7 @@ public class BidSummaryDto
     public required string ExpertFirstName { get; init; }
     public required string ExpertLastName { get; init; }
     public required string ExpertPhoneNumber { get; init; }
+    public required int ExpertId { get; set; }
     public required string ServiceTitle { get; init; }
     public required decimal ProposedPrice { get; init; }
     public required BidStatusEnum Status { get; init; }

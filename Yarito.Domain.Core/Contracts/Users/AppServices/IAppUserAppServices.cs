@@ -13,27 +13,25 @@ public interface IAppUserAppServices
     /// <summary>
     /// دریافت آمار کلی سیستم شامل تعداد کاربران، درخواست‌ها و پیشنهادها.
     /// </summary>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>آمار کلی سیستم</returns>
     Task<AppStatisticsDto> GetStatisticsAsync(CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه کاربران با قابلیت صفحه‌بندی.
     /// </summary>
-    /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه صفحه‌بندی شده از کاربران</returns>
     Task<PagedResult<AppUserSummaryDto>> GetAppUserSummaryListAsync(AppUserReqDto q, CancellationToken ct);
 
+    /// <summary>
+    /// دریافت اطلاعات کامل کاربر بر اساس شناسه.
+    /// </summary>
     Task<Result<AppUserFullDto>> GetAppUserFullByIdAsync(int userId, CancellationToken ct);
 
+    /// <summary>
+    /// دریافت لیست دسته‌بندی و کارهای متخصص.
+    /// </summary>
     Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.
     /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه عملیات حذف</returns>
-    Task<Result<string>> SoftDeleteAsync(int userId, CancellationToken ct);
+    Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct);
 }

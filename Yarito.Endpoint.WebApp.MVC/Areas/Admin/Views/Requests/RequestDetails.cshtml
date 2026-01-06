@@ -1,0 +1,212 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.RequestDetailsViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>جزئیات درخواست</h2>
+    <div class="admin-page-header__actions">
+        <a asp-area="Admin"
+           asp-controller="Requests"
+           asp-action="Index"
+           class="btn btn--ghost">بازگشت</a>
+    </div>
+</div>
+
+<!-- Customer & Request Info Boxes Side by Side -->
+<div class="admin-offer-users-grid">
+    <!-- Customer Info Box (Right) -->
+    <section class="card admin-box admin-customer-info-box">
+        <a asp-area="Admin"
+           asp-controller="Users"
+           asp-action="CustomerDetails"
+           asp-route-id="@Model.CustomerInfo.Id"
+           class="btn btn--ghost btn--sm"
+           style="position: absolute; top: 16px; left: 16px;">مشاهده</a>
+        @await Html.PartialAsync("_UserDetailsPartial", new UserDetailsViewModel()
+        {
+            Id = Model.CustomerInfo.Id,
+            ProfileImgPath = Model.CustomerInfo.ProfileImgPath,
+            FirstName = Model.CustomerInfo.FirstName,
+            LastName = Model.CustomerInfo.LastName,
+            UserType = Model.CustomerInfo.UserType,
+            CreatedAt = Model.CustomerInfo.CreatedAt,
+            PhoneNumber = Model.CustomerInfo.PhoneNumber,
+            CityName = Model.CustomerInfo.CityName,
+            Email = Model.CustomerInfo.Email,
+            WalletBalance = Model.CustomerInfo.WalletBalance,
+            Address = Model.CustomerInfo.Address
+        })
+    </section>
+
+    <!-- Request Info Box (Left) with 8.png background -->
+    <section class="card admin-box admin-request-info-box">
+    @await Html.PartialAsync("_RequestDetailsPartial", new RequestDetailsPartialViewModel()
+    {
+        Id = Model.RequestInfo.Id,
+        Status = Model.RequestInfo.Status,
+        Address = Model.RequestInfo.Address,
+        Title = Model.RequestInfo.Title,
+        CreatedAt = Model.RequestInfo.CreatedAt,
+        Description = Model.RequestInfo.Description,
+        PreferredVisitDateTime = Model.RequestInfo.PreferredVisitDateTime,
+        ProposedPrice = Model.RequestInfo.ProposedPrice
+    })
+     </section>
+</div>
+
+<!-- Uploaded Images Section -->
+<section class="card admin-box">
+    <div class="admin-box__header">
+        <h3>تصاویر آپلود شده</h3>
+    </div>
+    <div class="admin-images-grid">
+        @foreach (var i in Model.RequestImagesPath)
+        {
+            <a href="@i" class="glightbox admin-image-item" data-gallery="request-images">
+                <img src="@i" alt="تصویر آپلود شده">
+            </a>
+        }
+    </div>
+</section>
+
+<!-- No Accepted Offer Card - Centered 50% -->
+@if (Model.AcceptedBid is not null)
+{
+    <section class="card admin-box">
+        <div class="admin-box__header">
+            <h3>پیشنهاد پدیرفته شده</h3>
+        </div>
+        <div class="admin-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>نام و نام خانوادگی متخصص</th>
+                    <th>شماره تماس متخصص</th>
+                    <th>قیمت پیشنهادی</th>
+                    <th>تاریخ مراجعه پیشنهادی</th>
+                    <th>وضعیت</th>
+                    <th class="text-left">عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>@Model.AcceptedBid.ExpertFirstName @Model.AcceptedBid.ExpertLastName</td>
+                    <td dir="ltr">@Model.AcceptedBid.ExpertPhoneNumber.ToPersianNum()</td>
+                    <td>@Model.AcceptedBid.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
+                    <td>@Model.AcceptedBid.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
+                    <td><span class="badge badge--completed">@Html.DisplayFor(_ => @Model.AcceptedBid.Status)</span></td>
+                    <td class="text-left">
+                        <a asp-area="Admin"
+                           asp-controller="Requests"
+                           asp-action="BidDetails"
+                           asp-route-id="@Model.AcceptedBid.Id"
+                           class="btn btn--secondary btn--sm">جزئیات</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+}
+else
+{
+    <div class="admin-no-offer-wrapper">
+        <section class="card admin-box admin-no-offer-box">
+            <div class="admin-box__header">
+                <h3>پیشنهاد پذیرفته نشده</h3>
+            </div>
+            <div class="admin-offer-status-card__content">
+                <p class="muted">هنوز هیچ پیشنهادی توسط مشتری پذیرفته نشده است.</p>
+            </div>
+        </section>
+    </div>
+}
+
+
+<!-- Offers List - Full Width -->
+<section class="card admin-box">
+    <div class="admin-box__header">
+        <h3>لیست پیشنهادات</h3>
+        <div class="admin-box__search">
+            <form asp-area="Admin"
+                  asp-controller="Requests"
+                  asp-action="RequestDetails"
+                  asp-route-id="@Model.RequestInfo.Id"
+                  method="get">
+                <input asp-for="Search" type="text" placeholder="جستجو..." class="admin-search-input" value="@Model.Search">
+                <button type="submit" class="btn btn--primary btn--sm">جستجو</button>
+            </form>
+        </div>
+    </div>
+    <div class="admin-table-wrapper">
+        <table class="admin-table">
+            <thead>
+            <tr>
+                <th>نام و نام خانوادگی متخصص</th>
+                <th>شماره تماس متخصص</th>
+                <th>قیمت پیشنهادی</th>
+                <th>تاریخ مراجعه پیشنهادی</th>
+                <th>وضعیت</th>
+                <th class="text-left">عملیات</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var b in Model.BidList)
+            {
+                <tr>
+                    <td>@b.ExpertFirstName @b.ExpertLastName</td>
+                    <td dir="ltr">@b.ExpertPhoneNumber.ToPersianNum()</td>
+                    <td>@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
+                    <td>@b.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
+                    <td><span class="badge @(b.Status switch
+                                           {
+                                               BidStatusEnum.Accepted => "badge--completed",
+                                               BidStatusEnum.Rejected => "badge--cancelled",
+                                               _ => "badge--waiting" })">@Html.DisplayFor(_ => b.Status)</span></td>
+                    <td class="text-left">
+                        <a asp-area="Admin"
+                           asp-controller="Requests"
+                           asp-action="BidDetails"
+                           asp-route-id="@b.Id"
+                           class="btn btn--ghost btn--sm">مشاهده</a>
+                        @if (b.Status == BidStatusEnum.Pending)
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Requests"
+                                  asp-action="RejectBid"
+                                  asp-route-id="@b.Id"
+                                  asp-route-requestId="@Model.RequestInfo.Id"
+                                  method="post"
+                                  style="display: inline;">
+                                <button type="submit" class="btn btn--danger btn--sm" onclick="return confirm('آیا از رد این پیشنهاد اطمینان دارید؟')">رد کردن</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Area = "Admin",
+        Controller = "Requests",
+        Action = "RequestDetails",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["id"] = Model.RequestInfo.Id.ToString(),
+            ["search"] = Model.Search ?? "",
+        }
+    })
+</section>
+
+@section Scripts {
+    <script src="~/js/glightbox-init.js"></script>
+}

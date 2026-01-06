@@ -4365,3 +4365,79 @@ Select2 Custom Styles
     padding: var(--space-md);
     text-align: center;
 }
+
+
+
+/* ==========================================================================
+   Status Dropdown
+   ========================================================================== */
+.status-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.status-dropdown__toggle {
+    cursor: pointer;
+}
+
+.status-dropdown__menu {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    z-index: 100;
+    min-width: 180px;
+    padding: 0.5rem 0;
+    margin-bottom: 0.25rem;
+    background: var(--color-bg-card, #fff);
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+}
+
+.status-dropdown.is-open .status-dropdown__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.status-dropdown__item {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--color-text, #374151);
+    cursor: pointer;
+    transition: background 0.15s ease;
+}
+
+    .status-dropdown__item:hover {
+        background: var(--color-bg-hover, #f3f4f6);
+    }
+
+    .status-dropdown__item[data-status="receiving"]:hover {
+        background: #dbeafe;
+        color: #1d4ed8;
+    }
+
+    .status-dropdown__item[data-status="waiting"]:hover {
+        background: #fef3c7;
+        color: #b45309;
+    }
+
+    .status-dropdown__item[data-status="completed"]:hover {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .status-dropdown__item[data-status="cancelled"]:hover {
+        background: #fee2e2;
+        color: #dc2626;
+    }

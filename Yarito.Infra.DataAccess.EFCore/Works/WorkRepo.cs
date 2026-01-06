@@ -5,8 +5,11 @@ using Yarito.Domain.Core.Entities.Works;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 
 namespace Yarito.Infra.DataAccess.EFCore.Works;
+
 public class WorkRepo(AppDbContext _db) : IWorkRepo
 {
+    #region Query Methods
+
     public async Task<WorkDto?> GetByIdAsync(int workId, CancellationToken ct)
     {
         return await _db.Works
@@ -21,8 +24,12 @@ public class WorkRepo(AppDbContext _db) : IWorkRepo
             .FirstOrDefaultAsync(ct);
     }
 
+    #endregion
+
+    #region Command Methods
+
     public async Task<bool> AddAsync(WorkDto newWork, CancellationToken ct)
-    { 
+    {
         _db.Works.Add(new Work
         {
             Title = newWork.Title,
@@ -49,7 +56,27 @@ public class WorkRepo(AppDbContext _db) : IWorkRepo
         _db.ChangeTracker.Clear();
         return await _db.Works
             .Where(w => w.Id == workId && w.IsDeleted == false)
-            .ExecuteUpdateAsync(w => w
-                .SetProperty(work => work.IsDeleted, true), ct) > 0;
+            .ExecuteUpdateAsync(w => w.SetProperty(work => work.IsDeleted, true), ct) > 0;
     }
+
+    #endregion
+
+    #region Validation Methods
+
+    public async Task<bool> IsTitleExistsAsync(string title, CancellationToken ct)
+    {
+        return await _db.Works.AnyAsync(w => w.Title == title, ct);
+    }
+
+    public async Task<bool> IsTitleExistsAsync(string title, int excludeId, CancellationToken ct)
+    {
+        return await _db.Works.AnyAsync(w => w.Id != excludeId && w.Title == title, ct);
+    }
+
+    public async Task<bool> IsCategoryInUseAsync(int categoryId, CancellationToken ct)
+    {
+        return await _db.Works.AnyAsync(w => w.CategoryId == categoryId, ct);
+    }
+
+    #endregion
 }

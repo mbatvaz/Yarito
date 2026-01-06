@@ -1,0 +1,128 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models.ReviewsViewModel
+@{
+    Layout = "_Layout";
+}
+<!-- Page Header -->
+<div class="admin-page-header">
+    <h2>مدیریت کامنت‌ها</h2>
+</div>
+
+<!-- Filters -->
+<div class="admin-comments-filter-wrapper">
+    <section class="card admin-box">
+        <form class="admin-filter-bar admin-filter-bar--comments"
+              asp-area="Admin"
+              asp-controller="Reviews"
+              asp-action="Index"
+              method="get">
+            <div class="form-group form-group--search">
+                <label asp-for="Search" class="sr-only">جستجو</label>
+                <input asp-for="Search" type="text" placeholder="جستجوی متن کامنت..." value="@Model.Search">
+            </div>
+            <div class="form-group form-group--filter">
+                <label asp-for="Status" class="sr-only">وضعیت کامنت</label>
+                <select asp-for="Status">
+                    <option value="">همه</option>
+                    <option value="@ReviewStatusEnum.Pending" selected="@(Model.Status == ReviewStatusEnum.Pending)">در انتظار</option>
+                    <option value="@ReviewStatusEnum.Approved" selected="@(Model.Status == ReviewStatusEnum.Approved)">تایید شده</option>
+                    <option value="@ReviewStatusEnum.Rejected" selected="@(Model.Status == ReviewStatusEnum.Rejected)">رد شده</option>
+                </select>
+            </div>
+            <div class="admin-filter-bar__buttons">
+                <button type="submit" class="btn btn--primary">اعمال فیلتر</button>
+                <a asp-area="Admin"
+                   asp-controller="Reviews"
+                   asp-action="Index"
+                   class="btn btn--ghost">پاک کردن</a>
+            </div>
+        </form>
+    </section>
+</div>
+
+@if (Model.Reviews.Count > 0)
+{
+    <!-- Comments Cards -->
+    <div class="admin-comments-cards">
+        @foreach (var review in Model.Reviews)
+        {
+            <article class="card admin-box admin-comment-card">
+                <span class="badge @(review.ReviewStatus switch
+                                   {
+                                       ReviewStatusEnum.Approved => "badge--approved",
+                                       ReviewStatusEnum.Rejected => "badge--rejected",
+                                       _ => "badge--pending"
+                                   }) admin-comment-card__status">@Html.DisplayFor(_ => review.ReviewStatus)</span>
+                <div class="admin-comment-card__header">
+                    <span class="admin-comment-card__date">@review.CreateAt.CompleteShamsiDate("yyyy/mm/dd")</span>
+                    <div class="admin-comment-card__rating" aria-label="امتیاز @review.Rating از ۵">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="star @(i <= review.Rating ? "star--filled" : "star--empty")"></span>
+                        }
+                    </div>
+                    <span class="admin-comment-card__customer">@review.FirstName @review.LastName</span>
+                </div>
+                <p class="admin-comment-card__text">@(review.Comment ?? "بدون نظر")</p>
+                <div class="admin-comment-card__footer">
+                    <div class="admin-comment-card__links">
+                        <a asp-area="Admin"
+                           asp-controller="Requests"
+                           asp-action="RequestDetails"
+                           asp-route-id="@review.RequestId"
+                           class="btn btn--ghost btn--sm">جزئیات درخواست</a>
+                    </div>
+                    <div class="admin-comment-card__actions">
+                        @if (review.ReviewStatus != ReviewStatusEnum.Approved)
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Reviews"
+                                  asp-action="Approve"
+                                  asp-route-id="@review.ReviewId"
+                                  method="post"
+                                  style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn--primary btn--sm">تایید</button>
+                            </form>
+                        }
+                        @if (review.ReviewStatus != ReviewStatusEnum.Rejected)
+                        {
+                            <form asp-area="Admin"
+                                  asp-controller="Reviews"
+                                  asp-action="Reject"
+                                  asp-route-id="@review.ReviewId"
+                                  method="post"
+                                  style="display: inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn--danger btn--sm">رد</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </article>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Area = "Admin",
+        Controller = "Reviews",
+        Action = "Index",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["search"] = Model.Search ?? "",
+            ["status"] = Model.Status?.ToString() ?? ""
+        }
+    })
+}
+else
+{
+    <!-- Empty State -->
+    <div class="admin-empty-state">
+        <p>هیچ کامنتی یافت نشد.</p>
+    </div>
+}

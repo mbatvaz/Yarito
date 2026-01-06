@@ -12,6 +12,7 @@
     <meta name="description" content="پنل مدیریت یاریتو - داشبورد">
     <link rel="stylesheet" href="~/css/site.css">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css" />
 </head>
 
 <body>
@@ -68,7 +69,10 @@
                     </a>
                 </li>
                 <li>
-                        <a href="admin-requests.html" class="admin-sidebar__link @(controller == "Requests" ? "is-active" : "")">
+                    <a asp-area="Admin"
+                       asp-controller="Requests"
+                       asp-action="Index"
+                       class="admin-sidebar__link @(controller == "Requests" ? "is-active" : "")">
                         <div class="admin-sidebar__link-icon">
                             <img src="~/Images/Frontend/RequestsIcon.png" alt="">
                         </div>
@@ -76,7 +80,10 @@
                     </a>
                 </li>
                 <li>
-                        <a href="admin-comments.html" class="admin-sidebar__link @(controller == "Comments" ? "is-active" : "")">
+                    <a asp-area="Admin"
+                       asp-controller="Reviews"
+                       asp-action="Index"
+                       class="admin-sidebar__link @(controller == "Reviews" ? "is-active" : "")">
                         <div class="admin-sidebar__link-icon">
                             <img src="~/Images/Frontend/CommentsIcon.png" alt="">
                         </div>
@@ -107,9 +114,10 @@
         @RenderBody()
     </main>
 </div>
-    @await RenderSectionAsync("Scripts", required: false)
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 
 </html>

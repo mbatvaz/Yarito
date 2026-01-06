@@ -16,6 +16,7 @@ public class RequestReqDto : PageRequest
     public int? CustomerId { get; init; }
     public int? ExpertId { get; init; }
     public int? WorkId { get; init; }
+    public int? CityId { get; init; }
 
     public DateTime? From { get; init; }
     public DateTime? To { get; init; }
@@ -24,7 +25,6 @@ public class RequestReqDto : PageRequest
     public DateTime? PreferredTo { get; init; }
 
     public string? TextSearch { get; set; }
-    public string? City { get; set; }
 
     public SortRequest<RequestSortableEnum>? Sort { get; init; }
 }

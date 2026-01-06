@@ -58,4 +58,20 @@ public interface IBidRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه صفحه‌بندی شده از پیشنهادات</returns>
     Task<PagedResult<BidSummaryDto>> GetBidsSummaryListAsync(BidReqDto q, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت اطلاعات کامل پیشنهاد بر اساس شناسه.
+    /// </summary>
+    /// <param name="bidId">شناسه پیشنهاد</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>اطلاعات کامل پیشنهاد یا null در صورت عدم وجود</returns>
+    Task<BidFullDto?> GetBidFullByIdAsync(int bidId, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت جزئیات کامل یک پیشنهاد شامل اطلاعات مشتری، متخصص و درخواست.
+    /// </summary>
+    /// <param name="bidId">شناسه پیشنهاد</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>اطلاعات کامل پیشنهاد یا null در صورت عدم وجود</returns>
+    Task<BidDetailsDto?> GetBidDetailsAsync(int bidId, CancellationToken ct);
 }

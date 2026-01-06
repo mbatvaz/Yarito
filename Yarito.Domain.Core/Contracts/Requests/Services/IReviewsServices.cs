@@ -1,5 +1,6 @@
 ﻿using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.Contracts.Requests.Services;
 
@@ -8,6 +9,15 @@ namespace Yarito.Domain.Core.Contracts.Requests.Services;
 /// </summary>
 public interface IReviewsServices
 {
+    /// <summary>
+    /// تغییر وضعیت یک نظر.
+    /// </summary>
+    /// <param name="reviewId">شناسه نظر</param>
+    /// <param name="newStatus">وضعیت جدید</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
+    Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct);
+
     /// <summary>
     /// دریافت نظرات تایید شده برای نمایش در صفحه اصلی.
     /// </summary>

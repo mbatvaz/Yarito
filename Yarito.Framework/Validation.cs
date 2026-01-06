@@ -1,5 +1,5 @@
-﻿using Microsoft.Identity.Client;
-using System.Net.Mail;
+﻿using System.Net.Mail;
+using System.Text.RegularExpressions;
 
 namespace Yarito.Framework
 {
@@ -103,7 +103,22 @@ namespace Yarito.Framework
             var validFormat = new List<string> { ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp" };
             return !string.IsNullOrWhiteSpace(ext) && validFormat.Contains(ext);
         }
-        
+
+        public static string NormalizeText(string? input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return string.Empty;
+
+            var s = input.Trim();
+            s = Regex.Replace(s, @"\s+", " ");
+
+            s = s.Replace('ي', 'ی')
+                .Replace('ك', 'ک')
+                .Replace('\u200C', ' ');
+
+            return s;
+        }
+
         //public static bool IsValidProfileImage(Stream imageStream)
         //{
         //    if (!imageStream.CanRead)

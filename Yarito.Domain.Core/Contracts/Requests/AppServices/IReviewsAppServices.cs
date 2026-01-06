@@ -9,6 +9,22 @@ namespace Yarito.Domain.Core.Contracts.Requests.AppServices;
 public interface IReviewsAppServices
 {
     /// <summary>
+    /// تایید یک نظر.
+    /// </summary>
+    /// <param name="reviewId">شناسه نظر</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه عملیات</returns>
+    Task<Result<bool>> ApproveAsync(int reviewId, CancellationToken ct);
+
+    /// <summary>
+    /// رد یک نظر.
+    /// </summary>
+    /// <param name="reviewId">شناسه نظر</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه عملیات</returns>
+    Task<Result<bool>> RejectAsync(int reviewId, CancellationToken ct);
+
+    /// <summary>
     /// دریافت نظرات تایید شده برای نمایش در صفحه اصلی.
     /// </summary>
     /// <param name="request">پارامترهای جستجو</param>

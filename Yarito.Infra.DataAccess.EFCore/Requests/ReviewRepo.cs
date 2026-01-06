@@ -148,7 +148,8 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
                 Rating = r.Rating,
                 ReviewStatus = r.ReviewStatus,
                 Comment = r.Comment,
-                CreateAt = r.CreatedAt
+                CreateAt = r.CreatedAt,
+                RequestId = r.Request.Id
             }).ToListAsync(ct);
 
         return new PagedResult<ReviewFullDto>

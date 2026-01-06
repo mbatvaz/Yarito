@@ -1,5 +1,6 @@
 ﻿using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.Contracts.Requests.Services;
 
@@ -8,18 +9,43 @@ namespace Yarito.Domain.Core.Contracts.Requests.Services;
 /// </summary>
 public interface IRequestServices
 {
+    #region Query Methods
+
     /// <summary>
     /// دریافت تعداد کل درخواست‌ها.
     /// </summary>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>تعداد کل درخواست‌ها</returns>
     Task<int> GetCountAsync(CancellationToken ct);
+
+    /// <summary>
+    /// دریافت جزئیات کامل یک درخواست با شناسه.
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>اطلاعات کامل درخواست یا null در صورت عدم وجود</returns>
+    Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه درخواست‌ها با قابلیت صفحه‌بندی.
     /// </summary>
-    /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
-    /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه صفحه‌بندی شده از درخواست‌ها</returns>
     Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت لیست کارت‌های درخواست با قابلیت صفحه‌بندی.
+    /// </summary>
+    Task<PagedResult<RequestCardDto>> GetRequestsCardListAsync(RequestReqDto q, CancellationToken ct);
+
+    #endregion
+
+    #region Command Methods
+
+    /// <summary>
+    /// تغییر وضعیت یک درخواست.
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="newStatus">وضعیت جدید</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
+    Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct);
+
+    #endregion
 }

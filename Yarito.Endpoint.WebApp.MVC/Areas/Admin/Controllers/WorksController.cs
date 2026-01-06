@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Yarito.Domain.Core.Contracts.Works.AppServices;
@@ -11,9 +12,19 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
     [Area(nameof(Areas.Admin))]
     public class WorksController(
         ICategoryAppServices categoryAppServices,
-        IWorkAppServices workAppServices) : Controller
+        IWorkAppServices workAppServices,
+        IMapper mapper) : Controller
     {
-        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+        private void Notification<T>(Result<T> result)
+        {
+            var r = result.Status switch
+            {
+                ResultStatusEnum.Failure => Result<string>.Failure(result.Message),
+                ResultStatusEnum.Warning => Result<string>.Warning(result.Message),
+                _ => Result<string>.Success(result.Message),
+            };
+            TempData["Notification"] = JsonConvert.SerializeObject(r);
+        }
 
         public async Task<IActionResult> Create(CancellationToken ct)
         {
@@ -21,6 +32,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
             {
                 Categories = await categoryAppServices.GetJustCategoriesListAsync(ct)
             };
+
             return View("WorkForm", model);
         }
 
@@ -33,12 +45,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 return View("WorkForm", model);
             }
 
-            var result = await workAppServices.AddAsync(new WorkDto
-            {
-                Title = model.Title,
-                BasePrice = model.BasePrice,
-                CategoryId = model.CategoryId
-            }, ct);
+            var result = await workAppServices.AddAsync(mapper.Map<WorkDto>(model), ct);
 
             Notification(result);
 
@@ -53,22 +60,15 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
         {
             var result = await workAppServices.GetByIdAsync(id, ct);
 
+            Notification(result);
+
             if (result.Status != ResultStatusEnum.Success || result.Data is null)
-            {
-                Notification(Result<string>.Warning(result.Message));
                 return RedirectToAction("Index", "Categories", new { area = "Admin" });
-            }
 
-            var viewModel = new WorkFormViewModel
-            {
-                Id = result.Data.Id,
-                Title = result.Data.Title,
-                BasePrice = result.Data.BasePrice,
-                CategoryId = result.Data.CategoryId,
-                Categories = await categoryAppServices.GetJustCategoriesListAsync(ct)
-            };
+            var model = mapper.Map<WorkFormViewModel>(result.Data);
+            model.Categories = await categoryAppServices.GetJustCategoriesListAsync(ct);
 
-            return View("WorkForm", viewModel);
+            return View("WorkForm", model);
         }
 
         [HttpPost]
@@ -80,13 +80,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
                 return View("WorkForm", model);
             }
 
-            var result = await workAppServices.UpdateAsync(new WorkDto
-            {
-                Id = model.Id,
-                Title = model.Title,
-                BasePrice = model.BasePrice,
-                CategoryId = model.CategoryId
-            }, ct);
+            var result = await workAppServices.UpdateAsync(mapper.Map<WorkDto>(model), ct);
 
             Notification(result);
             return RedirectToAction("Index", "Categories", new { area = "Admin" });

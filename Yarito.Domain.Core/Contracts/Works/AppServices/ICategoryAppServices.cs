@@ -29,7 +29,7 @@ public interface ICategoryAppServices
     /// <param name="newCategory">اطلاعات دسته‌بندی جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<Result<string>> AddAsync(CategoryDto newCategory, CancellationToken ct);
+    Task<Result<CategoryDto>> AddAsync(CategoryDto newCategory, CancellationToken ct);
 
     /// <summary>
     /// دریافت یک دسته‌بندی بر اساس شناسه.
@@ -45,7 +45,7 @@ public interface ICategoryAppServices
     /// <param name="category">اطلاعات دسته‌بندی برای به‌روزرسانی</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<Result<string>> UpdateAsync(CategoryDto category, CancellationToken ct);
+    Task<Result<CategoryDto>> UpdateAsync(CategoryDto category, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم یک دسته‌بندی.
@@ -53,7 +53,12 @@ public interface ICategoryAppServices
     /// <param name="categoryId">شناسه دسته‌بندی</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<Result<string>> DeleteAsync(int categoryId, CancellationToken ct);
+    Task<Result<bool>> DeleteAsync(int categoryId, CancellationToken ct);
 
+    /// <summary>
+    /// دریافت لیست ساده دسته‌بندی‌ها (فقط شناسه و عنوان).
+    /// </summary>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>لیست دسته‌بندی‌ها با اطلاعات پایه</returns>
     Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct);
 }

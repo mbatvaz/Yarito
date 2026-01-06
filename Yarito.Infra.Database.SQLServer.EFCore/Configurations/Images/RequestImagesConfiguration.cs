@@ -38,7 +38,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage1Id,
-                ImgPath = "/images/requests/req1_img1_a7f3d8e2.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request1Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-25)
@@ -46,7 +46,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage2Id,
-                ImgPath = "/images/requests/req1_img2_b4e9c1f6.jpg",
+                ImgPath = "/images/request/2.jpg",
                 RequestId = SeedDataIds.Request1Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-25)
@@ -56,7 +56,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage3Id,
-                ImgPath = "/images/requests/req2_img1_c2d8a5b9.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request2Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-18)
@@ -66,7 +66,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage4Id,
-                ImgPath = "/images/requests/req3_img1_d9f6e3c7.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request3Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
@@ -74,7 +74,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage5Id,
-                ImgPath = "/images/requests/req3_img2_e5a8b4d1.jpg",
+                ImgPath = "/images/request/2.jpg",
                 RequestId = SeedDataIds.Request3Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
@@ -82,7 +82,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage6Id,
-                ImgPath = "/images/requests/req3_img3_f1c9d7e2.jpg",
+                ImgPath = "/images/request/3.jpg",
                 RequestId = SeedDataIds.Request3Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-12)
@@ -92,7 +92,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage7Id,
-                ImgPath = "/images/requests/req4_img1_g8b5f2a6.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request4Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-5)
@@ -100,7 +100,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage8Id,
-                ImgPath = "/images/requests/req4_img2_h3d7c9e4.jpg",
+                ImgPath = "/images/request/2.jpg",
                 RequestId = SeedDataIds.Request4Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-5)
@@ -110,7 +110,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage9Id,
-                ImgPath = "/images/requests/req5_img1_i6e2a8b5.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request5Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-3)
@@ -120,7 +120,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage10Id,
-                ImgPath = "/images/requests/req6_img1_j9f4c3d7.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request6Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-1)
@@ -128,7 +128,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage11Id,
-                ImgPath = "/images/requests/req6_img2_k2a5e8b1.jpg",
+                ImgPath = "/images/request/2.jpg",
                 RequestId = SeedDataIds.Request6Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-1)
@@ -138,7 +138,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage12Id,
-                ImgPath = "/images/requests/req7_img1_l7c9d2f6.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request7Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-12)
@@ -148,7 +148,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage13Id,
-                ImgPath = "/images/requests/req8_img1_m4e6a3b8.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request8Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddHours(-8)
@@ -158,7 +158,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage14Id,
-                ImgPath = "/images/requests/req10_img1_n8f5d7c2.jpg",
+                ImgPath = "/images/request/1.jpg",
                 RequestId = SeedDataIds.Request10Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-14)
@@ -166,7 +166,7 @@ public class RequestImagesConfiguration : IEntityTypeConfiguration<RequestImage>
             new RequestImage
             {
                 Id = SeedDataIds.RequestImage15Id,
-                ImgPath = "/images/requests/req10_img2_o1b9e4a6.jpg",
+                ImgPath = "/images/request/2.jpg",
                 RequestId = SeedDataIds.Request10Id,
                 IsDeleted = false,
                 CreatedAt = SeedDataIds.SeedDataBaseDate.AddDays(-14)
