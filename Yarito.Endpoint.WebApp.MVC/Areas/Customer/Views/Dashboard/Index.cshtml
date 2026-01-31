@@ -1,6 +1,129 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Framework
+@model Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models.DashboardViewModel
+
 @{
+    Layout = "_Layout";
 }
-پنل مشتری
+<section class="profile-main">
+<!-- Profile Incomplete Alert -->
+@if (!Model.UserInfo.IsInfoComplete)
+{
+    <div class="profile-alert">
+        <div class="profile-alert__icon">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+        </div>
+        <div class="profile-alert__content">
+            <h4 class="profile-alert__title">اطلاعات پروفایل شما کامل نیست!</h4>
+            <p class="profile-alert__text">برای استفاده کامل از خدمات، لطفاً اطلاعات پروفایل خود را تکمیل کنید.</p>
+        </div>
+        <div class="profile-alert__action">
+            <a href="#" class="btn btn--sm">تکمیل پروفایل</a>
+        </div>
+    </div>
+}
+
+<!-- Top 3 Cards Row -->
+<div class="dashboard-cards-row">
+    <!-- Balance Card -->
+    <div class="card dashboard-card">
+        <h3 class="dashboard-card__title">موجودی حساب</h3>
+        <p class="dashboard-card__amount">@Model.UserInfo.WalletBalance.ToString("N0").ToPersianNum() <span class="dashboard-card__currency">تومان</span></p>
+        <a href="#" class="btn btn--primary btn--sm">افزایش موجودی</a>
+    </div>
+
+    <!-- New Request Card -->
+    <div class="card dashboard-card">
+        <h3 class="dashboard-card__title">ثبت درخواست جدید</h3>
+        <p class="dashboard-card__desc muted">درخواست خدمات فنی ثبت کنید</p>
+        @if (Model.UserInfo.IsInfoComplete)
+        {
+            <a asp-area="Customer"
+               asp-controller="CustomerRequest"
+               asp-action="NewRequest"
+               class="btn btn--primary btn--sm">ثبت درخواست</a>
+        }
+        else
+        {
+            <p class="profile-alert__title">ابتدا اطلاعات خود را تکمیل کنید</p>
+        }
+    </div>
+
+    <!-- Request History Card -->
+    <div class="card dashboard-card">
+        <h3 class="dashboard-card__title">تاریخچه درخواست‌ها</h3>
+        <p class="dashboard-card__desc muted">مشاهده درخواست‌های قبلی</p>
+        <a href="#" class="btn btn--secondary btn--sm">مشاهده</a>
+    </div>
+</div>
+
+<!-- User Requests List -->
+<div class="card dashboard-card dashboard-card--large">
+    <div class="dashboard-card__header">
+        <h3 class="dashboard-card__title">درخواست‌های فعال</h3>
+    </div>
+    @if (Model.ActiveRequests.Count == 0)
+    {
+        <!-- Empty State (hidden when has requests) -->
+        <div class="requests-empty-state">
+            <div class="requests-empty-state__icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                    <line x1="9" y1="15" x2="15" y2="15"></line>
+                </svg>
+            </div>
+            <h4 class="requests-empty-state__title">هنوز درخواستی ثبت نکرده‌اید</h4>
+        </div>
+    }
+    else
+    {
+        <div class="requests-table-wrapper">
+            <table class="requests-table">
+                <thead>
+                <tr>
+                    <th>کد درخواست</th>
+                    <th>عنوان</th>
+                    <th>سرویس</th>
+                    <th>تاریخ ثبت</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var r in Model.ActiveRequests)
+                {
+                    <tr>
+                        <td><a href="#">#@r.Id.ToString().ToPersianNum()</a></td>
+                        <td>@r.Title</td>
+                        <td>@r.ServicesTitle</td>
+                        <td>@r.CreateAt.CompleteShamsiDate("yyyy/mm/dd")</td>
+                        <td><span class="badge @(r.Status switch
+                                               {
+                                                   RequestStatusEnum.Pending => "badge--waiting",
+                                                   RequestStatusEnum.InProgress => "badge--receiving",
+                                                   RequestStatusEnum.Completed => "badge--completed",
+                                                   _ => "badge--cancelled"
+                                               })">@Html.DisplayFor(_ => r.Status)</span></td>
+                        <td><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <!-- Request Limit Notice -->
+    <div class="requests-limit-notice">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>هر کاربر می‌تواند به صورت همزمان حداکثر <strong>۵ درخواست فعال</strong> داشته باشد.</span>
+    </div>
+</div>
+</section>

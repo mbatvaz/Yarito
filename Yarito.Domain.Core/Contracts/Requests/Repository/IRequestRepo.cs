@@ -28,6 +28,13 @@ public interface IRequestRepo
     Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
 
     /// <summary>
+    /// اطلاعات مخصوص ثبت موفق یک درخواست را باز میگرداند
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>درصورت وجود اطلاعات لازم در غیر این صورت null</returns>
+    Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct);
+    /// <summary>
     /// دریافت لیست خلاصه درخواست‌ها با قابلیت صفحه‌بندی و فیلتر.
     /// </summary>
     /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
@@ -50,10 +57,10 @@ public interface IRequestRepo
     /// <summary>
     /// افزودن یک درخواست جدید به دیتابیس.
     /// </summary>
-    /// <param name="newRequest">موجودیت درخواست جدید</param>
+    /// <param name="dto">موجودیت درخواست جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
-    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AddAsync(Request newRequest, CancellationToken ct);
+    /// <returns>بازگرداند ایدی درخواست در صورت موفقیت</returns>
+    Task<int> AddAsync(RequestNewDto dto, CancellationToken ct);
 
     /// <summary>
     /// به‌روزرسانی اطلاعات یک درخواست موجود.
@@ -82,4 +89,7 @@ public interface IRequestRepo
     Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct);
 
     #endregion
+
+
+    Task<int> CountOfOpenRequestForCustomerIdAsync(int customerId, CancellationToken ct);
 }

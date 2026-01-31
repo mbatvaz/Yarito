@@ -1,18 +1,31 @@
-﻿using Yarito.Domain.Core.Contracts.Requests.AppServices;
+﻿using Yarito.Domain.Core.Contracts._Common.Services;
+using Yarito.Domain.Core.Contracts.Images.Services;
+using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Services;
+using Yarito.Domain.Core.Contracts.Users.Services;
+using Yarito.Domain.Core.Contracts.Works.Repository;
+using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.AppServices.Requests
 {
     public class RequestAppServices(
-        IRequestServices requestServices) : IRequestAppServices
+        IRequestServices requestServices,
+        IAppUserServices appUserServices,
+        IFileServices fileServices,
+        IImageServices imageServices,
+        IWorkServices workServices) : IRequestAppServices
     {
         #region Query Methods
 
         public async Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
             => await requestServices.GetRequestFullByIdAsync(requestId, ct);
+
+        public async Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct)
+            => await requestServices.GetRequestSuccessInfoByIdAsync(requestId, ct);
 
         public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct)
             => await requestServices.GetRequestsSummaryListAsync(q, ct);
@@ -28,5 +41,74 @@ namespace Yarito.Domain.AppServices.Requests
             => await requestServices.ChangeStatusAsync(requestId, newStatus, ct);
 
         #endregion
+
+        public async Task<Result<int>> AddNewRequest(RequestNewDto dto, CancellationToken ct)
+        {
+            var validationResult = requestServices.IsPropertyValid(dto);
+            if (validationResult.Status != ResultStatusEnum.Success)
+                return Result<int>.Warning(validationResult.Message);
+
+            var requestCountResult = await requestServices.CountOfOpenRequestForCustomerIdAsync(dto.UserId, ct);
+            if(requestCountResult.Status != ResultStatusEnum.Success)
+                return Result<int>.Warning(requestCountResult.Message);
+
+            var workValidationResult = await workServices.GetByIdAsync(dto.WorkId, ct);
+            if (workValidationResult.Status != ResultStatusEnum.Success || workValidationResult.Data is null)
+                return Result<int>.Warning(workValidationResult.Message);
+
+            var work = workValidationResult.Data;
+            var finalProposedPrice = dto.ProposedPrice ?? work.BasePrice;
+            if (dto.ProposedPrice.HasValue)
+            {
+                var priceCheck = requestServices.IsProposedPriceAllow(finalProposedPrice, work);
+                if (priceCheck.Status != ResultStatusEnum.Success)
+                    return Result<int>.Warning(priceCheck.Message);
+            }
+            dto.ProposedPrice = finalProposedPrice;
+
+            if (dto.UseProfileAddress)
+            {
+                var addressResult = await appUserServices.GetCustomerAddressAsync(dto.UserId, ct);
+                if(addressResult.Status != ResultStatusEnum.Success || addressResult.Data is null)
+                    return Result<int>.Warning(addressResult.Message);
+                dto.Address = addressResult.Data;
+            }
+            
+            var addNewRequestResult = await requestServices.Add(dto, ct);
+            var failureMessage = addNewRequestResult.Message;
+            try
+            {
+                if (addNewRequestResult.Status != ResultStatusEnum.Success)
+                    return Result<int>.Failure(addNewRequestResult.Message);
+
+                if (dto.Images.Count == 0)
+                    return Result<int>.Success(addNewRequestResult.Message, addNewRequestResult.Data);
+
+                foreach (var i in dto.Images)
+                {
+                    i.FileName = await fileServices.SaveImageOnDiskAsync(i.ImageStream, "Images/Request", i.FileFormat, ct);
+                }
+
+                var addRequestImageResult = await imageServices.AddRangeAsync(dto.Images, addNewRequestResult.Data, ct);
+                if (addRequestImageResult.Status != ResultStatusEnum.Success)
+                {
+                    failureMessage = addRequestImageResult.Message;
+                    throw new Exception();
+                }
+
+                return Result<int>.Success(addNewRequestResult.Message, addNewRequestResult.Data);
+            }
+            catch (Exception ex)
+            {
+                await requestServices.ChangeStatusAsync(addNewRequestResult.Data, RequestStatusEnum.Cancelled, ct);
+                foreach (var i in dto.Images)
+                {
+                    await fileServices.DeleteImageOnDiskAsync(i.FileName, ct);
+                }
+
+                await imageServices.RemoveRequestImagesAsync(addNewRequestResult.Data, ct);
+                return Result<int>.Failure(failureMessage);
+            }
+        }
     }
 }

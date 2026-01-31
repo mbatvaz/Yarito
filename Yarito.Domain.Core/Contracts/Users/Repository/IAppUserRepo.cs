@@ -1,6 +1,7 @@
 ﻿using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Entities.Users;
 
 namespace Yarito.Domain.Core.Contracts.Users.Repository;
 
@@ -15,7 +16,7 @@ public interface IAppUserRepo
     /// <param name="userId">شناسه کاربر</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نام کامل کاربر یا null در صورت عدم یافتن</returns>
-    Task<string?> GetFullNameByIdAsync(int userId, CancellationToken ct);
+    Task<AppUserSummaryDto?> GetAppUserSummaryByIdAsync(int userId, CancellationToken ct);
 
     /// <summary>
     /// ثبت کاربر جدید در دیتابیس.
@@ -24,6 +25,15 @@ public interface IAppUserRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> AddAsync(RegisterDto dto, CancellationToken ct);
+
+    /// <summary>
+    /// بروزرسانی اطلاعات کاربر.
+    /// </summary>
+    /// <param name="userId">شناسه کاربر</param>
+    /// <param name="dto">اطلاعات بروزرسانی</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
+    Task<bool> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct);
 
     /// <summary>
     /// دریافت آمار تعداد کاربران (مشتری و متخصص).
@@ -88,4 +98,20 @@ public interface IAppUserRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>true در صورت وجود کاربر</returns>
     Task<bool> IsExistsAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// بررسی ثبت شهر برای کاربر بر اساس شناسه.
+    /// </summary>
+    /// <param name="userId">شناسه کاربر</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>true در صورت ثبت شهر</returns>
+    Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// آدرس کاربر رو بر می گرداند
+    /// </summary>
+    /// <param name="userId">شناسه کاربر</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>در صورت وجود آدرس مقدار آدرس در غیر این صورت null</returns>
+    Task<string?> GetCustomerAddressAsync(int userId, CancellationToken ct);
 }

@@ -19,7 +19,7 @@ public class IdentityUserConfiguration : IEntityTypeConfiguration<IdentityUser<i
             Email = "admin@yarito.com",
             NormalizedEmail = "ADMIN@YARITO.COM",
             EmailConfirmed = true,
-            PhoneNumber = "09991234567",
+            PhoneNumber = "09214507392",
             PhoneNumberConfirmed = true,
             SecurityStamp = "1K2L3M4N5O6P7Q8R9S0T",
             ConcurrencyStamp = "K1L2M3N4-O5P6-Q7R8-S9T0-U1V2W3X4Y5Z6"

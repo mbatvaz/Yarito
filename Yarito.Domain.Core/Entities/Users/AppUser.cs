@@ -34,7 +34,7 @@ public abstract class AppUser : BaseEntity
     public string? Email { get; set; }
     public required string PhoneNumber { get; init; }
     public decimal WalletBalance { get; set; } = 0;
-    public string? ProfileImgPath { get; set; }
+    public string ProfileImgPath { get; set; } = "~/Images/Profile/default.png";
 
     // Foreign Keys
     public int? CityId { get; set; }

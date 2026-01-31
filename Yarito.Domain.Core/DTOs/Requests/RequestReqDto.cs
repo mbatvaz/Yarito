@@ -8,7 +8,8 @@ namespace Yarito.Domain.Core.DTOs.Requests;
 /// </summary>
 public class RequestReqDto : PageRequest
 {
-    public RequestStatusEnum? Status { get; init; }
+    public RequestStatusEnum? FirstStatus { get; init; }
+    public RequestStatusEnum? SecondStatus { get; init; }
 
     public decimal? MinProposedPrice { get; init; }
     public decimal? MaxProposedPrice { get; init; }

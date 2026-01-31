@@ -39,19 +39,29 @@ namespace Yarito.Domain.AppServices.Users
                 return Result<string>.Failure("شماره موبایل یا رمز عبور وارد شده اشتباه است");
 
             var role = (await userManager.GetRolesAsync(user)).SingleOrDefault();
+
             if (role is null)
             {
                 await signInManager.SignOutAsync();
                 return Result<string>.Failure("مشکلی برای حساب کاربری شما رخ داده است. با پشتیبانی تماس بگیرید.");
             }
-
+            
             var principal = await signInManager.CreateUserPrincipalAsync(user);
             var identity = (ClaimsIdentity)principal.Identity!;
 
             if (role != "Admin")
             {
-                var userFullName = await appUserServices.GetNameByIdAsync(user.Id, ct);
-                identity.AddClaim(new Claim("FullName", userFullName));
+                var userInfoResult = await appUserServices.GetAppUserSummaryByIdAsync(user.Id, ct);
+                if (userInfoResult is { Status: ResultStatusEnum.Success, Data: not null })
+                {
+                    identity.AddClaim(new Claim("FullName", $"{userInfoResult.Data.FirstName} {userInfoResult.Data.LastName}"));
+                    identity.AddClaim(new Claim("ProfileImage", userInfoResult.Data.ProfileImgPath));
+                }
+                else
+                {
+                    await signInManager.SignOutAsync();
+                    return Result<string>.Failure("امکان ورود به حساب کاربری وجود ندارد");
+                }
             }
 
             await httpContextAccessor.HttpContext!.SignInAsync(

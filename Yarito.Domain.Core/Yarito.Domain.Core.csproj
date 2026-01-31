@@ -8,10 +8,7 @@
 
   <ItemGroup>
     <Folder Include="Contracts\Images\AppServices\" />
-    <Folder Include="Contracts\Images\Repository\" />
-    <Folder Include="Contracts\Images\Services\" />
     <Folder Include="Contracts\_Common\AppServices\" />
-    <Folder Include="DTOs\Images\" />
   </ItemGroup>
 
 </Project>

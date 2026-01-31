@@ -1,0 +1,127 @@
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models.CustomerFormViewModel
+@{
+    Layout = "_Layout";
+}
+<section class="profile-main">
+<div class="edit-container edit-container--wide">
+    <form asp-area="Customer" asp-controller="Dashboard" asp-action="CustomerForm" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="CurrentProfileImagePath" />
+        <input type="hidden" asp-for="DeleteProfileImage" id="DeleteProfileImage" />
+
+        <!-- Card A: Profile Image Section -->
+        <div class="card edit-card">
+            <h2 class="edit-card__title">تصویر پروفایل</h2>
+            <div class="edit-card__avatar-section">
+                <!-- Avatar Preview -->
+                <div class="avatar-preview" id="avatarPreview">
+                    <img src="@(Model.CurrentProfileImagePath ?? "/Images/Profile/default.png")" alt="پیش‌نمایش تصویر" id="avatarImage">
+                </div>
+
+                <!-- Upload Controls -->
+                <div class="edit-card__avatar-upload">
+                    <label class="avatar-upload-btn" for="profileImage">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>انتخاب تصویر جدید</span>
+                        <input asp-for="ProfileImage"
+                               type="file"
+                               id="profileImage"
+                               accept="image/*">
+                    </label>
+                    <button type="button" id="removeProfileImageBtn" class="btn btn--text btn--danger" style="margin-top: 0.5rem; font-size: 0.9rem; color: #ef4444;">حذف تصویر پروفایل</button>
+                    <p class="form-help">فرمت‌های مجاز: JPG، PNG، WebP - حداکثر ۲ مگابایت</p>
+                    <span asp-validation-for="ProfileImage" class="validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card B: Editable Fields Section -->
+        <div class="card edit-card">
+            <h2 class="edit-card__title">اطلاعات کاربری</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FirstName">نام</label>
+                    <input asp-for="FirstName"
+                           type="text"
+                           placeholder="نام خود را وارد کنید"
+                           autocomplete="given-name">
+                    <span asp-validation-for="FirstName" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName">نام خانوادگی</label>
+                    <input asp-for="LastName"
+                           type="text"
+                           placeholder="نام خانوادگی خود را وارد کنید"
+                           autocomplete="family-name">
+                    <span asp-validation-for="LastName" class="validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">ایمیل</label>
+                <input asp-for="Email"
+                       type="email"
+                       dir="ltr"
+                       placeholder="ایمیل خود را وارد کنید"
+                       autocomplete="email">
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Address">آدرس</label>
+                <textarea asp-for="Address"
+                          rows="3"
+                          placeholder="آدرس کامل خود را وارد کنید"
+                          autocomplete="street-address"></textarea>
+                <span asp-validation-for="Address" class="validation-error"></span>
+            </div>
+
+            <!-- Phone and City -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">شماره موبایل</label>
+                    <input asp-for="PhoneNumber"
+                           type="tel"
+                           dir="ltr"
+                           readonly
+                           class="input--readonly"
+                           aria-describedby="phoneHelp">
+                    <p class="form-help" id="phoneHelp">شماره موبایل قابل ویرایش نیست</p>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CityId">شهر</label>
+                    <select asp-for="CityId" id="city" class="form-control" style="width: 100%;">
+                        <option value="" disabled>انتخاب شهر</option>
+                        @if (Model.CityList != null)
+                        {
+                            @foreach (var c in Model.CityList.Where(c => c != null))
+                            {
+                                <option value="@c!.Id" selected="@(Model.CityId == c.Id)">@c.Name - @c.ParentName</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="CityId" class="validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="edit-actions">
+            <a asp-action="Index" class="btn btn--secondary">بازگشت</a>
+            <button type="submit" class="btn btn--primary">ثبت تغییرات</button>
+        </div>
+    </form>
+</div>
+</section>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/city-select2.js"></script>
+    <script src="~/js/profile-preview.js"></script>
+}

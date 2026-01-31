@@ -13,7 +13,16 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
     public class AuthenticationController(
         IAuthenticationAppServices authenticationAppServices) : Controller
     {
-        private void Notification(Result<string> r) => TempData["Notification"] = JsonConvert.SerializeObject(r);
+        private void Notification<T>(Result<T> result)
+        {
+            var r = result.Status switch
+            {
+                ResultStatusEnum.Failure => Result<string>.Failure(result.Message),
+                ResultStatusEnum.Warning => Result<string>.Warning(result.Message),
+                _ => Result<string>.Success(result.Message),
+            };
+            TempData["Notification"] = JsonConvert.SerializeObject(r);
+        }
 
         public IActionResult Login()
         {
@@ -35,19 +44,13 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Account.Controllers
 
             Notification(result);
 
-            if (result.Status == ResultStatusEnum.Success)
+            return result.Data switch
             {
-                if (result.Data == "Admin")
-                    return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
-
-                if (result.Data == "Customer")
-                    return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
-
-                if (result.Data == "Expert")
-                    return RedirectToAction("Index", "Dashboard", new { area = "Expert" });
-            }
-
-            return View(model);
+                "Customer" => RedirectToAction("Index", "Dashboard", new { area = "Customer" }),
+                "Expert" => RedirectToAction("Index", "Dashboard", new { area = "Expert" }),
+                "Admin" => RedirectToAction("Index", "Dashboard", new { area = "Admin" }),
+                _ => View(model)
+            };
         }
 
         public IActionResult Register()

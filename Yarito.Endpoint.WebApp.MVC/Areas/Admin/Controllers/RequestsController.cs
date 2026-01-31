@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Yarito.Domain.Core.Contracts.Cities.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
@@ -7,10 +8,13 @@ using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models;
+using Yarito.Endpoint.WebApp.MVC.Filters;
 
 namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers;
 
 [Area(nameof(Areas.Admin))]
+[Authorize(Roles = "Admin")]
+[LogActivity]
 public class RequestsController(
     IRequestAppServices requestAppServices,
     IBidAppServices bidAppServices,
@@ -34,7 +38,7 @@ public class RequestsController(
         {
             PageSize = 6,
             TextSearch = search,
-            Status = status,
+            FirstStatus = status,
             CityId = cityId,
             Page = page
         }, ct);
@@ -55,7 +59,7 @@ public class RequestsController(
         return View(model);
     }
 
-    public async Task<IActionResult> RequestDetails(int id, CancellationToken ct, int page = 1, string? search = null)
+    public async Task<IActionResult> RequestDetails(int id, CancellationToken ct)
     {
         var request = await requestAppServices.GetRequestFullByIdAsync(id, ct);
 
@@ -68,8 +72,8 @@ public class RequestsController(
         var bidsResult = await bidAppServices.GetBidsSummaryListAsync(new BidReqDto
         {
             RequestId = id,
-            TextSearch = search,
-            Page = page,
+            TextSearch = null,
+            Page = 1,
             PageSize = 10
         }, ct);
 
@@ -80,7 +84,7 @@ public class RequestsController(
             RequestImagesPath = request.RequestImagesPath.ToList(),
             AcceptedBid = request.AcceptedBid,
             BidList = bidsResult.Items,
-            Search = search,
+            Search = null,
             Page = bidsResult.Page,
             PageSize = bidsResult.PageSize,
             TotalCount = bidsResult.TotalCount,

@@ -19,7 +19,7 @@ public interface IAppUserServices
     /// <summary>
     /// دریافت نام کاربر بر اساس شناسه.
     /// </summary>
-    Task<string> GetNameByIdAsync(int userId, CancellationToken ct);
+    Task<Result<AppUserSummaryDto>> GetAppUserSummaryByIdAsync(int userId, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه کاربران با قابلیت صفحه‌بندی.
@@ -46,6 +46,11 @@ public interface IAppUserServices
     Task<Result<RegisterDto>> AddAsync(RegisterDto dto, CancellationToken ct);
 
     /// <summary>
+    /// بروزرسانی اطلاعات کاربر.
+    /// </summary>
+    Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct);
+
+    /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.
     /// </summary>
     Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct);
@@ -60,6 +65,11 @@ public interface IAppUserServices
     Result<RegisterDto> IsPropertyValid(RegisterDto dto);
 
     /// <summary>
+    /// اعتبارسنجی ویژگی‌های کاربر برای بروزرسانی.
+    /// </summary>
+    Result<AppUserUpdateDto> IsPropertyValid(AppUserUpdateDto dto);
+
+    /// <summary>
     /// بررسی تکراری بودن ایمیل.
     /// </summary>
     Task<Result<RegisterDto>> IsEmailDuplicationAsync(string email, CancellationToken ct, int? userId = null);
@@ -68,6 +78,17 @@ public interface IAppUserServices
     /// بررسی وجود کاربر.
     /// </summary>
     Task<bool> IsExistsAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// بررسی ثبت شهر محل سکونت برای کاربر
+    /// </summary>
+    Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
+
+
+    /// <summary>
+    /// نتیجه جستجوی آدرس مشتری را بر میگرداند
+    /// </summary>
+    Task<Result<string>> GetCustomerAddressAsync(int userId, CancellationToken ct);
 
     #endregion
 }

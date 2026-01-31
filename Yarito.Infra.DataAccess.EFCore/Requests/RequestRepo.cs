@@ -3,12 +3,11 @@ using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.Entities._Common;
-using Yarito.Domain.Core.Entities.Requests;
-using Yarito.Domain.Core.Entities.Users;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Domain.Core.Enums.Users;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
+using Request = Yarito.Domain.Core.Entities.Requests.Request;
 
 namespace Yarito.Infra.DataAccess.EFCore.Requests;
 
@@ -20,8 +19,12 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         var query = _db.Requests.AsNoTracking().AsQueryable();
 
         // Status filter
-        if (q.Status is not null)
-            query = query.Where(r => r.Status == q.Status);
+        if (q.FirstStatus is not null && q.SecondStatus is not null)
+            query = query.Where(r => r.Status == q.FirstStatus || r.Status == q.SecondStatus);
+        else if (q.FirstStatus is not null)
+            query = query.Where(r => r.Status == q.FirstStatus);
+        else if (q.SecondStatus is not null)
+            query = query.Where(r => r.Status == q.SecondStatus);
 
         // Price filters
         if (q.MinProposedPrice is not null)
@@ -104,10 +107,25 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             .CountAsync(ct);
     }
     
-    public async Task<bool> AddAsync(Request newRequest, CancellationToken ct)
+    public async Task<int> AddAsync(RequestNewDto dto, CancellationToken ct)
     {
-        _db.Requests.Add(newRequest);
-        return await _db.SaveChangesAsync(ct) > 0;
+        var request = new Request()
+        {
+            Title = dto.Title,
+            Address = dto.Address!,
+            Status = RequestStatusEnum.Pending,
+            CustomerId = dto.UserId,
+            Description = dto.Description,
+            PreferredVisitDateTime = dto.PreferredVisitDateTime,
+            ProposedPrice = dto.ProposedPrice,
+            WorkId = dto.WorkId,
+            
+        };
+        _db.Requests.Add(request);
+
+        return await _db.SaveChangesAsync(ct) <= 0 
+            ? 0 
+            : request.Id;
     }
 
     public async Task<bool> UpdateAsync(Request newRequest, CancellationToken ct)
@@ -201,6 +219,20 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         };
     }
 
+    public async Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct)
+    {
+        return await _db.Requests.AsNoTracking()
+            .Where(r => r.Id == requestId)
+            .Select(r => new RequestSuccessDto()
+            {
+                Title = r.Title,
+                Status = r.Status,
+                Address = r.Address,
+                Date = r.CreatedAt,
+                WorkTitle = r.Work.Title
+            }).FirstOrDefaultAsync(ct);
+    }
+
     public async Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
     {
         return await _db.Requests.AsNoTracking()
@@ -244,5 +276,14 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                 RequestImagesPath = r.RequestImages.Select(i => i.ImgPath).ToList()
             })
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<int> CountOfOpenRequestForCustomerIdAsync(int customerId, CancellationToken ct)
+    {
+        return await _db.Requests.CountAsync(r =>
+                r.CustomerId == customerId &&
+                (r.Status == RequestStatusEnum.InProgress ||
+                 r.Status == RequestStatusEnum.Pending),
+            ct);
     }
 }

@@ -11,8 +11,4 @@
     <ProjectReference Include="..\Yarito.Framework\Yarito.Framework.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Images\" />
-  </ItemGroup>
-
 </Project>

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Yarito.Domain.Core.Contracts.Cities.AppServices;
@@ -10,10 +11,13 @@ using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Users;
 using Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models;
+using Yarito.Endpoint.WebApp.MVC.Filters;
 
 namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers
 {
     [Area(nameof(Areas.Admin))]
+    [Authorize(Roles = "Admin")]
+    [LogActivity]
     public class UsersController(
         IAppUserAppServices appUserAppServices,
         IAuthenticationAppServices authenticationAppServices,

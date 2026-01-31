@@ -72,10 +72,20 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
 
     #region Query Methods
 
-    public async Task<string?> GetFullNameByIdAsync(int userId, CancellationToken ct)
+    public async Task<AppUserSummaryDto?> GetAppUserSummaryByIdAsync(int userId, CancellationToken ct)
     {
         return await _db.AppUsers.Where(c => c.Id == userId)
-            .Select(c => $"{c.FirstName} {c.LastName}")
+            .Select(au => new AppUserSummaryDto()
+            {
+                Id = au.Id,
+                FirstName = au.FirstName,
+                LastName = au.LastName,
+                ProfileImgPath = au.ProfileImgPath,
+                PhoneNumber = au.PhoneNumber,
+                WalletBalance = au.WalletBalance,
+                IsInfoComplete = au.CityId.HasValue,
+                UserType = au is Customer ? UserTypeEnum.Customer : UserTypeEnum.Expert
+            })
             .FirstOrDefaultAsync(ct);
     }
 
@@ -109,6 +119,25 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
+    public async Task<bool> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct)
+    {
+        var user = await _db.AppUsers.FindAsync([userId], ct);
+        if (user == null) return false;
+
+        if (!string.IsNullOrEmpty(dto.FirstName)) user.FirstName = dto.FirstName;
+        if (!string.IsNullOrEmpty(dto.LastName)) user.LastName = dto.LastName;
+        if (dto.Email != null) user.Email = dto.Email;
+        if (dto.CityId.HasValue) user.CityId = dto.CityId;
+        if (!string.IsNullOrEmpty(dto.ProfileImgPath)) user.ProfileImgPath = dto.ProfileImgPath;
+
+        if (user is Customer customer && !string.IsNullOrEmpty(dto.Address))
+        {
+            customer.Address = dto.Address;
+        }
+
+        return await _db.SaveChangesAsync(ct) > 0;
+    }
+
     public async Task<AppUserStaticsDto?> GetUserCountAsync(CancellationToken ct)
     {
         return await _db.AppUsers.AsNoTracking()
@@ -135,6 +164,8 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
                 LastName = au.LastName,
                 ProfileImgPath = au.ProfileImgPath,
                 PhoneNumber = au.PhoneNumber,
+                WalletBalance = au.WalletBalance,
+                IsInfoComplete = au.CityId.HasValue,
                 UserType = au is Customer ? UserTypeEnum.Customer : UserTypeEnum.Expert
             }).ToListAsync(ct);
 
@@ -214,6 +245,7 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
 
     public async Task<bool> SoftDeleteAsync(int userId, CancellationToken ct)
     {
+        _db.ChangeTracker.Clear();
         return await _db.AppUsers
             .Where(u => u.Id == userId)
             .ExecuteUpdateAsync(s
@@ -239,5 +271,18 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
         return await _db.AppUsers.AnyAsync(u => u.Id == userId, ct);
     }
 
+    public async Task<bool> IsCitySetAsync(int userId, CancellationToken ct)
+    {
+        return await _db.AppUsers.AnyAsync(u => u.Id == userId && u.City != null, ct);
+    }
+
+    public async Task<string?> GetCustomerAddressAsync(int userId, CancellationToken ct)
+    {
+        return await _db.AppUsers
+            .OfType<Customer>()
+            .Where(u => u.Id == userId)
+            .Select(u => u.Address)
+            .FirstOrDefaultAsync(ct);
+    }
     #endregion
 }

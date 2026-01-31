@@ -5,6 +5,13 @@ namespace Yarito.Framework
 {
     public static class Validation
     {
+        /// <summary>
+        /// درستی ساختار شماره موبایل را بررسی میکند
+        /// شماره موبایل نباید null باشد
+        /// باید با 09 شروع شود و طول آن دقیقا 11 کاراکتر باشد
+        /// </summary>
+        /// <param name="phoneNumber">شماره موبایل  وارد شده</param>
+        /// <returns>مقدار True در صورتی درستی ساختار شماره موبایل</returns>
         public static bool IsValidPhoneNumber(string phoneNumber)
         {
             if (string.IsNullOrWhiteSpace(phoneNumber))
@@ -17,12 +24,18 @@ namespace Yarito.Framework
             return digitsOnly.Length == 11;
         }
 
+        /// <summary>
+        /// درستی ساختار متن های را بررسی میکند
+        /// مقدار متن نباید خالی یا NULL باشد
+        /// و پس از حذف فضاهای خالی اضافی طول آن نباید از طول تعریف شده بیشتر شود
+        /// </summary>
+        /// <param name="text">متن مورد نظر</param>
+        /// <param name="len">حداکثر طول مجاز</param>
+        /// <returns>مقدار true در صورتی که درستی ساختار متن</returns>
         public static bool IsValidText(string text, int len)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return false;
-
-            text = text.Trim();
 
             if (text.Length > len)
                 return false;
@@ -30,12 +43,17 @@ namespace Yarito.Framework
             return true;
         }
 
+        /// <summary>
+        /// اعتبار سنجی ساختار نام ها
+        /// نام باید بعد از حذف فضا های خالی اضافی حداکثر 50 کاراکتر باشد
+        /// و فقط ساختار حروفات فارسی و انگلیسی مجاز است
+        /// </summary>
+        /// <param name="name">نام مورد نظر</param>
+        /// <returns>مقدار True در صورتی که نام ساختار صحیحی داشته باشد</returns>
         public static bool IsValidName(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
                 return false;
-
-            name = name.Trim();
 
             if (name.Length > 50)
                 return false;
@@ -59,12 +77,17 @@ namespace Yarito.Framework
             return true;
         }
 
+        /// <summary>
+        /// اعتبار ستجی ساختار ایمیل ها
+        /// ایمیل پس از حذف فاصله های اضافی ابتدا و انتها باید نباید هیچ فاصله ای در ساختار خود داشته باشد
+        /// و حالت استاندارد یک ایمیل را داشته باشد
+        /// </summary>
+        /// <param name="email">ایمیل وارد شده</param>
+        /// <returns>مقدار True در صورتی که ساختار ایمیل صحیح باشد</returns>
         public static bool IsValidEmail(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
                 return false;
-
-            email = email.Trim();
 
             if (email.Contains(' '))
                 return false;
@@ -80,6 +103,12 @@ namespace Yarito.Framework
             }
         }
 
+        /// <summary>
+        /// مقدار اولیه موجودی حساب را اعتبار سنجی میکند
+        /// مقدار حساب باید عددی صحیح و بیشتر از 0 باشد 
+        /// </summary>
+        /// <param name="amount">موجودی اولیه حساب</param>
+        /// <returns>مقدار True در صورت صحیح بودن موجودی اولیه</returns>
         public static bool IsValidBaseWalletBalance(decimal amount)
         {
             if (amount < 0)
@@ -88,12 +117,25 @@ namespace Yarito.Framework
             return decimal.Truncate(amount) == amount;
         }
 
+        /// <summary>
+        /// اعتبار سنجی درستی آدرس وارد شده
+        /// در صورتی که ادرس صحیح است که طول آن کمتر از 500 کاراکتر باشد
+        /// </summary>
+        /// <param name="address">آدرس وارد شده</param>
+        /// <returns>مقدار True در صورت صحیح بودم آدرس وارد شده</returns>
         public static bool IsValidAddress(string address)
         {
             address = address.Trim();
             return address.Length <= 500;
         }
 
+        /// <summary>
+        /// اعتبار سنجی فرمت تصاویر وارد شده
+        /// فقط فرمت های زیر معتبر است
+        /// ".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp" 
+        /// </summary>
+        /// <param name="filePath">آدرس تصویر</param>
+        /// <returns>مقدار True در صورت درستی مقدار ووارد شده</returns>
         public static bool IsValidImageUrlOrFileName(string? filePath)
         {
             if (string.IsNullOrWhiteSpace(filePath))
@@ -104,6 +146,13 @@ namespace Yarito.Framework
             return !string.IsNullOrWhiteSpace(ext) && validFormat.Contains(ext);
         }
 
+        /// <summary>
+        /// استاندارد سازی متن وارد شده
+        /// متن وارد شده نباید خالی یا null باشد
+        /// در صورت داشتن فضای خالی اصلاح شده و عبارات فارسی اصلاح میگردد
+        /// </summary>
+        /// <param name="input">متن ورودی</param>
+        /// <returns>مثدار متن نرمال سازی شده</returns>
         public static string NormalizeText(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))

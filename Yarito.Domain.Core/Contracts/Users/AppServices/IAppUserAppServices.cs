@@ -20,6 +20,8 @@ public interface IAppUserAppServices
     /// </summary>
     Task<PagedResult<AppUserSummaryDto>> GetAppUserSummaryListAsync(AppUserReqDto q, CancellationToken ct);
 
+    Task<Result<AppUserSummaryDto>> GetAppUserSummaryByIdAsync(int userid, CancellationToken ct);
+
     /// <summary>
     /// دریافت اطلاعات کامل کاربر بر اساس شناسه.
     /// </summary>
@@ -31,7 +33,21 @@ public interface IAppUserAppServices
     Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct);
 
     /// <summary>
+    /// بروزرسانی اطلاعات کاربر.
+    /// </summary>
+    /// <param name="userId">شناسه کاربر</param>
+    /// <param name="dto">اطلاعات بروزرسانی</param>
+    /// <param name="currentProfileImage">مسیر تصویر فعلی برای حذف در صورت موفقیت</param>
+    /// <param name="ct">توکن لغو</param>
+    Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, string? currentProfileImage, CancellationToken ct);
+
+    /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.
     /// </summary>
     Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// بررسی ثبت شهر محل سکونت برای کاربر
+    /// </summary>
+    Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using Yarito.Domain.AppServices.Cities;
 using Yarito.Domain.AppServices.Requests;
 using Yarito.Domain.AppServices.Users;
@@ -10,6 +11,8 @@ using Yarito.Domain.Core.Contracts._Common.Services;
 using Yarito.Domain.Core.Contracts.Cities.AppServices;
 using Yarito.Domain.Core.Contracts.Cities.Repository;
 using Yarito.Domain.Core.Contracts.Cities.Services;
+using Yarito.Domain.Core.Contracts.Images.Repository;
+using Yarito.Domain.Core.Contracts.Images.Services;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
@@ -21,11 +24,14 @@ using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Services._Common;
 using Yarito.Domain.Services.Cities;
+using Yarito.Domain.Services.Images;
 using Yarito.Domain.Services.Requests;
 using Yarito.Domain.Services.Users;
 using Yarito.Domain.Services.Works;
+using Yarito.Endpoint.WebApp.MVC.Middleware;
 using Yarito.Framework;
 using Yarito.Infra.DataAccess.EFCore.Cities;
+using Yarito.Infra.DataAccess.EFCore.Images;
 using Yarito.Infra.DataAccess.EFCore.Requests;
 using Yarito.Infra.DataAccess.EFCore.Users;
 using Yarito.Infra.DataAccess.EFCore.Works;
@@ -34,6 +40,11 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 using Yarito.Infra.Database.SQLServer.Identity.DatabaseContext;
 
 var builder = WebApplication.CreateBuilder(args);
+
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews(options =>
@@ -116,6 +127,7 @@ builder.Services.AddScoped<IRequestServices, RequestServices>();
 builder.Services.AddScoped<IBidServices, BidServices>();
 builder.Services.AddScoped<IFileServices, FileServices>();
 builder.Services.AddScoped<ICityServices, CityServices>();
+builder.Services.AddScoped<IImageServices, ImageServices>();
 
 // Dependency Injection for Repositories
 builder.Services.AddScoped<ICityRepo, CityRepo>();
@@ -128,6 +140,7 @@ builder.Services.AddScoped<IExpertRepo, ExpertRepo>();
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IImageRepop, ImageRepop>();
 
 
 
@@ -161,5 +174,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.UseMiddleware<ExceptionLoggingMiddleware>();
 
 app.Run();
