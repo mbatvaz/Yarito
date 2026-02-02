@@ -119,15 +119,17 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
                 .SetProperty(reviews => reviews.ReviewStatus, newStatus), ct) > 0;
     }
 
-    public async Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)
+    public async Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)
     {
         return await ApplyFilters(q)
             .Take(q.PageSize)
-            .Select(r => new HomeViewReviewDto()
+            .Select(r => new ReviewSummaryDto()
             {
+                Id = r.Id,
                 FirstName = r.Customer.FirstName ?? "ناشناس",
                 Rating = r.Rating,
                 Comment = r.Comment ?? "عالی",
+                Status = r.ReviewStatus
             }).ToListAsync(ct);
     }
 
@@ -159,5 +161,20 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
             PageSize = q.PageSize,
             TotalCount = total
         };
+    }
+
+    public async Task<ReviewSummaryDto?> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct)
+    {
+        return await _db.Reviews
+            .AsNoTracking()
+            .Where(r => r.RequestId == requestId)
+            .Select(r => new ReviewSummaryDto()
+            {
+                Id = r.Id,
+                FirstName = r.Customer.FirstName,
+                Comment = r.Comment,
+                Rating = r.Rating,
+                Status = r.ReviewStatus
+            }).FirstOrDefaultAsync(ct);
     }
 }

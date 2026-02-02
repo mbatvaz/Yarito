@@ -24,9 +24,12 @@ public class ReviewsAppServices(IReviewsServices reviewsServices) : IReviewsAppS
             : Result<bool>.Failure("خطا در رد نظر.");
     }
 
-    public async Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto request, CancellationToken ct)
+    public async Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto request, CancellationToken ct)
         => await reviewsServices.GetReviewsForHomePageAsync(request, ct);
 
     public async Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto request, CancellationToken ct)
         => await reviewsServices.GetReviewsListAsync(request, ct);
+
+    public async Task<Result<ReviewSummaryDto>> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct)
+        => await reviewsServices.GetReviewsForRequestByIdAsync(requestId, ct);
 }

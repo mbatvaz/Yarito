@@ -148,4 +148,18 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
     }
 
     #endregion
+
+    public async Task<Result<bool>> IncreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save = true)
+    {
+        return await appUserRepo.IncreaseWalletBalanceAsync(userId, amount, ct, save)
+            ? Result<bool>.Success("موجودی حساب با موفقیت افزایش یافت")
+            : Result<bool>.Failure("موجودی حساب افزایش نیافت");
+    }
+
+    public async Task<Result<bool>> DecreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save = true)
+    {
+        return await appUserRepo.DecreaseWalletBalanceAsync(userId, amount, ct, save)
+            ? Result<bool>.Success("موجودی حساب با موفقیت کاهش یافت")
+            : Result<bool>.Failure("موجودی حساب کاهش نیافت");
+    }
 }

@@ -11,7 +11,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Models
         public required RequestFullDto RequestInfo { get; init; }
         public required IReadOnlyList<string> RequestImagesPath { get; init; } = [];
         public required IReadOnlyList<BidSummaryDto> BidList { get; init; } = [];
-        public BidSummaryDto? AcceptedBid { get; init; }
+        public int? AcceptedBidId { get; init; }
 
         // Filters
         public string? Search { get; set; }

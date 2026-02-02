@@ -17,13 +17,15 @@ public interface IRequestServices
     /// </summary>
     Task<int> GetCountAsync(CancellationToken ct);
 
+    public void ClearChangeTracker();
+
     /// <summary>
     /// دریافت جزئیات کامل یک درخواست با شناسه.
     /// </summary>
     /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات کامل درخواست یا null در صورت عدم وجود</returns>
-    Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
+    Task<Result<RequestFullDto>> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
 
     /// <summary>
     /// دریافت اطلاعات لازم پس از ثبت موفق یک درخواست
@@ -31,7 +33,7 @@ public interface IRequestServices
     /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات لازم درخواست یا null در صورت عدم وجود</returns>
-    Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct);
+    Task<Result<RequestSuccessDto>> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct);
     
     /// <summary>
     /// دریافت لیست خلاصه درخواست‌ها با قابلیت صفحه‌بندی.
@@ -54,7 +56,7 @@ public interface IRequestServices
     /// <param name="newStatus">وضعیت جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct);
+    Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save = true);
 
     #endregion
 
@@ -84,4 +86,6 @@ public interface IRequestServices
     Result<bool> IsProposedPriceAllow(decimal proposedPrice, WorkDto work);
 
     Task<Result<int>> Add(RequestNewDto dto, CancellationToken ct);
+
+    Task<Result<BidFullDto>> CompletionValidationAsync(int requestId, int customerId, CancellationToken ct);
 }

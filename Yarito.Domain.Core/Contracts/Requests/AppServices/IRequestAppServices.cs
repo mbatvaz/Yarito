@@ -17,7 +17,7 @@ public interface IRequestAppServices
     /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات کامل درخواست یا null در صورت عدم وجود</returns>
-    Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
+    Task<Result<RequestFullDto>> GetRequestFullByIdAsync(int requestId, CancellationToken ct);
 
     /// <summary>
     /// دریافت اطلاعات لازم پس از ثبت موفق یک درخواست
@@ -25,7 +25,7 @@ public interface IRequestAppServices
     /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات لازم درخواست یا null در صورت عدم وجود</returns>
-    Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct);
+    Task<Result<RequestSuccessDto>> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه درخواست‌ها با قابلیت صفحه‌بندی.
@@ -65,4 +65,6 @@ public interface IRequestAppServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه عملیات</returns>
     Task<Result<int>> AddNewRequest(RequestNewDto dto, CancellationToken ct);
+
+    Task<Result<bool>> CompletionAsync(int requestId, int customerId, CancellationToken ct);
 }

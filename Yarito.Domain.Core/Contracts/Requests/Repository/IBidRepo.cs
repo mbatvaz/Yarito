@@ -60,6 +60,14 @@ public interface IBidRepo
     Task<PagedResult<BidSummaryDto>> GetBidsSummaryListAsync(BidReqDto q, CancellationToken ct);
 
     /// <summary>
+    /// دریافت لیست تمام اطلاعات پیشنهادات با قابلیت صفحه‌بندی و فیلتر.
+    /// </summary>
+    /// <param name="q">پارامترهای جستجو و صفحه‌بندی</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه صفحه‌بندی شده از پیشنهادات</returns>
+    Task<PagedResult<BidFullDto>> GetBidsFullListAsync(BidReqDto q, CancellationToken ct);
+
+    /// <summary>
     /// دریافت اطلاعات کامل پیشنهاد بر اساس شناسه.
     /// </summary>
     /// <param name="bidId">شناسه پیشنهاد</param>

@@ -1,7 +1,4 @@
-﻿using Yarito.Domain.Core.DTOs.Users;
-using Yarito.Domain.Core.Entities.Images;
-using Yarito.Domain.Core.Entities.Requests;
-using Yarito.Domain.Core.Enums.Requests;
+﻿using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.DTOs.Requests
 {
@@ -12,11 +9,12 @@ namespace Yarito.Domain.Core.DTOs.Requests
         public string? Description { get; init; }
         public decimal ProposedPrice { get; init; }
         public required string Address { get; init; }
+        public required string WorkTitle { get; init; }
         public DateTime? PreferredVisitDateTime { get; init; }
         public DateTime CreatedAt { get; init; }
         public required RequestStatusEnum Status { get; init; }
-        public required AppUserFullDto CustomerInfo { get; init; }
-        public BidSummaryDto? AcceptedBid { get; init; }
+        public required int CustomerId { get; init; }
+        public int? AcceptedBidId { get; init; }
         public ICollection<string> RequestImagesPath { get; set; } = [];
     }
 }

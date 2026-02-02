@@ -285,4 +285,31 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
             .FirstOrDefaultAsync(ct);
     }
     #endregion
+
+    public async Task<bool> IncreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save)
+    {
+        var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Id == userId, ct);
+        if (user is null) return false;
+
+        user.WalletBalance += amount;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
+    }
+
+    public async Task<bool> DecreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save)
+    { 
+        var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Id == userId, ct);
+        if (user is null) return false;
+        if (user.WalletBalance < amount) return false;
+
+        user.WalletBalance -= amount;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
+    }
 }

@@ -146,6 +146,37 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             TotalCount = total
         };
     }
+
+    public async Task<PagedResult<BidFullDto>> GetBidsFullListAsync(BidReqDto q, CancellationToken ct)
+    {
+        var query = ApplyFilters(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(b => new BidFullDto()
+            {
+                Id = b.Id,
+                ProposedPrice = b.ProposedPrice,
+                ExpertId = b.ExpertId,
+                Status = b.Status,
+                Description = b.Description,
+                CreatedAt = b.ProposedVisitDateTime,
+                ProposedVisitDateTime = b.ProposedVisitDateTime,
+                RequestId = b.RequestId
+
+            }).ToListAsync(ct);
+
+        return new PagedResult<BidFullDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
+    }
+
     public async Task<BidFullDto?> GetBidFullByIdAsync(int bidId, CancellationToken ct)
     {
         return await _db.Bids.AsNoTracking()
@@ -158,19 +189,8 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                 ProposedPrice = b.ProposedPrice,
                 Description = b.Description,
                 Status = b.Status,
-                Expert = new AppUserFullDto()
-                {
-                    Id = b.Expert.Id,
-                    FirstName = b.Expert.FirstName,
-                    LastName = b.Expert.LastName,
-                    PhoneNumber = b.Expert.PhoneNumber,
-                    UserType = UserTypeEnum.Expert,
-                    CreatedAt = b.Expert.CreatedAt,
-                    ProfileImgPath = b.Expert.ProfileImgPath ?? "/Images/Profile/default.png",
-                    WalletBalance = b.Expert.WalletBalance,
-                    CityName = b.Expert.City != null ? b.Expert.City.Name : null,
-                    Email = b.Expert.Email
-                }
+                ExpertId = b.ExpertId,
+                RequestId = b.RequestId
             })
             .FirstOrDefaultAsync(ct);
     }
@@ -189,19 +209,8 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                     ProposedPrice = b.ProposedPrice,
                     Description = b.Description,
                     Status = b.Status,
-                    Expert = new AppUserFullDto()
-                    {
-                        Id = b.Expert.Id,
-                        FirstName = b.Expert.FirstName,
-                        LastName = b.Expert.LastName,
-                        PhoneNumber = b.Expert.PhoneNumber,
-                        UserType = UserTypeEnum.Expert,
-                        CreatedAt = b.Expert.CreatedAt,
-                        ProfileImgPath = b.Expert.ProfileImgPath ?? "/Images/Profile/default.png",
-                        WalletBalance = b.Expert.WalletBalance,
-                        CityName = b.Expert.City != null ? b.Expert.City.Name : null,
-                        Email = b.Expert.Email
-                    }
+                    ExpertId = b.ExpertId,
+                    RequestId = b.RequestId
                 },
                 Expert = new AppUserFullDto()
                 {
@@ -235,25 +244,13 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                     Id = b.Request.Id,
                     Title = b.Request.Title,
                     Description = b.Request.Description,
+                    WorkTitle = b.Request.Work.Title,
                     ProposedPrice = b.Request.ProposedPrice ?? 0,
                     Address = b.Request.Address,
                     PreferredVisitDateTime = b.Request.PreferredVisitDateTime,
                     CreatedAt = b.Request.CreatedAt,
                     Status = b.Request.Status,
-                    CustomerInfo = new AppUserFullDto()
-                    {
-                        Id = b.Request.Customer.Id,
-                        FirstName = b.Request.Customer.FirstName,
-                        LastName = b.Request.Customer.LastName,
-                        PhoneNumber = b.Request.Customer.PhoneNumber,
-                        UserType = UserTypeEnum.Customer,
-                        CreatedAt = b.Request.Customer.CreatedAt,
-                        ProfileImgPath = b.Request.Customer.ProfileImgPath ?? "/Images/Profile/default.png",
-                        WalletBalance = b.Request.Customer.WalletBalance,
-                        CityName = b.Request.Customer.City != null ? b.Request.Customer.City.Name : null,
-                        Email = b.Request.Customer.Email,
-                        Address = b.Request.Customer.Address
-                    }
+                    CustomerId = b.Request.CustomerId,
                 }
             })
             .FirstOrDefaultAsync(ct);

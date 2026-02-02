@@ -73,43 +73,49 @@
 </section>
 
 <!-- No Accepted Offer Card - Centered 50% -->
-@if (Model.AcceptedBid is not null)
+@if (Model.AcceptedBidId is not null)
 {
-    <section class="card admin-box">
-        <div class="admin-box__header">
-            <h3>پیشنهاد پدیرفته شده</h3>
-        </div>
-        <div class="admin-table-wrapper">
-            <table class="admin-table">
-                <thead>
-                <tr>
-                    <th>نام و نام خانوادگی متخصص</th>
-                    <th>شماره تماس متخصص</th>
-                    <th>قیمت پیشنهادی</th>
-                    <th>تاریخ مراجعه پیشنهادی</th>
-                    <th>وضعیت</th>
-                    <th class="text-left">عملیات</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>@Model.AcceptedBid.ExpertFirstName @Model.AcceptedBid.ExpertLastName</td>
-                    <td dir="ltr">@Model.AcceptedBid.ExpertPhoneNumber.ToPersianNum()</td>
-                    <td>@Model.AcceptedBid.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
-                    <td>@Model.AcceptedBid.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
-                    <td><span class="badge badge--completed">@Html.DisplayFor(_ => @Model.AcceptedBid.Status)</span></td>
-                    <td class="text-left">
-                        <a asp-area="Admin"
-                           asp-controller="Requests"
-                           asp-action="BidDetails"
-                           asp-route-id="@Model.AcceptedBid.Id"
-                           class="btn btn--secondary btn--sm">جزئیات</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+    @foreach (var b in Model.BidList)
+    {
+        if (b.Id == Model.AcceptedBidId)
+        {
+            <section class="card admin-box">
+                <div class="admin-box__header">
+                    <h3>پیشنهاد پدیرفته شده</h3>
+                </div>
+                <div class="admin-table-wrapper">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th>نام و نام خانوادگی متخصص</th>
+                            <th>شماره تماس متخصص</th>
+                            <th>قیمت پیشنهادی</th>
+                            <th>تاریخ مراجعه پیشنهادی</th>
+                            <th>وضعیت</th>
+                            <th class="text-left">عملیات</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>@b.ExpertFirstName @b.ExpertLastName</td>
+                            <td dir="ltr">@b.ExpertPhoneNumber.ToPersianNum()</td>
+                            <td>@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</td>
+                            <td>@b.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
+                            <td><span class="badge badge--completed">@Html.DisplayFor(_ => @b.Status)</span></td>
+                            <td class="text-left">
+                                <a asp-area="Admin"
+                                   asp-controller="Requests"
+                                   asp-action="BidDetails"
+                                   asp-route-id="@b.Id"
+                                   class="btn btn--secondary btn--sm">جزئیات</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+    }
 }
 else
 {

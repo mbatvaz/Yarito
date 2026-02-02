@@ -152,13 +152,19 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                     .SetProperty(request => request.AcceptedBidId, bidId), ct) > 0;
     }
 
-    public async Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct)
+    public async Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-        return await _db.Requests
-            .Where(r => r.Id == requestId && r.Status != newStatus)
-            .ExecuteUpdateAsync(r => r
-                    .SetProperty(request => request.Status, newStatus), ct) > 0;
+        var request = await _db.Requests.FirstOrDefaultAsync(r => r.Id == requestId, ct);
+
+        if (request is null) return false;
+        if (request.Status == newStatus) return false;
+
+        request.Status = newStatus;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
     }
 
     public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct)
@@ -247,32 +253,9 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                 PreferredVisitDateTime = r.PreferredVisitDateTime,
                 CreatedAt = r.CreatedAt,
                 Status = r.Status,
-                CustomerInfo = new AppUserFullDto()
-                {
-                    Id = r.Customer.Id,
-                    ProfileImgPath = r.Customer.ProfileImgPath ?? "/Images/Profile/default.png",
-                    FirstName = r.Customer.FirstName,
-                    LastName = r.Customer.LastName,
-                    UserType = UserTypeEnum.Customer,
-                    CreatedAt = r.Customer.CreatedAt,
-                    PhoneNumber = r.Customer.PhoneNumber,
-                    CityName = r.Customer.City != null ? r.Customer.City.Name : null,
-                    Email = r.Customer.Email,
-                    WalletBalance = r.Customer.WalletBalance,
-                    Address = r.Customer.Address
-                },
-                AcceptedBid = r.AcceptedBid != null ? new BidSummaryDto()
-                {
-                    Id = r.AcceptedBid.Id,
-                    ExpertFirstName = r.AcceptedBid.Expert.FirstName,
-                    ExpertLastName = r.AcceptedBid.Expert.LastName,
-                    ExpertPhoneNumber = r.AcceptedBid.Expert.PhoneNumber,
-                    ExpertId = r.AcceptedBid.ExpertId,
-                    ServiceTitle = r.Work.Title,
-                    ProposedPrice = r.AcceptedBid.ProposedPrice,
-                    Status = r.AcceptedBid.Status,
-                    ProposedVisitDate = r.AcceptedBid.ProposedVisitDateTime
-                } : null,
+                CustomerId = r.CustomerId,
+                WorkTitle = r.Work.Title,
+                AcceptedBidId = r.AcceptedBidId,
                 RequestImagesPath = r.RequestImages.Select(i => i.ImgPath).ToList()
             })
             .FirstOrDefaultAsync(ct);
@@ -285,5 +268,10 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                 (r.Status == RequestStatusEnum.InProgress ||
                  r.Status == RequestStatusEnum.Pending),
             ct);
+    }
+
+    public void ClearChangeTracker()
+    {
+        _db.ChangeTracker.Clear();
     }
 }

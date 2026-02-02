@@ -114,4 +114,7 @@ public interface IAppUserRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>در صورت وجود آدرس مقدار آدرس در غیر این صورت null</returns>
     Task<string?> GetCustomerAddressAsync(int userId, CancellationToken ct);
+
+    Task<bool> IncreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save);
+    Task<bool> DecreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save);
 }

@@ -1,0 +1,319 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models.RequestDetailsViewModel
+@{
+    Layout = "_Layout";
+    var request = Model.Request;
+    var review = Model.Review;
+    var acceptedBid = request.AcceptedBidId is null
+        ? null
+        : Model.Bids.FirstOrDefault(x => x.Id == request.AcceptedBidId.Value);
+}
+<section class="profile-main">
+
+    <!-- Section 1: Request Info + Images Combined -->
+    <section class="card user-section">
+        <div class="user-section__header">
+            <h3>اطلاعات درخواست</h3>
+            <span class="badge
+                  @(request.Status switch
+                  {
+                      RequestStatusEnum.Pending => "badge--receiving",
+                      RequestStatusEnum.Completed => "badge--completed",
+                      RequestStatusEnum.Cancelled => "badge--cancelled",
+                      RequestStatusEnum.InProgress => "badge--waiting",
+                      _ => ""
+                  })">@Html.DisplayFor(_ => request.Status)</span>
+        </div>
+
+        <div class="user-request-combined">
+            <!-- Request Info -->
+            <div class="user-request-info">
+                <div class="user-info-grid">
+                    <div class="user-info-item">
+                        <dt>عنوان درخواست</dt>
+                        <dd>@request.Title</dd>
+                    </div>
+                    <div class="user-info-item">
+                        <dt>دسته‌بندی</dt>
+                        <dd>@request.WorkTitle</dd>
+                    </div>
+                    <div class="user-info-item">
+                        <dt>تاریخ ثبت</dt>
+                        <dd>@request.CreatedAt.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                    </div>
+                    <div class="user-info-item">
+                        <dt>تاریخ مراجعه درخواستی</dt>
+                        @if (request.PreferredVisitDateTime is not null)
+                        {
+                            <dd>@request.PreferredVisitDateTime.Value.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                        }
+                        else
+                        {
+                            <dd>اعلام نشده</dd>
+                        }
+                    </div>
+                    <div class="user-info-item">
+                        <dt>قیمت پیشنهادی</dt>
+                        <dd><strong class="text-primary">@request.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+                    </div>
+                    <div class="user-info-item">
+                        <dt>آدرس</dt>
+                        <dd>@request.Address.ToPersianNum()</dd>
+                    </div>
+                    <div class="user-info-item user-info-item--full">
+                        <dt>توضیحات</dt>
+                        <dd>@request.Description.ToPersianNum()</dd>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uploaded Images (max 4) -->
+            <div class="user-request-images">
+                <div class="user-images-grid user-images-grid--4">
+                    @foreach (var i in request.RequestImagesPath)
+                    {
+                        <div class="user-image-item">
+                            <img src="@i" alt="تصویر آپلود شده">
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="user-section__actions">
+        @switch (request.Status)
+        {
+            case RequestStatusEnum.Pending:
+                <button type="button" class="btn btn--danger btn--sm">لغو</button>
+                break;
+            case RequestStatusEnum.InProgress:
+                <button type="button" class="btn btn--primary btn--sm">اتمام</button>
+                break;
+            case RequestStatusEnum.Completed:
+            case RequestStatusEnum.Cancelled:
+            default:
+                break;
+        }
+        </div>
+    </section>
+
+    <!-- Section 2: Accepted Offer + User Review (Side by Side) -->
+    <div class="user-grid-row">
+        @if (request.AcceptedBidId is not null)
+        {
+            <section class="card user-section">
+                <div class="user-section__header">
+                    <h3>پیشنهاد پذیرفته شده</h3>
+                    <a href="#" class="btn btn--secondary btn--sm">مشاهده پروفایل متخصص</a>
+                </div>
+
+                <div class="user-info-grid">
+                    <div class="user-info-item">
+                        <dt>تاریخ مراجعه پیشنهادی</dt>
+                        <dd>@acceptedBid?.ProposedVisitDateTime.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                    </div>
+                    <div class="user-info-item">
+                        <dt>قیمت پیشنهادی</dt>
+                        <dd><strong class="text-primary">@acceptedBid?.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+                    </div>
+                    <div class="user-info-item user-info-item--full">
+                        <dt>توضیحات پیشنهاد</dt>
+                        <dd>
+                            @acceptedBid?.Description.ToPersianNum()
+                        </dd>
+                    </div>
+                </div>
+            </section>
+        }
+        else
+        {
+            <section class ="card user-section user-section--empty" >
+                <div class ="user-section__header" >
+                <h3 > پیشنهاد پذیرفته شده</h3>
+                </div >
+                <div class ="user-empty-state" >
+                    <svg xmlns = "http://www.w3.org/2000/svg" width = "48" height = "48" viewBox = "0 0 24 24" fill = "none" stroke = "currentColor" stroke - width = "1.5" >
+                        <path d = "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" ></path >
+                        <polyline points = "14 2 14 8 20 8" ></polyline >
+                    </svg >
+                    <p > هنوز هیچ پیشنهادی پذیرفته نشده است.</p >
+                </div >
+            </section>
+        }
+
+        <!-- User Review -->
+        @if (review is not null)
+        {
+            <section class="card user-section">
+                <div class="user-section__header">
+                    <h3>نظر ثبت شده</h3>
+                    <span class="badge @(review.Status switch{
+                                           ReviewStatusEnum.Approved => "badge--completed",
+                                           ReviewStatusEnum.Rejected => "badge--cancelled",
+                                           _ => "badge--waiting" })">@Html.DisplayFor(_ => review.Status)</span>
+                </div>
+                <div class="user-review-display">
+                    <div class="user-review-display__rating">
+                        @{
+                            var rating = review.Rating;
+                            rating = Math.Clamp(rating, 0, 5);
+                            var stars = new string('★', rating) + new string('☆', 5 - rating);
+                        }
+                        <span class="star-display">@stars</span>
+                    </div>
+                    @if (review.Comment is not null)
+                    {
+                        <div class="user-review-display__text">
+                            <p>@review.Comment.ToPersianNum()</p>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+        else if (request.Status == RequestStatusEnum.Completed)
+        {
+            <section class="card user-section">
+                <div class="user-section__header">
+                    <h3>ثبت نظر</h3>
+                </div>
+                <form class="user-review-form user-review-form--compact">
+                    <div class="form-group">
+                        <textarea asp-for="ReviewForm.Comment" class="form-control form-control--textarea" rows="3"
+                                  placeholder="نظر خود را بنویسید..."></textarea>
+                    </div>
+                    <span asp-validation-for="ReviewForm.Comment" class="text-danger"></span>
+                    <div class="user-review-form__footer">
+                        <div class="star-rating">
+                            @for (var i = 5; i >= 1; i--)
+                            {
+                                var id = $"rate_{i}";
+                                <input type="radio"
+                                       id="@id"
+                                       name="ReviewForm.Rating"
+                                       value="@i"
+                                       @(Model.ReviewForm.Rating == i ? "checked" : "") />
+                                <label for="@id" title="@($"{i} ستاره")">★</label>
+                            }
+                        </div>
+                        <span asp-validation-for="ReviewForm.Rating" class="text-danger"></span>
+                        <button type="submit" class="btn btn--primary btn--sm">ثبت نظر</button>
+                    </div>
+                </form>
+            </section>
+        }
+        else
+        {
+            <section class="card user-section user-section--empty">
+                <div class="user-section__header">
+                    <h3>نظر ثبت شده</h3>
+                </div>
+                <div class="user-empty-state">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                    <p>تا زمانی که خدمات مورد نظر شما به اتمام نرسیده امکان ثبت نظر وجود ندارد</p>
+                </div>
+            </section>
+        }
+    </div>
+
+    <!-- Section 3: Offers List (Full Width) -->
+    <section class="card user-section">
+        <div class="user-section__header">
+            <h3>لیست پیشنهادات <span class="offers-count">(@Model.TotalCount.ToString().ToPersianNum() پیشنهاد)</span></h3>
+            <form asp-area="Customer"
+                  asp-controller="Requests"
+                  asp-action="Details"
+                  class="user-section__search"
+                  method="get">
+                <input type="text" id="search" name="search" placeholder="جستجو..." class="form-control form-control--sm" value="@Model.Search">
+                <button type="button" class="btn btn--primary btn--sm">جستجو</button>
+            </form>
+        </div>
+        <div class="offers-grid">
+        @if (Model.Bids.Count > 0)
+        {
+            foreach (var b in Model.Bids)
+            {
+                if (b.Id != request.AcceptedBidId && b.Status == BidStatusEnum.Pending)
+                {
+                    <div class="offer-card">
+                        <span class="badge badge--waiting" style="position: absolute; top: var(--space-lg); left: var(--space-lg);">@Html.DisplayFor(_ => b.Status)</span>
+                        <div class="offer-card__body">
+                            <div class="offer-card__info">
+                                <div class="offer-card__info-item">
+                                    <dt>قیمت پیشنهادی</dt>
+                                    <dd><strong class="text-primary">@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+                                </div>
+                                <div class="offer-card__info-item">
+                                    <dt>تاریخ مراجعه</dt>
+                                    <dd>@b.ProposedVisitDateTime.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                                </div>
+                            </div>
+                            <div class="offer-card__desc">
+                                <dt>توضیحات</dt>
+                                <dd>@b.Description.ToPersianNum()</dd>
+                            </div>
+                        </div>
+                        <div class="offer-card__actions">
+                            <button type="button" class="btn btn--primary btn--sm">پذیرش</button>
+                            <button type="button" class="btn btn--danger btn--sm">رد</button>
+                            <a href="#" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
+                        </div>
+                    </div>        
+                }
+
+                if (b.Id != request.AcceptedBidId && b.Status == BidStatusEnum.Rejected)
+                {
+                    <div class="offer-card offer-card--disabled">
+                        <span class="badge badge--cancelled" style="position: absolute; top: var(--space-lg); left: var(--space-lg);">@Html.DisplayFor(_ => b.Status)</span>
+                        <div class="offer-card__body">
+                            <div class="offer-card__info">
+                                <div class="offer-card__info-item">
+                                    <dt>قیمت پیشنهادی</dt>
+                                    <dd><strong class="text-primary">@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+                                </div>
+                                <div class="offer-card__info-item">
+                                    <dt>تاریخ مراجعه</dt>
+                                    <dd>@b.ProposedVisitDateTime.CompleteShamsiDate("dn, dd mn yyyy")</dd>
+                                </div>
+                            </div>
+                            <div class="offer-card__desc">
+                                <dt>توضیحات</dt>
+                                <dd>@b.Description.ToPersianNum()</dd>
+                            </div>
+                        </div>
+                        <div class="offer-card__actions">
+                            <a href="#" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="user-empty-state">
+                <p>تا به این لحظه شما هیچ پیشنهادی از طرف متخصصان برای درخواست خود دریافت نکرده اید</p>
+            </div>
+        }
+        </div>
+
+        <!-- Pagination -->
+        @await Html.PartialAsync("_Pagination", new PaginationViewModel
+        {
+            Page = Model.Page,
+            TotalPages = Model.TotalPages,
+            Area = "Customer",
+            Controller = "Requests",
+            Action = "Details",
+            RouteValues = new Dictionary<string, string?>
+            {
+                ["search"] = Model.Search,
+                ["id"] = Model.Request.Id.ToString()
+            }
+        })
+    </section>
+
+</section>

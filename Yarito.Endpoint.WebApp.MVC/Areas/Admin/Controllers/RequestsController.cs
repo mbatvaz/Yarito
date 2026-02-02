@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Yarito.Domain.AppServices.Users;
 using Yarito.Domain.Core.Contracts.Cities.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
+using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Enums._Common;
@@ -18,7 +20,8 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Admin.Controllers;
 public class RequestsController(
     IRequestAppServices requestAppServices,
     IBidAppServices bidAppServices,
-    ICityAppServices cityAppServices) : Controller
+    ICityAppServices cityAppServices,
+    IAppUserAppServices appUserAppServices) : Controller
 {
     private void Notification<T>(Result<T> result)
     {
@@ -62,10 +65,16 @@ public class RequestsController(
     public async Task<IActionResult> RequestDetails(int id, CancellationToken ct)
     {
         var request = await requestAppServices.GetRequestFullByIdAsync(id, ct);
-
-        if (request is null)
+        if (request.Status != ResultStatusEnum.Success || request.Data is null)
         {
-            Notification(Result<string>.Failure("درخواست مورد نظر یافت نشد."));
+            Notification(request);
+            return RedirectToAction(nameof(Index));
+        }
+
+        var customer = await appUserAppServices.GetAppUserFullByIdAsync(request.Data.CustomerId, ct);
+        if (request.Status != ResultStatusEnum.Success || customer.Data is null)
+        {
+            Notification(customer);
             return RedirectToAction(nameof(Index));
         }
 
@@ -79,10 +88,11 @@ public class RequestsController(
 
         var model = new RequestDetailsViewModel
         {
-            CustomerInfo = request.CustomerInfo,
-            RequestInfo = request,
-            RequestImagesPath = request.RequestImagesPath.ToList(),
-            AcceptedBid = request.AcceptedBid,
+            CustomerInfo = customer.Data,
+            RequestInfo = request.Data,
+            RequestImagesPath = request.Data.RequestImagesPath.ToList(),
+            
+            AcceptedBidId = request.Data.AcceptedBidId,
             BidList = bidsResult.Items,
             Search = null,
             Page = bidsResult.Page,

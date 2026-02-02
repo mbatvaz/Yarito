@@ -12,6 +12,9 @@ namespace Yarito.Domain.AppServices.Requests
         public async Task<PagedResult<BidSummaryDto>> GetBidsSummaryListAsync(BidReqDto q, CancellationToken ct)
             => await bidServices.GetBidsSummaryListAsync(q, ct);
 
+        public async Task<PagedResult<BidFullDto>> GetBidsFullListAsync(BidReqDto q, CancellationToken ct)
+            => await bidServices.GetBidsFullListAsync(q, ct);
+
         public async Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct)
         {
             var result = await bidServices.ChangeSingleStatusAsync(bidId, BidStatusEnum.Rejected, ct);

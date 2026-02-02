@@ -49,7 +49,7 @@ public interface IReviewRepo
     /// <param name="q">پارامترهای جستجو</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>لیست نظرات برای نمایش در صفحه اصلی</returns>
-    Task<IReadOnlyList<HomeViewReviewDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct);
+    Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست کامل نظرات با قابلیت صفحه‌بندی و فیلتر.
@@ -58,4 +58,7 @@ public interface IReviewRepo
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه صفحه‌بندی شده از نظرات</returns>
     Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto q, CancellationToken ct);
+
+
+    Task<ReviewSummaryDto?> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct);
 }

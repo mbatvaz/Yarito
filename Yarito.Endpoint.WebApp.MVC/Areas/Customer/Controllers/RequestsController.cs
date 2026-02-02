@@ -18,10 +18,12 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
     [Area(nameof(Areas.Customer))]
     [Authorize(Roles = "Customer")]
     [LogActivity]
-    public class CustomerRequestController(
+    public class RequestsController(
         IAppUserAppServices appUserAppServices,
         ICategoryAppServices categoryAppServices,
         IRequestAppServices requestAppServices,
+        IReviewsAppServices reviewsAppServices,
+        IBidAppServices bidAppServices,
         UserManager<IdentityUser<int>> userManager) : Controller
     {
         private void Notification<T>(Result<T> result)
@@ -43,7 +45,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 : int.Parse(userIdStr);
         }
 
-        public async Task<IActionResult> NewRequest(CancellationToken ct)
+        public async Task<IActionResult> New(CancellationToken ct)
         {
             if (!await appUserAppServices.IsCitySetAsync(GetUserId(),ct))
             {
@@ -65,7 +67,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> NewRequest(NewRequestViewModel model, CancellationToken ct)
+        public async Task<IActionResult> New(NewRequestViewModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
@@ -131,18 +133,63 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
 
             var requestSuccessResult = await requestAppServices.GetRequestSuccessInfoByIdAsync(result.Data, ct);
 
-            if (requestSuccessResult is null)
+            if (requestSuccessResult.Status != ResultStatusEnum.Success || requestSuccessResult.Data is null)
+            {
+                Notification(requestSuccessResult);
                 return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
+            }
 
             var requestSuccessModel = new RequestSuccessViewModel()
             {
-                Title = requestSuccessResult.Title,
-                WorkTitle = requestSuccessResult.WorkTitle,
-                Status = requestSuccessResult.Status,
-                Address = requestSuccessResult.Address,
-                Date = requestSuccessResult.Date
+                Title = requestSuccessResult.Data.Title,
+                WorkTitle = requestSuccessResult.Data.WorkTitle,
+                Status = requestSuccessResult.Data.Status,
+                Address = requestSuccessResult.Data.Address,
+                Date = requestSuccessResult.Data.Date
             };
-            return View("RequestSuccess", requestSuccessModel);
+            return View("Success", requestSuccessModel);
+        }
+
+        public async Task<IActionResult> Details(int id, CancellationToken ct, int page = 1, string? search = null)
+        {
+            var request = await requestAppServices.GetRequestFullByIdAsync(id, ct);
+            if (request.Status != ResultStatusEnum.Success || request.Data is null || request.Data.CustomerId != GetUserId())
+            {
+                Notification(Result<bool>.Failure("درخواست مورد نظر یافت نشد"));
+                return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
+            }
+
+            Notification(request);
+            var review = await reviewsAppServices.GetReviewsForRequestByIdAsync(id, ct);
+            var bids = await bidAppServices.GetBidsFullListAsync(new BidReqDto()
+            {
+                RequestId = id,
+                TextSearch = search,
+                Page = page,
+                PageSize = 6
+            }, ct);
+
+            var resultModel = new RequestDetailsViewModel()
+            {
+                Request = request.Data,
+                Review = review.Data,
+                Bids = bids.Items,
+
+                Page = page,
+                Search = search,
+                TotalCount = bids.TotalCount,
+                PageSize = 6,
+            };
+
+            return View(resultModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Completion(int requestId, CancellationToken ct)
+        {
+            var result = await requestAppServices.CompletionAsync(requestId, GetUserId(), ct);
+            Notification(result);
+            return RedirectToAction(nameof(Details), new { id = requestId });
         }
     }
 }

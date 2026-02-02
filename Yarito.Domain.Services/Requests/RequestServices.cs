@@ -3,22 +3,36 @@ using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Requests
 {
     public class RequestServices(
-        IRequestRepo requestRepo) : IRequestServices
+        IRequestRepo requestRepo,
+        IBidServices bidServices) : IRequestServices
     {
         public async Task<int> GetCountAsync(CancellationToken ct)
             => await requestRepo.GetCountAsync(ct);
 
-        public async Task<RequestFullDto?> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
-            => await requestRepo.GetRequestFullByIdAsync(requestId, ct);
+        public void ClearChangeTracker() => requestRepo.ClearChangeTracker();
 
-        public async Task<RequestSuccessDto?> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct)
-            => await requestRepo.GetRequestSuccessInfoByIdAsync(requestId, ct);
+        public async Task<Result<RequestFullDto>> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
+        {
+            var result = await requestRepo.GetRequestFullByIdAsync(requestId, ct);
+            return result is not null
+                ? Result<RequestFullDto>.Success("درخواست با موفقیت پیدا شد", result)
+                : Result<RequestFullDto>.Failure("درخواستی پیدا نشد");
+        }
+
+        public async Task<Result<RequestSuccessDto>> GetRequestSuccessInfoByIdAsync(int requestId, CancellationToken ct)
+        {
+            var result = await requestRepo.GetRequestSuccessInfoByIdAsync(requestId, ct);
+            return result is not null
+                ? Result<RequestSuccessDto>.Success("درخواست با موفقیت ثبت شده است", result)
+                : Result<RequestSuccessDto>.Failure("درخواست با موفقیت ثبت نشده");
+        }
 
         public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q,
             CancellationToken ct)
@@ -28,9 +42,9 @@ namespace Yarito.Domain.Services.Requests
             => await requestRepo.GetRequestsCardListAsync(q, ct);
 
         public async Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus,
-            CancellationToken ct)
+            CancellationToken ct, bool save = true)
         {
-            return await requestRepo.ChangeStatusAsync(requestId, newStatus, ct)
+            return await requestRepo.ChangeStatusAsync(requestId, newStatus, ct, save)
                 ? Result<bool>.Success("وضعیت درخواست با موفقیت تغییر کرد.")
                 : Result<bool>.Failure("خطا در تغییر وضعیت درخواست.");
         }
@@ -85,6 +99,39 @@ namespace Yarito.Domain.Services.Requests
             return result == 0
                 ? Result<int>.Failure("در ثبت درخواست خطایی رخ داد")
                 : Result<int>.Success("درخواست با موفقیت ثبت شد", result);
+        }
+
+        public async Task<Result<BidFullDto>> CompletionValidationAsync(int requestId, int customerId, CancellationToken ct)
+        {
+            var requestResult = await GetRequestFullByIdAsync(requestId, ct);
+            if (requestResult.Status != ResultStatusEnum.Success || requestResult.Data is null)
+                return Result<BidFullDto>.Failure(requestResult.Message);
+
+            var request = requestResult.Data;
+
+            if (request.CustomerId != customerId)
+                return Result<BidFullDto>.Failure("دسترسی غیرمجاز.");
+
+            if (request.Status == RequestStatusEnum.Completed)
+                return Result<BidFullDto>.Success("این درخواست قبلاً اتمام شده است.");
+
+            if (request.Status != RequestStatusEnum.InProgress)
+                return Result<BidFullDto>.Failure("فقط درخواست‌هایی که در وضعیت انجام هستند قابلیت اتمام دارند.");
+
+            if (request.AcceptedBidId is null)
+                return Result<BidFullDto>.Failure("برای این درخواست پیشنهاد پذیرفته‌شده‌ای وجود ندارد.");
+
+
+            var bidResult = await bidServices.GetBidFullByIdAsync(request.AcceptedBidId.Value, ct);
+            if (bidResult.Status != ResultStatusEnum.Success || bidResult.Data is null)
+                return Result<BidFullDto>.Failure(bidResult.Message);
+
+            var bid = bidResult.Data;
+
+            if (bid.RequestId != requestId)
+                return Result<BidFullDto>.Failure("پیشنهاد پذیرفته‌شده معتبر نیست.");
+
+            return Result<BidFullDto>.Success("تغییر وضعیت به تکمیل ممکن است", bid);
         }
     }
 }

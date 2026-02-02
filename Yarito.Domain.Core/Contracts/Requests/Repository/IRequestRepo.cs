@@ -86,10 +86,11 @@ public interface IRequestRepo
     /// <param name="newStatus">وضعیت جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct);
+    Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save);
 
     #endregion
 
 
     Task<int> CountOfOpenRequestForCustomerIdAsync(int customerId, CancellationToken ct);
+    void ClearChangeTracker();
 }

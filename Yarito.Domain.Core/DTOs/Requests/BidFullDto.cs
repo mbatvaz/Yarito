@@ -1,7 +1,4 @@
-﻿using Yarito.Domain.Core.DTOs.Users;
-using Yarito.Domain.Core.Entities.Requests;
-using Yarito.Domain.Core.Entities.Users;
-using Yarito.Domain.Core.Enums.Requests;
+﻿using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.Core.DTOs.Requests
 {
@@ -13,6 +10,7 @@ namespace Yarito.Domain.Core.DTOs.Requests
         public required DateTime ProposedVisitDateTime { get; init; }
         public required DateTime CreatedAt { get; init; }
         public BidStatusEnum Status { get; set; } = BidStatusEnum.Pending;
-        public AppUserFullDto Expert { get; set; } = null!;
+        public required int ExpertId { get; init; }
+        public required int RequestId { get; init; }
     }
 }

@@ -41,8 +41,8 @@
         @if (Model.UserInfo.IsInfoComplete)
         {
             <a asp-area="Customer"
-               asp-controller="CustomerRequest"
-               asp-action="NewRequest"
+               asp-controller="Requests"
+               asp-action="New"
                class="btn btn--primary btn--sm">ثبت درخواست</a>
         }
         else
@@ -108,7 +108,11 @@
                                                    RequestStatusEnum.Completed => "badge--completed",
                                                    _ => "badge--cancelled"
                                                })">@Html.DisplayFor(_ => r.Status)</span></td>
-                        <td><a href="#" class="btn btn--ghost btn--sm">مشاهده</a></td>
+                        <td><a asp-area="Customer"
+                               asp-controller="Requests"
+                               asp-action="Details"
+                               asp-route-id="@r.Id"
+                               class="btn btn--ghost btn--sm">مشاهده</a></td>
                     </tr>
                 }
                 </tbody>
