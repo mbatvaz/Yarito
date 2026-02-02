@@ -49,6 +49,9 @@ namespace Yarito.Domain.Services.Requests
                 : Result<bool>.Failure("خطا در تغییر وضعیت درخواست.");
         }
 
+        public async Task<bool> SaveChangesAsync(CancellationToken ct) 
+        => await requestRepo.SaveChangesAsync(ct);
+
         public Result<RequestNewDto> IsPropertyValid(RequestNewDto dto)
         {
             dto.Title = Validation.NormalizeText(dto.Title);

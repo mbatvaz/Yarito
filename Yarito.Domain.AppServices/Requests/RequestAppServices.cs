@@ -3,7 +3,6 @@ using Yarito.Domain.Core.Contracts.Images.Services;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.Contracts.Users.Services;
-using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
@@ -17,7 +16,6 @@ namespace Yarito.Domain.AppServices.Requests
         IAppUserServices appUserServices,
         IFileServices fileServices,
         IImageServices imageServices,
-        IBidServices bidServices,
         IWorkServices workServices) : IRequestAppServices
     {
         #region Query Methods
@@ -126,16 +124,19 @@ namespace Yarito.Domain.AppServices.Requests
                     return Result<bool>.Failure(changStatusResult.Message); 
 
                 var balance = acceptedBid.Data.ProposedPrice * (decimal)0.9;
-
                 var feeResult = await appUserServices.DecreaseWalletBalanceAsync(11, balance, ct, false);
+
                 if (feeResult.Status != ResultStatusEnum.Success)
                     throw new Exception();
 
-                var result = await appUserServices.IncreaseWalletBalanceAsync(acceptedBid.Data.ExpertId, balance, ct, true);
+                var result = await appUserServices.IncreaseWalletBalanceAsync(acceptedBid.Data.ExpertId, balance, ct, false);
+                
+                if (result.Status != ResultStatusEnum.Success)
+                    throw new Exception();
 
-                return result.Status == ResultStatusEnum.Success
-                    ? Result<bool>.Success("وضعیت درخواست شما به اتمام تغییر یافت")
-                    : throw new Exception();
+                await requestServices.SaveChangesAsync(ct);
+
+                return Result<bool>.Success("وضعیت درخواست شما به اتمام تغییر یافت");
             }
             catch (Exception ex)
             {

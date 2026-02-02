@@ -88,6 +88,13 @@ public interface IRequestRepo
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save);
 
+    /// <summary>
+    /// ذخیره تغییرات اعمال شده در دیتابیس.
+    /// </summary>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت عملیات ذخیره</returns>
+    Task<bool> SaveChangesAsync(CancellationToken ct);
+
     #endregion
 
 

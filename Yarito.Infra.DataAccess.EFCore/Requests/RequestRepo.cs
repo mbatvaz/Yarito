@@ -167,6 +167,13 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         return true;
     }
 
+    public async Task<bool> SaveChangesAsync(CancellationToken ct)
+    {
+        return await _db.SaveChangesAsync(ct) > 0;
+    }
+
+
+
     public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct)
     {
         var query = ApplyFilters(q);

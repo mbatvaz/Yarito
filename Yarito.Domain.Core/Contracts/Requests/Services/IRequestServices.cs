@@ -57,6 +57,8 @@ public interface IRequestServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save = true);
+    
+    Task<bool> SaveChangesAsync(CancellationToken ct);
 
     #endregion
 
