@@ -55,7 +55,9 @@
     <div class="card dashboard-card">
         <h3 class="dashboard-card__title">تاریخچه درخواست‌ها</h3>
         <p class="dashboard-card__desc muted">مشاهده درخواست‌های قبلی</p>
-        <a href="#" class="btn btn--secondary btn--sm">مشاهده</a>
+        <a asp-area="Customer"
+           asp-controller="Requests"
+           asp-action="History" class="btn btn--secondary btn--sm">مشاهده</a>
     </div>
 </div>
 
@@ -103,10 +105,11 @@
                         <td>@r.CreateAt.CompleteShamsiDate("yyyy/mm/dd")</td>
                         <td><span class="badge @(r.Status switch
                                                {
-                                                   RequestStatusEnum.Pending => "badge--waiting",
-                                                   RequestStatusEnum.InProgress => "badge--receiving",
-                                                   RequestStatusEnum.Completed => "badge--completed",
-                                                   _ => "badge--cancelled"
+                                                   RequestStatusEnum.Pending    => "badge--receiving",
+                                                   RequestStatusEnum.Completed  => "badge--completed",
+                                                   RequestStatusEnum.Cancelled  => "badge--cancelled",
+                                                   RequestStatusEnum.InProgress => "badge--waiting",
+                                                   _                            => ""
                                                })">@Html.DisplayFor(_ => r.Status)</span></td>
                         <td><a asp-area="Customer"
                                asp-controller="Requests"

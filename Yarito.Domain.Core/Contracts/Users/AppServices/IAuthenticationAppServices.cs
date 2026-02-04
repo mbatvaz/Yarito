@@ -29,4 +29,6 @@ public interface IAuthenticationAppServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه عملیات ثبت‌نام با پیام مناسب</returns>
     Task<Result<string>> RegisterAsync(RegisterDto dto, CancellationToken ct);
+
+    Task<Result<bool>> ChangePasswordAsync(ChangePasswordDto dto, CancellationToken ct);
 }

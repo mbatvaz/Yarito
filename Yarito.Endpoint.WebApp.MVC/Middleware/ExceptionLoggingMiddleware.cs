@@ -11,6 +11,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Middleware
             try
             {
                 await next(context);
+
             }
             catch (Exception ex)
             {

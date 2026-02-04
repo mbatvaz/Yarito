@@ -113,7 +113,11 @@
             <section class="card user-section">
                 <div class="user-section__header">
                     <h3>پیشنهاد پذیرفته شده</h3>
-                    <a href="#" class="btn btn--secondary btn--sm">مشاهده پروفایل متخصص</a>
+                    <a asp-area="Customer"
+                       asp-controller="Profile"
+                       asp-action="Expert"
+                       asp-route-expertId="@acceptedBid.ExpertId"
+                       class="btn btn--secondary btn--sm">مشاهده پروفایل متخصص</a>
                 </div>
 
                 <div class="user-info-grid">
@@ -276,7 +280,10 @@
                                 <input type="hidden" name="requestId" value="@request.Id" />
                                 <button type="submit" class="btn btn--danger btn--sm">رد</button>
                             </form>
-                            <a href="#" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
+                            <a asp-area="Customer"
+                               asp-controller="Profile"
+                               asp-action="Expert"
+                               asp-route-expertId="@b.ExpertId" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
                         </div>
                     </div>        
                 }
@@ -302,7 +309,10 @@
                             </div>
                         </div>
                         <div class="offer-card__actions">
-                            <a href="#" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
+                            <a asp-area="Customer"
+                               asp-controller="Profile"
+                               asp-action="Expert"
+                               asp-route-expertId="@b.ExpertId" class="btn btn--ghost btn--sm">پروفایل متخصص</a>
                         </div>
                     </div>
                 }

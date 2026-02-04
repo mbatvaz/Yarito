@@ -141,5 +141,23 @@ namespace Yarito.Domain.AppServices.Users
                 return Result<string>.Failure(ex.Message);
             }
         }
+
+        public async Task<Result<bool>> ChangePasswordAsync(ChangePasswordDto dto, CancellationToken ct)
+        {
+            var user = await userManager.FindByIdAsync(dto.Id.ToString());
+            if (user is null)
+            {
+                await signInManager.SignOutAsync();
+                return Result<bool>.Failure("مشخصات کاربر پیدا نشد");
+            }
+
+            var result = await userManager.ChangePasswordAsync(user, dto.OldPassword, dto.NewPassword);
+
+            if (!result.Succeeded)
+                return Result<bool>.Failure(result.Errors.First().Description);
+
+            await signInManager.SignOutAsync();
+            return Result<bool>.Success("رمز عبور شما با موفقیت تغییر کرد، لطفا دوباره وارد سیستم شوید");
+        }
     }
 }

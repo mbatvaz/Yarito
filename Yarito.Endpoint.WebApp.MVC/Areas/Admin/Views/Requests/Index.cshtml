@@ -12,17 +12,21 @@
 
 <!-- Filters -->
 <section class="card admin-box">
-    <form class="admin-filter-bar admin-filter-bar--row" asp-area="Admin" asp-controller="Requests" asp-action="Index" method="get">
+    <form asp-area="Admin"
+          asp-controller="Requests"
+          asp-action="Index"
+          class="admin-filter-bar admin-filter-bar--row"
+          method="get">
         <div class="admin-filter-bar__fields">
             <div class="form-group form-group--search">
-                <label for="search">جستجو</label>
-                <input type="text" id="search" name="search" placeholder="عنوان، توضیحات..." value="@Model.Search">
+                <label asp-for="Search">جستجو</label>
+                <input type="text" asp-for="Search" placeholder="عنوان، توضیحات..." value="@Model.Search">
             </div>
             <div class="form-group form-group--select">
-                <label for="status">وضعیت</label>
-                <select id="status" name="status">
+                <label asp-for="Status">وضعیت</label>
+                <select asp-for="Status">
                     <option value="">همه</option>
-                    <option value="@RequestStatusEnum.Pending" selected="@(Model.Status == RequestStatusEnum.Pending)">در حال دریافت پیشنهاد</option>
+                    <option value="@RequestStatusEnum.Pending" selected="@(Model.Status == RequestStatusEnum.Pending)">دریافت پیشنهاد</option>
                     <option value="@RequestStatusEnum.InProgress" selected="@(Model.Status == RequestStatusEnum.InProgress)">در انتظار انجام</option>
                     <option value="@RequestStatusEnum.Completed" selected="@(Model.Status == RequestStatusEnum.Completed)">تکمیل شده</option>
                     <option value="@RequestStatusEnum.Cancelled" selected="@(Model.Status == RequestStatusEnum.Cancelled)">لغو شده</option>

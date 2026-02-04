@@ -4,7 +4,7 @@
 }
 <section class="profile-main">
 <div class="edit-container edit-container--wide">
-    <form asp-area="Customer" asp-controller="Dashboard" asp-action="CustomerForm" method="post" enctype="multipart/form-data">
+    <form asp-area="Customer" asp-controller="Profile" asp-action="Form" method="post" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input type="hidden" asp-for="CurrentProfileImagePath" />
         <input type="hidden" asp-for="DeleteProfileImage" id="DeleteProfileImage" />
@@ -114,7 +114,10 @@
 
         <!-- Footer Actions -->
         <div class="edit-actions">
-            <a asp-action="Index" class="btn btn--secondary">بازگشت</a>
+            <a asp-area="Customer"
+               asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn btn--secondary">بازگشت</a>
             <button type="submit" class="btn btn--primary">ثبت تغییرات</button>
         </div>
     </form>

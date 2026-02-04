@@ -1,0 +1,120 @@
+﻿@using Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models.ExpertViewModel
+@{
+    Layout = "_Layout";
+    var info = Model.Info;
+    var avg = Model.Reviews.Any() ? Model.Reviews.Average(x => x.Rating) : 0;
+}
+<div class="expert-profile-container">
+
+    <!-- Expert Info -->
+    <div class="card expert-info-card">
+        <div class="expert-info-content">
+            <div class="expert-main-info">
+                <img src="@info.ProfileImgPath" class="expert-avatar" alt="تصویر متخصص">
+                <div class="expert-details">
+                    <h1 class="expert-name">@info.FirstName @info.LastName</h1>
+                    <div class="expert-meta">
+                        <span class="expert-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            از @info.CreatedAt.CompleteShamsiDate("dd mn yyyy") در یاریتو
+                        </span>
+                        <span class="expert-location">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            @info.CityName
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Side -->
+            <div class="expert-stats-side">
+                <div class="expert-stat-item">
+                    <span class="stat-label">تعداد نظرات</span>
+                    <strong class="stat-value">@Model.TotalCount.ToString("N0").ToPersianNum()</strong>
+                </div>
+                <div class="expert-stat-item">
+                    <span class="stat-label">میانگین امتیاز</span>
+                    <div class="stat-rating">
+                        <strong class="stat-value">@avg.ToString("F1").ToPersianNum()</strong>
+                        <span class="star star--filled"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Services -->
+    <div class="card expert-section-card">
+        <div class="expert-section-header">
+            <h3>خدمات ارائه شده</h3>
+        </div>
+        <div class="expert-services-list">
+            @foreach (var c in Model.Categories)
+            {
+                <div class="expert-service-category">
+                    <h4>@c.CategoryTitle</h4>
+                    <div class="service-chips">
+                        @foreach (var s in c.Works)
+                        {
+                            <span class="service-chip">@s.Title</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="expert-section-card">
+        <div class="expert-section-header">
+            <h3>نظرات کاربران</h3>
+        </div>
+        <div class="expert-comments-grid">
+            @foreach (var r in Model.Reviews)
+            {
+                if (r.Comment is not null)
+                {
+                    <div class="card expert-comment-card">
+                        <div class="comment-header">
+                            <span class="comment-date">@r.FirstName @r.LastName</span>
+                            <span class="comment-date">@r.CreateAt.CompleteShamsiDate("dd mn yyyy")</span>
+                            <div class="comment-rating">
+                                @for (var i = 1; i <= 5; i++)
+                                {
+                                    <span class="star @(i <= r.Rating ? "star--filled" : "star--empty")"></span>
+                                }
+                            </div>
+                        </div>
+                        <p class="comment-text">@r.Comment.ToPersianNum()</p>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @await Html.PartialAsync("_Pagination", new PaginationViewModel
+    {
+        Page = Model.Page,
+        TotalPages = Model.TotalPages,
+        Area = "Customer",
+        Controller = "Profile",
+        Action = "Expert",
+        RouteValues = new Dictionary<string, string?>
+        {
+            ["expertId"] = Model.Info.Id.ToString(),
+        }
+    })
+
+</div>

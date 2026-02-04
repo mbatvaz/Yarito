@@ -10,6 +10,7 @@ using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Enums._Common;
+using Yarito.Domain.Core.Enums.Requests;
 using Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models;
 using Yarito.Endpoint.WebApp.MVC.Filters;
 
@@ -245,6 +246,30 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
 
             Notification(result);
             return RedirectToAction(nameof(Details), new { id = model.RequestId });
+        }
+
+        public async Task<IActionResult> History(CancellationToken ct, int page = 1, string? search = null,
+            RequestStatusEnum? status = null)
+        {
+            var requestsResult = await requestAppServices.GetRequestsSummaryListAsync(new RequestReqDto()
+            {
+                CustomerId = GetUserId(),
+                Page = 1,
+                PageSize = 5,
+                FirstStatus = status,
+                TextSearch = search
+            }, ct);
+
+            var model = new HistoryViewModel()
+            {
+                Status = status,
+                Page = page,
+                Requests = requestsResult.Items,
+                Search = search,
+                TotalCount = requestsResult.TotalCount,
+                PageSize = requestsResult.PageSize,
+            };
+            return View(model);
         }
     }
 }
