@@ -1,4 +1,5 @@
-﻿using Yarito.Domain.Core.Contracts._Common.Services;
+﻿using Microsoft.Extensions.Configuration;
+using Yarito.Domain.Core.Contracts._Common.Services;
 using Yarito.Domain.Core.Contracts.Images.Services;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Services;
@@ -16,7 +17,9 @@ namespace Yarito.Domain.AppServices.Requests
         IAppUserServices appUserServices,
         IFileServices fileServices,
         IImageServices imageServices,
-        IWorkServices workServices) : IRequestAppServices
+        IBidServices bidServices,
+        IWorkServices workServices,
+        IConfiguration configuration) : IRequestAppServices
     {
         #region Query Methods
 
@@ -125,7 +128,7 @@ namespace Yarito.Domain.AppServices.Requests
 
                 var balance = acceptedBid.Data.ProposedPrice * (decimal)0.9;
                 var feeResult = await appUserServices.DecreaseWalletBalanceAsync(11, balance, ct, false);
-
+                
                 if (feeResult.Status != ResultStatusEnum.Success)
                     throw new Exception();
 
@@ -142,6 +145,74 @@ namespace Yarito.Domain.AppServices.Requests
             {
                 requestServices.ClearChangeTracker(); 
                 return Result<bool>.Failure("در هنگام تغییر وضعیت خطایی رخ داد، لطفا بعدا تلاش کنید");
+            }
+        }
+
+        public async Task<Result<bool>> CancelAsync(int requestId, int customerId, CancellationToken ct)
+        {
+            var validationResult = await requestServices.CancelValidationAsync(requestId, customerId, ct);
+            if (validationResult.Status != ResultStatusEnum.Success)
+                return Result<bool>.Failure(validationResult.Message);
+
+            try
+            {
+                var changeStatusResult = await requestServices.ChangeStatusAsync(requestId, RequestStatusEnum.Cancelled, ct, false);
+                if (changeStatusResult.Status != ResultStatusEnum.Success)
+                    return Result<bool>.Failure(changeStatusResult.Message);
+
+                var bidRejectionResult = await bidServices.RejectAllBidsByRequestIdAsync(requestId, ct);
+                if (bidRejectionResult.Status != ResultStatusEnum.Success)
+                    throw new Exception(bidRejectionResult.Message);
+
+                var x = await requestServices.SaveChangesAsync(ct);
+
+                return Result<bool>.Success("درخواست شما با موفقیت لغو شد.");
+            }
+            catch (Exception ex)
+            {
+                requestServices.ClearChangeTracker();
+                return Result<bool>.Failure("در هنگام لغو درخواست خطایی رخ داد، لطفا بعدا تلاش کنید");
+            }
+        }
+
+        public async Task<Result<bool>> AcceptBidAsync(int requestId, int bidId, int customerId, CancellationToken ct)
+        {
+            var validationResult = await requestServices.AcceptBidValidationAsync(requestId, bidId, customerId, ct);
+            if (validationResult.Status != ResultStatusEnum.Success || validationResult.Data is null)
+                return Result<bool>.Failure(validationResult.Message);
+
+            var bid = validationResult.Data;
+
+            try
+            {
+                var decreaseResult = await appUserServices.DecreaseWalletBalanceAsync(customerId, bid.ProposedPrice, ct, false);
+                if (decreaseResult.Status != ResultStatusEnum.Success)
+                    return Result<bool>.Failure("خطا در کسر موجودی از حساب شما.");
+
+                var increaseResult = await appUserServices.IncreaseWalletBalanceAsync(11, bid.ProposedPrice, ct, false);
+                if (increaseResult.Status != ResultStatusEnum.Success)
+                    throw new Exception("خطا در واریز وجه به حساب سیستم.");
+
+                var changeRequestStatus = await requestServices.ChangeStatusAsync(requestId, RequestStatusEnum.InProgress, ct, false);
+                if (changeRequestStatus.Status != ResultStatusEnum.Success)
+                    throw new Exception("خطا در تغییر وضعیت درخواست.");
+
+                var setAcceptedBidResult = await requestServices.SetAcceptedBidIdAsync(requestId, bidId, ct, false);
+                if (setAcceptedBidResult.Status != ResultStatusEnum.Success)
+                    throw new Exception(setAcceptedBidResult.Message);
+
+                var bidAcceptanceResult = await bidServices.AcceptBidAsync(bidId, requestId, ct);
+                if (bidAcceptanceResult.Status != ResultStatusEnum.Success)
+                    throw new Exception(bidAcceptanceResult.Message);
+
+                await requestServices.SaveChangesAsync(ct);
+
+                return Result<bool>.Success("پیشنهاد با موفقیت پذیرفته شد و وضعیت درخواست به 'در حال انجام' تغییر یافت.");
+            }
+            catch (Exception ex)
+            {
+                requestServices.ClearChangeTracker();
+                return Result<bool>.Failure(ex.Message);
             }
         }
     }

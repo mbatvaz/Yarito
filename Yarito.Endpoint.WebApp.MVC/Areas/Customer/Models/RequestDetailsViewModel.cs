@@ -12,7 +12,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
         public required IReadOnlyList<BidFullDto> Bids { get; init; }
 
         // Add Review
-        public AddReviewInputModel ReviewForm { get; init; } = new();
+        public AddReviewInputModel ReviewModel { get; init; } = new();
 
         // Filters
         public string? Search { get; init; }

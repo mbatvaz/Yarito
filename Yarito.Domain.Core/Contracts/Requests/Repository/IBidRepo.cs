@@ -42,14 +42,24 @@ public interface IBidRepo
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct);
 
+
+
     /// <summary>
-    /// تغییر وضعیت چندین پیشنهاد به صورت همزمان.
+    /// رد کردن تمامی پیشنهادهای یک درخواست به صورت انبوه.
     /// </summary>
-    /// <param name="bidIds">لیست شناسه‌های پیشنهاد</param>
-    /// <param name="newStatus">وضعیت جدید</param>
+    /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeMultipleStatusesAsync(List<int> bidIds, BidStatusEnum newStatus, CancellationToken ct);
+    Task<bool> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct);
+
+    /// <summary>
+    /// پذیرش یک پیشنهاد و رد کردن تمامی پیشنهادهای دیگر همان درخواست.
+    /// </summary>
+    /// <param name="bidId">شناسه پیشنهاد پذیرفته شده</param>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت عملیات</returns>
+    Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct);
 
     /// <summary>
     /// دریافت لیست خلاصه پیشنهادات با قابلیت صفحه‌بندی و فیلتر.

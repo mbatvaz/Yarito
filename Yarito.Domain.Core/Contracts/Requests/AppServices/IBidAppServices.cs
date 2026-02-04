@@ -25,12 +25,14 @@ public interface IBidAppServices
     Task<PagedResult<BidFullDto>> GetBidsFullListAsync(BidReqDto q, CancellationToken ct);
 
     /// <summary>
-    /// رد کردن یک پیشنهاد.
+    /// رد کردن یک پیشنهاد با بررسی صحت تعلق به درخواست و مالکیت اختیاری.
     /// </summary>
     /// <param name="bidId">شناسه پیشنهاد</param>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="userId">شناسه کاربر (مشتری - برای بررسی دسترس)</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه عملیات</returns>
-    Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct);
+    Task<Result<bool>> RejectBidAsync(int bidId, int requestId, int? userId, CancellationToken ct);
 
     /// <summary>
     /// دریافت جزئیات کامل یک پیشنهاد شامل اطلاعات مشتری، متخصص و درخواست.

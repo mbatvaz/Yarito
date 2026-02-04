@@ -16,7 +16,7 @@ public interface IReviewRepo
     /// <param name="newReview">موجودیت نظر جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AddAsync(Review newReview, CancellationToken ct);
+    Task<bool> AddAsync(AddNewReviewDto newReview, CancellationToken ct);
 
     /// <summary>
     /// به‌روزرسانی اطلاعات یک نظر موجود.
@@ -61,4 +61,5 @@ public interface IReviewRepo
 
 
     Task<ReviewSummaryDto?> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct);
+    Task<bool> HasReviewForRequestAsync(int requestId, CancellationToken ct);
 }

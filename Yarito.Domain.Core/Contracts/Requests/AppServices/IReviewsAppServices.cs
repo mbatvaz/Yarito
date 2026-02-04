@@ -32,6 +32,8 @@ public interface IReviewsAppServices
     /// <returns>لیست نظرات برای صفحه اصلی</returns>
     Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto request, CancellationToken ct);
 
+    Task<Result<ReviewSummaryDto>> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct);
+
     /// <summary>
     /// دریافت لیست کامل نظرات با قابلیت صفحه‌بندی.
     /// </summary>
@@ -40,5 +42,13 @@ public interface IReviewsAppServices
     /// <returns>نتیجه صفحه‌بندی شده از نظرات</returns>
     Task<PagedResult<ReviewFullDto>> GetReviewsListAsync(ReviewReqDto request, CancellationToken ct);
 
-    Task<Result<ReviewSummaryDto>> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct);
+
+    /// <summary>
+    /// ثبت یک نظر جدید توسط مشتری.
+    /// </summary>
+    /// <param name="model">مدل ورودی نظر</param>
+    /// <param name="customerId">شناسه مشتری</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه عملیات</returns>
+    Task<Result<bool>> RegisterReviewAsync(AddNewReviewDto dto,  CancellationToken ct);
 }

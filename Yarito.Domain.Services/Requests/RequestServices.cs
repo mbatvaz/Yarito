@@ -1,5 +1,6 @@
 ﻿using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
+using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
@@ -11,7 +12,8 @@ namespace Yarito.Domain.Services.Requests
 {
     public class RequestServices(
         IRequestRepo requestRepo,
-        IBidServices bidServices) : IRequestServices
+        IBidServices bidServices,
+        IAppUserServices appUserServices) : IRequestServices
     {
         public async Task<int> GetCountAsync(CancellationToken ct)
             => await requestRepo.GetCountAsync(ct);
@@ -135,6 +137,74 @@ namespace Yarito.Domain.Services.Requests
                 return Result<BidFullDto>.Failure("پیشنهاد پذیرفته‌شده معتبر نیست.");
 
             return Result<BidFullDto>.Success("تغییر وضعیت به تکمیل ممکن است", bid);
+        }
+
+        public async Task<Result<bool>> CancelValidationAsync(int requestId, int customerId, CancellationToken ct)
+        {
+            var requestResult = await GetRequestFullByIdAsync(requestId, ct);
+            if (requestResult.Status != ResultStatusEnum.Success || requestResult.Data is null)
+                return Result<bool>.Failure(requestResult.Message);
+
+            var request = requestResult.Data;
+
+            if (request.CustomerId != customerId)
+                return Result<bool>.Failure("دسترسی غیرمجاز.");
+
+            if (request.Status == RequestStatusEnum.Cancelled)
+                return Result<bool>.Success("این درخواست قبلاً لغو شده است.");
+
+            if (request.Status != RequestStatusEnum.Pending)
+                return Result<bool>.Failure("فقط درخواست‌هایی که در وضعیت انتظار هستند قابلیت لغو دارند.");
+
+            if (request.AcceptedBidId is not null)
+                return Result<bool>.Failure("این درخواست دارای پیشنهاد پذیرفته‌شده است و نمی‌تواند لغو شود.");
+
+            return Result<bool>.Success("امکان لغو درخواست وجود دارد.");
+        }
+
+        public async Task<Result<BidFullDto>> AcceptBidValidationAsync(int requestId, int bidId, int customerId, CancellationToken ct)
+        {
+            var requestResult = await GetRequestFullByIdAsync(requestId, ct);
+            if (requestResult.Status != ResultStatusEnum.Success || requestResult.Data is null)
+                return Result<BidFullDto>.Failure(requestResult.Message);
+
+            var request = requestResult.Data;
+
+            if (request.CustomerId != customerId)
+                return Result<BidFullDto>.Failure("دسترسی غیرمجاز.");
+
+            if (request.Status != RequestStatusEnum.Pending)
+                return Result<BidFullDto>.Failure("فقط درخواست‌هایی که در وضعیت انتظار هستند قابلیت پذیرش پیشنهاد دارند.");
+
+            if (request.AcceptedBidId.HasValue)
+                return Result<BidFullDto>.Failure("این درخواست در حال حاضر دارای یک پیشنهاد پذیرفته شده است.");
+
+            var bidResult = await bidServices.GetBidFullByIdAsync(bidId, ct);
+            if (bidResult.Status != ResultStatusEnum.Success || bidResult.Data is null)
+                return Result<BidFullDto>.Failure("پیشنهاد مورد نظر یافت نشد.");
+
+            var bid = bidResult.Data;
+            if (bid.RequestId != requestId)
+                return Result<BidFullDto>.Failure("این پیشنهاد متعلق به این درخواست نمی‌باشد.");
+
+            if (bid.ProposedVisitDateTime.Date <= DateTime.Today)
+                return Result<BidFullDto>.Failure("تاریخ مراجعه پیشنهادی باید حداقل برای روز بعد از امروز باشد.");
+
+            var userResult = await appUserServices.GetAppUserSummaryByIdAsync(customerId, ct);
+            if (userResult.Status != ResultStatusEnum.Success || userResult.Data is null)
+                return Result<BidFullDto>.Failure("اطلاعات کاربر یافت نشد.");
+
+            if (userResult.Data.WalletBalance < bid.ProposedPrice)
+                return Result<BidFullDto>.Failure("موجودی حساب شما برای پذیرش این پیشنهاد کافی نیست.");
+
+            return Result<BidFullDto>.Success("اعتبارسنجی با موفقیت انجام شد.", bid);
+        }
+
+        public async Task<Result<bool>> SetAcceptedBidIdAsync(int requestId, int bidId, CancellationToken ct, bool save = true)
+        {
+            return await requestRepo.AcceptBidAsync(requestId, bidId, ct)
+                ? Result<bool>.Success("پیشنهاد با موفقیت به عنوان پیشنهاد پذیرفته شده ثبت شد.")
+                : Result<bool>.Failure("خطا در ثبت پیشنهاد پذیرفته شده.");
         }
     }
 }

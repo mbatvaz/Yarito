@@ -57,9 +57,9 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
 
         if (q.TextSearch is not null)
         {
-            query = query.Where(r => r.Comment.Contains(q.TextSearch) 
-                                        || r.Customer.FirstName.Contains(q.TextSearch)
-                                        || r.Customer.LastName.Contains(q.TextSearch));
+            query = query.Where(r => r.Comment.Contains(q.TextSearch)
+                                     || r.Customer.FirstName.Contains(q.TextSearch)
+                                     || r.Customer.LastName.Contains(q.TextSearch));
         }
 
         // Sorting
@@ -76,16 +76,25 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
 
             (ReviewSortableEnum.CreatedAt, SortDirectionEnum.Ascending)
                 => query.OrderBy(r => r.CreatedAt),
-                
+
             _ => query.OrderByDescending(r => r.CreatedAt),
         };
 
         return query;
     }
 
-    public async Task<bool> AddAsync(Review newReview, CancellationToken ct)
+    public async Task<bool> AddAsync(AddNewReviewDto newReview, CancellationToken ct)
     {
-        _db.Reviews.Add(newReview);
+        var review = new Review
+        {
+            RequestId = newReview.RequestId,
+            CustomerId = newReview.CustomerId,
+            ExpertId = newReview.ExpertId,
+            Rating = newReview.Rating,
+            Comment = newReview.Comment,
+            ReviewStatus = newReview.ReviewStatus
+        };
+        _db.Reviews.Add(review);
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
@@ -176,5 +185,10 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
                 Rating = r.Rating,
                 Status = r.ReviewStatus
             }).FirstOrDefaultAsync(ct);
+
+    }
+    public async Task<bool> HasReviewForRequestAsync(int requestId, CancellationToken ct)
+    {
+        return await _db.Reviews.AnyAsync(r => r.RequestId == requestId, ct);
     }
 }

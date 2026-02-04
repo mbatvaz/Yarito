@@ -115,7 +115,7 @@ public class RequestsController(
     [HttpPost]
     public async Task<IActionResult> RejectBid(int id, int requestId, CancellationToken ct)
     {
-        var result = await bidAppServices.RejectBidAsync(id, ct);
+        var result = await bidAppServices.RejectBidAsync(id, requestId, null, ct);
         Notification(result);
         return RedirectToAction(nameof(RequestDetails), new { id = requestId });
     }

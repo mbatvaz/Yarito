@@ -161,6 +161,11 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
 
             Notification(request);
             var review = await reviewsAppServices.GetReviewsForRequestByIdAsync(id, ct);
+            
+            AddReviewInputModel? reviewModel = null;
+            if (TempData["ReviewModel"] is string reviewModelJson)
+                reviewModel = JsonConvert.DeserializeObject<AddReviewInputModel>(reviewModelJson);
+
             var bids = await bidAppServices.GetBidsFullListAsync(new BidReqDto()
             {
                 RequestId = id,
@@ -174,6 +179,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 Request = request.Data,
                 Review = review.Data,
                 Bids = bids.Items,
+                ReviewModel = reviewModel ?? new AddReviewInputModel { RequestId = id },
 
                 Page = page,
                 Search = search,
@@ -190,6 +196,55 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
             var result = await requestAppServices.CompletionAsync(requestId, GetUserId(), ct);
             Notification(result);
             return RedirectToAction(nameof(Details), new { id = requestId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Cancel(int requestId, CancellationToken ct)
+        {
+            var result = await requestAppServices.CancelAsync(requestId, GetUserId(), ct);
+            Notification(result);
+            return RedirectToAction(nameof(Details), new { id = requestId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectBid(int bidId, int requestId, CancellationToken ct)
+        {
+            var result = await bidAppServices.RejectBidAsync(bidId, requestId, GetUserId(), ct);
+            Notification(result);
+            return RedirectToAction(nameof(Details), new { id = requestId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AcceptBid(int requestId, int bidId, CancellationToken ct)
+        {
+            var result = await requestAppServices.AcceptBidAsync(requestId, bidId, GetUserId(), ct);
+            Notification(result);
+            return RedirectToAction(nameof(Details), new { id = requestId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddReview(AddReviewInputModel model, CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
+                Notification(Result<bool>.Failure("اطلاعات وارد شده معتبر نیست."));
+                return RedirectToAction(nameof(Details), new { id = model.RequestId });
+            }
+
+            var result = await reviewsAppServices.RegisterReviewAsync(new AddNewReviewDto()
+            {
+                Comment = model.Comment,
+                Rating = model.Rating,
+                RequestId = model.RequestId,
+                CustomerId = GetUserId()
+            }, ct);
+
+            if (result.Status != ResultStatusEnum.Success)
+                TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
+
+            Notification(result);
+            return RedirectToAction(nameof(Details), new { id = model.RequestId });
         }
     }
 }

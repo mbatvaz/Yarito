@@ -90,4 +90,25 @@ public interface IRequestServices
     Task<Result<int>> Add(RequestNewDto dto, CancellationToken ct);
 
     Task<Result<BidFullDto>> CompletionValidationAsync(int requestId, int customerId, CancellationToken ct);
+
+    /// <summary>
+    /// اعتبارسنجی لغو درخواست توسط مشتری.
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="customerId">شناسه مشتری</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه موفقیت یا شکست اعتبارسنجی</returns>
+    Task<Result<bool>> CancelValidationAsync(int requestId, int customerId, CancellationToken ct);
+
+    /// <summary>
+    /// اعتبارسنجی پذیرش پیشنهاد توسط مشتری.
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="bidId">شناسه پیشنهاد</param>
+    /// <param name="customerId">شناسه مشتری</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>اطلاعات پیشنهاد مورد تایید برای فرآیند مالی</returns>
+    Task<Result<BidFullDto>> AcceptBidValidationAsync(int requestId, int bidId, int customerId, CancellationToken ct);
+
+    Task<Result<bool>> SetAcceptedBidIdAsync(int requestId, int bidId, CancellationToken ct, bool save = true);
 }

@@ -22,8 +22,18 @@ namespace Yarito.Domain.Services.Requests
         {
             var result = await reviewRepo.GetReviewsForRequestByIdAsync(requestId, ct);
             return result is null
-                ? Result<ReviewSummaryDto>.Failure("نظری برای این درخواست مجو ندارد")
+                ? Result<ReviewSummaryDto>.Failure("نظری برای این درخواست وجود ندارد")
                 : Result<ReviewSummaryDto>.Success("نظر مرتبط برای این درخواست یافت شد", result);
         }
+
+        public async Task<Result<bool>> AddAsync(AddNewReviewDto review, CancellationToken ct)
+        {
+            return await reviewRepo.AddAsync(review, ct)
+                ? Result<bool>.Success("نظر شما با موفقیت ثبت شد")
+                : Result<bool>.Failure("نظر شما ثبت نشد");
+        }
+
+        public async Task<bool> HasReviewForRequestAsync(int requestId, CancellationToken ct)
+            => await reviewRepo.HasReviewForRequestAsync(requestId, ct);
     }
 }

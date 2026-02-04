@@ -56,4 +56,25 @@ public interface IBidServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات کامل پیشنهاد یا null در صورت عدم وجود</returns>
     Task<Result<BidDetailsDto>> GetBidDetailsAsync(int bidId, CancellationToken ct);
+
+    /// <summary>
+    /// رد کردن یک پیشنهاد (تغییر وضعیت به Rejected).
+    /// </summary>
+    /// <param name="bidId">شناسه پیشنهاد</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه عملیات</returns>
+    Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct);
+
+    /// <summary>
+    /// پذیرش یک پیشنهاد و رد بقیه.
+    /// </summary>
+    Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct);
+
+    /// <summary>
+    /// رد کردن تمامی پیشنهادهای یک درخواست به صورت انبوه.
+    /// </summary>
+    /// <param name="requestId">شناسه درخواست</param>
+    /// <param name="ct">توکن لغو عملیات</param>
+    /// <returns>نتیجه لغو تمام پیشنهادات</returns>
+    Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct);
 }

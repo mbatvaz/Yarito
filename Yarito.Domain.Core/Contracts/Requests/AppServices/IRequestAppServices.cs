@@ -67,4 +67,8 @@ public interface IRequestAppServices
     Task<Result<int>> AddNewRequest(RequestNewDto dto, CancellationToken ct);
 
     Task<Result<bool>> CompletionAsync(int requestId, int customerId, CancellationToken ct);
+
+    Task<Result<bool>> CancelAsync(int requestId, int customerId, CancellationToken ct);
+
+    Task<Result<bool>> AcceptBidAsync(int requestId, int bidId, int customerId, CancellationToken ct);
 }

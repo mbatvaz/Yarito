@@ -36,5 +36,28 @@ namespace Yarito.Domain.Services.Requests
                 ? Result<BidDetailsDto>.Success("پیشنهاد یافت شد", result)
                 : Result<BidDetailsDto>.Failure("پیشنهادی مورد نظر یافت نشد");
         }
+
+        public async Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct)
+        {
+            var result = await bidRepo.RejectAllBidsByRequestIdAsync(requestId, ct);
+            return result
+                ? Result<bool>.Success("تمامی پیشنهادهای مربوط به این درخواست لغو شدند.")
+                : Result<bool>.Failure("خطا در لغو پیشنهادهای مربوط به درخواست.");
+        }
+
+        public async Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct)
+        {
+            var updateResult = await bidRepo.ChangeSingleStatusAsync(bidId, BidStatusEnum.Rejected, ct);
+            return updateResult
+                ? Result<bool>.Success("پیشنهاد با موفقیت رد شد.")
+                : Result<bool>.Failure("خطا در رد پیشنهاد.");
+        }
+
+        public async Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct)
+        {
+            return await bidRepo.AcceptBidAndRejectOthersAsync(bidId, requestId, ct)
+                ? Result<bool>.Success("پیشنهاد با موفقیت پذیرفته شد.")
+                : Result<bool>.Failure("خطا در پذیرش پیشنهاد.");
+        }
     }
 }

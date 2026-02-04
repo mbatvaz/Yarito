@@ -2,11 +2,14 @@
 using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
 
 namespace Yarito.Domain.AppServices.Requests;
 
-public class ReviewsAppServices(IReviewsServices reviewsServices) : IReviewsAppServices
+public class ReviewsAppServices(
+    IReviewsServices reviewsServices,
+    IRequestServices requestServices) : IReviewsAppServices
 {
     public async Task<Result<bool>> ApproveAsync(int reviewId, CancellationToken ct)
     {
@@ -32,4 +35,23 @@ public class ReviewsAppServices(IReviewsServices reviewsServices) : IReviewsAppS
 
     public async Task<Result<ReviewSummaryDto>> GetReviewsForRequestByIdAsync(int requestId, CancellationToken ct)
         => await reviewsServices.GetReviewsForRequestByIdAsync(requestId, ct);
+
+    public async Task<Result<bool>> RegisterReviewAsync(AddNewReviewDto dto, CancellationToken ct)
+    {
+        var validationResult = await requestServices.CompletionValidationAsync(dto.RequestId, dto.CustomerId, ct);
+        if (validationResult.Status != ResultStatusEnum.Success)
+            return Result<bool>.Warning(validationResult.Message);
+
+        if (await reviewsServices.HasReviewForRequestAsync(dto.RequestId, ct))
+            return Result<bool>.Failure("شما قبلاً برای این درخواست نظر ثبت کرده‌اید.");
+
+        var bid = validationResult.Data;
+
+        dto.ExpertId = bid.ExpertId;
+
+        var addResult = await reviewsServices.AddAsync(dto, ct);
+        return addResult.Status == ResultStatusEnum.Success
+            ? Result<bool>.Success("نظر شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.")
+            : Result<bool>.Failure("خطا در ثبت نظر.");
+    }
 }
