@@ -551,15 +551,15 @@ button {
   }
 }
 
-/* Two Column Cards Row */
-.dashboard-cards-row--two {
-  grid-template-columns: 1fr;
-}
-
 @media (min-width: 768px) {
   .dashboard-cards-row--two {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* Full Width Dashboard Row */
+.dashboard-cards-row--full {
+    grid-template-columns: 1fr;
 }
 
 /* Dashboard Card */
@@ -617,6 +617,33 @@ button {
 .dashboard-card--list {
   text-align: right;
 }
+
+
+.dashboard-card__header-inline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+    .dashboard-card__header-inline .dashboard-card__title {
+        margin-bottom: 0;
+    }
+
+.btn-link {
+    color: var(--color-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+    .btn-link:hover {
+        color: #1eb3a5;
+        text-decoration: underline;
+    }
 
 /* Empty State */
 .empty-state {
@@ -689,43 +716,67 @@ button {
   gap: var(--space-sm);
 }
 
-.visit-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background: var(--color-bg);
-  border-radius: var(--radius-sm);
-  flex-wrap: wrap;
+.visit-list--grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
 }
 
-.visit-item__info {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  flex: 1;
-  min-width: 150px;
+@media (min-width: 768px) {
+    .visit-list--grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.visit-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+    .visit-item:hover {
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-sm);
+    }
+
+.visit-item__main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    flex: 1;
 }
 
 .visit-item__title {
-  font-weight: 500;
-  color: var(--color-text);
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: var(--text-base);
 }
 
-.visit-item__city {
-  font-size: 0.875rem;
+.visit-item__details {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
 }
 
-.visit-item__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
+.visit-item__detail {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
 }
 
-.visit-item__time {
-  font-size: 0.875rem;
-}
+    .visit-item__detail svg {
+        color: var(--color-primary);
+        flex-shrink: 0;
+    }
 
 /* ==========================================================================
    Edit Profile Pages

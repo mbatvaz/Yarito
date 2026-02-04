@@ -169,8 +169,10 @@ else
                     <td>@b.ProposedVisitDate.CompleteShamsiDate("yyyy/mm/dd")</td>
                     <td><span class="badge @(b.Status switch
                                            {
+                                               BidStatusEnum.Pending  => "badge--waiting",
                                                BidStatusEnum.Accepted => "badge--completed",
                                                BidStatusEnum.Rejected => "badge--cancelled",
+                                               BidStatusEnum.Done     => "badge--completed",
                                                _ => "badge--waiting" })">@Html.DisplayFor(_ => b.Status)</span></td>
                     <td class="text-left">
                         <a asp-area="Admin"

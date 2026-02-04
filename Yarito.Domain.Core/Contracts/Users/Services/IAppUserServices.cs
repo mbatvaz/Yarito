@@ -54,7 +54,7 @@ public interface IAppUserServices
     /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.
     /// </summary>
-    Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct);
+    Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct, bool save = true);
 
     #endregion
 
@@ -96,4 +96,9 @@ public interface IAppUserServices
     Task<Result<bool>> IncreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save = true);
 
     Task<Result<bool>> DecreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save = true);
+
+    /// <summary>
+    /// دریافت اطلاعات داشبورد کاربر.
+    /// </summary>
+    Task<Result<UserDashboardDto>> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct);
 }

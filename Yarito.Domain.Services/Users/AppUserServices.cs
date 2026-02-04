@@ -56,9 +56,9 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
             : Result<bool>.Failure("خطا در بروزرسانی اطلاعات کاربر");
     }
 
-    public async Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct)
+    public async Task<Result<bool>> SoftDeleteAsync(int userId, CancellationToken ct, bool save = true)
     {
-        return await appUserRepo.SoftDeleteAsync(userId, ct)
+        return await appUserRepo.SoftDeleteAsync(userId, ct, save)
             ? Result<bool>.Success("کاربر با موفقیت حذف شد")
             : Result<bool>.Failure("خطا در حذف کاربر");
     }
@@ -161,5 +161,13 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
         return await appUserRepo.DecreaseWalletBalanceAsync(userId, amount, ct, save)
             ? Result<bool>.Success("موجودی حساب با موفقیت کاهش یافت")
             : Result<bool>.Failure("موجودی حساب کاهش نیافت");
+    }
+
+    public async Task<Result<UserDashboardDto>> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct)
+    {
+        var result = await appUserRepo.GetAppUserDashboardByIdAsync(userId, ct);
+        return result is not null
+            ? Result<UserDashboardDto>.Success("اطلاعات داشبورد دریافت شد", result)
+            : Result<UserDashboardDto>.Warning("اطلاعات داشبورد یافت نشد");
     }
 }

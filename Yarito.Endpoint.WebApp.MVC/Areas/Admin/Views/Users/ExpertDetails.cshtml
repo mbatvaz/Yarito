@@ -107,6 +107,7 @@
                                                    BidStatusEnum.Pending  => "badge--waiting",
                                                    BidStatusEnum.Accepted => "badge--completed",
                                                    BidStatusEnum.Rejected => "badge--cancelled",
+                                                   BidStatusEnum.Done     => "badge--completed",
                                                    _ => ""
                                                })">
                                 @Html.DisplayFor(_ => b.Status)

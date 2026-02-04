@@ -16,7 +16,7 @@ public interface IReviewsServices
     /// <param name="newStatus">وضعیت جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct);
+    Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct, bool save = true);
 
     /// <summary>
     /// دریافت نظرات تایید شده برای نمایش در صفحه اصلی.

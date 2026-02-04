@@ -108,5 +108,8 @@ namespace Yarito.Domain.AppServices.Users
 
         public async Task<bool> IsCitySetAsync(int userId, CancellationToken ct) 
             => await appUserServices.IsCitySetAsync(userId, ct);
+
+        public async Task<Result<UserDashboardDto>> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct)
+            => await appUserServices.GetAppUserDashboardByIdAsync(userId, ct);
     }
 }

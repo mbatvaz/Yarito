@@ -47,7 +47,7 @@ public interface IBidServices
     /// <param name="newStatus">وضعیت جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct);
+    Task<Result<bool>> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct, bool save = true);
 
     /// <summary>
     /// دریافت جزئیات کامل یک پیشنهاد شامل اطلاعات مشتری، متخصص و درخواست.
@@ -63,12 +63,12 @@ public interface IBidServices
     /// <param name="bidId">شناسه پیشنهاد</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه عملیات</returns>
-    Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct);
+    Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct, bool save = true);
 
     /// <summary>
     /// پذیرش یک پیشنهاد و رد بقیه.
     /// </summary>
-    Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct);
+    Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct, bool save = true);
 
     /// <summary>
     /// رد کردن تمامی پیشنهادهای یک درخواست به صورت انبوه.
@@ -76,5 +76,5 @@ public interface IBidServices
     /// <param name="requestId">شناسه درخواست</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه لغو تمام پیشنهادات</returns>
-    Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct);
+    Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save = true);
 }

@@ -135,8 +135,6 @@ builder.Services.AddScoped<IBidRepo, BidRepo>();
 builder.Services.AddScoped<IRequestRepo, RequestRepo>();
 builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 builder.Services.AddScoped<IAppUserRepo, AppUserRepo>();
-builder.Services.AddScoped<ICustomerRepo, CustomerRepo>();
-builder.Services.AddScoped<IExpertRepo, ExpertRepo>();
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();

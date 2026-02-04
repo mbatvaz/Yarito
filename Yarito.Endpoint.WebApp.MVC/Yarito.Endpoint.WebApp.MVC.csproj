@@ -36,8 +36,6 @@
     <Folder Include="Areas\Admin\Data\" />
     <Folder Include="Areas\Customer\Data\" />
     <Folder Include="Areas\Expert\Data\" />
-    <Folder Include="Areas\Expert\Models\" />
-    <Folder Include="Areas\Expert\Views\Shared\" />
     <Folder Include="wwwroot\Images\Frontend\" />
     <Folder Include="wwwroot\Images\Request\" />
     <Folder Include="wwwroot\Images\Profile\" />

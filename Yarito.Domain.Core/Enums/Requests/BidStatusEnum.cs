@@ -23,5 +23,11 @@ public enum BidStatusEnum
     /// پیشنهاد توسط مشتری رد شده یا پیشنهاد دیگری برای درخواست پذیرفته شده است.
     /// </summary>
     [Display(Name = "رد شده")]
-    Rejected = 2
+    Rejected = 2,
+
+    /// <summary>
+    /// متخصص پیشنهاد پذیرفته شده را انجام داده است.
+    /// </summary>
+    [Display(Name = "انجام شده")]
+    Done = 3
 }

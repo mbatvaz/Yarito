@@ -202,9 +202,12 @@ namespace Yarito.Domain.Services.Requests
 
         public async Task<Result<bool>> SetAcceptedBidIdAsync(int requestId, int bidId, CancellationToken ct, bool save = true)
         {
-            return await requestRepo.AcceptBidAsync(requestId, bidId, ct)
+            return await requestRepo.AcceptBidAsync(requestId, bidId, ct, save)
                 ? Result<bool>.Success("پیشنهاد با موفقیت به عنوان پیشنهاد پذیرفته شده ثبت شد.")
                 : Result<bool>.Failure("خطا در ثبت پیشنهاد پذیرفته شده.");
         }
+
+        public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct) 
+            => await requestRepo.GetExpertVisitsAsync(q, ct);
     }
 }

@@ -70,14 +70,8 @@ public interface IRequestRepo
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> UpdateAsync(Request newRequest, CancellationToken ct);
 
-    /// <summary>
-    /// پذیرش یک پیشنهاد برای درخواست.
-    /// </summary>
-    /// <param name="requestId">شناسه درخواست</param>
-    /// <param name="bidId">شناسه پیشنهاد پذیرفته‌شده</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AcceptBidAsync(int requestId, int bidId, CancellationToken ct);
+    Task<bool> AcceptBidAsync(int requestId, int bidId, CancellationToken ct, bool save);
 
     /// <summary>
     /// تغییر وضعیت یک درخواست.
@@ -100,4 +94,9 @@ public interface IRequestRepo
 
     Task<int> CountOfOpenRequestForCustomerIdAsync(int customerId, CancellationToken ct);
     void ClearChangeTracker();
+
+    /// <summary>
+    /// دریافت لیست مراجعات یک متخصص بر اساس فیلترهای مشخص شده (مانند تاریخ امروز).
+    /// </summary>
+    Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct);
 }

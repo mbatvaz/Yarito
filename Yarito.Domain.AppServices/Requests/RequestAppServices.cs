@@ -137,6 +137,10 @@ namespace Yarito.Domain.AppServices.Requests
                 if (result.Status != ResultStatusEnum.Success)
                     throw new Exception();
 
+                var bidStatusResult = await bidServices.ChangeSingleStatusAsync(acceptedBid.Data.Id, BidStatusEnum.Done, ct, false);
+                if (bidStatusResult.Status != ResultStatusEnum.Success)
+                    throw new Exception(bidStatusResult.Message);
+
                 await requestServices.SaveChangesAsync(ct);
 
                 return Result<bool>.Success("وضعیت درخواست شما به اتمام تغییر یافت");
@@ -160,7 +164,7 @@ namespace Yarito.Domain.AppServices.Requests
                 if (changeStatusResult.Status != ResultStatusEnum.Success)
                     return Result<bool>.Failure(changeStatusResult.Message);
 
-                var bidRejectionResult = await bidServices.RejectAllBidsByRequestIdAsync(requestId, ct);
+                var bidRejectionResult = await bidServices.RejectAllBidsByRequestIdAsync(requestId, ct, false);
                 if (bidRejectionResult.Status != ResultStatusEnum.Success)
                     throw new Exception(bidRejectionResult.Message);
 
@@ -201,7 +205,7 @@ namespace Yarito.Domain.AppServices.Requests
                 if (setAcceptedBidResult.Status != ResultStatusEnum.Success)
                     throw new Exception(setAcceptedBidResult.Message);
 
-                var bidAcceptanceResult = await bidServices.AcceptBidAsync(bidId, requestId, ct);
+                var bidAcceptanceResult = await bidServices.AcceptBidAsync(bidId, requestId, ct, false);
                 if (bidAcceptanceResult.Status != ResultStatusEnum.Success)
                     throw new Exception(bidAcceptanceResult.Message);
 
@@ -215,5 +219,8 @@ namespace Yarito.Domain.AppServices.Requests
                 return Result<bool>.Failure(ex.Message);
             }
         }
+
+        public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
+            => await requestServices.GetExpertVisitsAsync(q, ct);
     }
 }

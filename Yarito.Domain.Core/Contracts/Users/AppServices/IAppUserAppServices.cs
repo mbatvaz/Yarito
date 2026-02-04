@@ -50,4 +50,9 @@ public interface IAppUserAppServices
     /// بررسی ثبت شهر محل سکونت برای کاربر
     /// </summary>
     Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت اطلاعات داشبورد کاربر.
+    /// </summary>
+    Task<Result<UserDashboardDto>> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct);
 }

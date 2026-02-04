@@ -1,0 +1,65 @@
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models.PaginationViewModel
+@{
+    IDictionary<string, string> WithPage(int page)
+    {
+        return new Dictionary<string, string>(Model.RouteValues!)
+        {
+            ["page"] = page.ToString()
+        };
+    }
+}
+
+
+
+@if (Model.TotalPages > 1)
+{
+    <nav class="user-pagination">
+        <!-- Previous page -->
+        @if (Model.Page > 1)
+        {
+            <a asp-area="@Model.Area"
+               asp-controller="@Model.Controller"
+               asp-action="@Model.Action"
+               asp-all-route-data="WithPage(Model.Page - 1)"
+               class="user-pagination__btn">قبلی</a>
+        }
+        @if (Model.Page > 1)
+        {
+            <a asp-area="@Model.Area"
+               asp-controller="@Model.Controller"
+               asp-action="@Model.Action"
+               asp-all-route-data="WithPage(1)"
+               class="user-pagination__btn">@("1".ToPersianNum())</a>
+        }
+        <div class="user-pagination__pages">
+            @if (Model.Page > 2)
+            {
+                <span class="user-pagination__page">...</span>
+            }
+
+            <span href="#" class="user-pagination__page is-active">@Model.Page.ToString().ToPersianNum()</span>
+
+            @if (Model.Page < Model.TotalPages - 1)
+            {
+                <span class="user-pagination__page">...</span>
+            }
+        </div>
+        <!-- Next page -->
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-area="@Model.Area"
+               asp-controller="@Model.Controller"
+               asp-action="@Model.Action"
+               asp-all-route-data="WithPage(Model.TotalPages)"
+               class="user-pagination__page">@Model.TotalPages.ToString().ToPersianNum()</a>
+        }
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-area="@Model.Area"
+               asp-controller="@Model.Controller"
+               asp-action="@Model.Action"
+               asp-all-route-data="WithPage(Model.Page + 1)"
+               class="user-pagination__btn">بعدی</a>
+        }
+    </nav>
+}

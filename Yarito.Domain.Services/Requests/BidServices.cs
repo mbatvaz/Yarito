@@ -26,8 +26,12 @@ namespace Yarito.Domain.Services.Requests
                 : Result<BidFullDto>.Failure("پیشنهاد مورد نظر یافت نشد");
         }
 
-        public async Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct)
-            => await bidRepo.ChangeSingleStatusAsync(bidId, newStatus, ct);
+        public async Task<Result<bool>> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct, bool save = true)
+        {
+            return await bidRepo.ChangeSingleStatusAsync(bidId, newStatus, ct, save)
+                ? Result<bool>.Success("وضعیت پیشنهاد با موفقیت تغییر کرد")
+                : Result<bool>.Failure("خطایی در هنگام تغییر وضعیت پیشنهاد رخ داد");
+        }
 
         public async Task<Result<BidDetailsDto>> GetBidDetailsAsync(int bidId, CancellationToken ct)
         {
@@ -37,25 +41,25 @@ namespace Yarito.Domain.Services.Requests
                 : Result<BidDetailsDto>.Failure("پیشنهادی مورد نظر یافت نشد");
         }
 
-        public async Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct)
+        public async Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save = false)
         {
-            var result = await bidRepo.RejectAllBidsByRequestIdAsync(requestId, ct);
+            var result = await bidRepo.RejectAllBidsByRequestIdAsync(requestId, ct, save);
             return result
                 ? Result<bool>.Success("تمامی پیشنهادهای مربوط به این درخواست لغو شدند.")
                 : Result<bool>.Failure("خطا در لغو پیشنهادهای مربوط به درخواست.");
         }
 
-        public async Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct)
+        public async Task<Result<bool>> RejectBidAsync(int bidId, CancellationToken ct, bool save = true)
         {
-            var updateResult = await bidRepo.ChangeSingleStatusAsync(bidId, BidStatusEnum.Rejected, ct);
+            var updateResult = await bidRepo.ChangeSingleStatusAsync(bidId, BidStatusEnum.Rejected, ct, save);
             return updateResult
                 ? Result<bool>.Success("پیشنهاد با موفقیت رد شد.")
                 : Result<bool>.Failure("خطا در رد پیشنهاد.");
         }
 
-        public async Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct)
+        public async Task<Result<bool>> AcceptBidAsync(int bidId, int requestId, CancellationToken ct, bool save = false)
         {
-            return await bidRepo.AcceptBidAndRejectOthersAsync(bidId, requestId, ct)
+            return await bidRepo.AcceptBidAndRejectOthersAsync(bidId, requestId, ct, save)
                 ? Result<bool>.Success("پیشنهاد با موفقیت پذیرفته شد.")
                 : Result<bool>.Failure("خطا در پذیرش پیشنهاد.");
         }

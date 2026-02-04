@@ -243,13 +243,17 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
 
     #region Command Methods
 
-    public async Task<bool> SoftDeleteAsync(int userId, CancellationToken ct)
+    public async Task<bool> SoftDeleteAsync(int userId, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-        return await _db.AppUsers
-            .Where(u => u.Id == userId)
-            .ExecuteUpdateAsync(s
-                => s.SetProperty(u => u.IsDeleted, true), ct) > 0;
+        var user = await _db.AppUsers.FindAsync([userId], ct);
+        if (user is null || user.IsDeleted) return false;
+
+        user.IsDeleted = true;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
     }
 
     #endregion
@@ -311,5 +315,17 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
             return await _db.SaveChangesAsync(ct) > 0;
 
         return true;
+    }
+
+    public async Task<UserDashboardDto?> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct)
+    {
+        return await _db.AppUsers.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Select(u => new UserDashboardDto
+            {
+                WalletBalance = u.WalletBalance,
+                IsInfoComplete = u.CityId.HasValue
+            })
+            .FirstOrDefaultAsync(ct);
     }
 }

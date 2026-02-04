@@ -97,20 +97,23 @@ public class BidRepo(AppDbContext _db) : IBidRepo
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
-    public async Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct)
+    public async Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-        return await _db.Bids
-            .Where(b => b.Id == bidId && b.Status != newStatus)
-            .ExecuteUpdateAsync(s => s
-                    .SetProperty(b => b.Status, newStatus),
-                ct) > 0;
+        var bid = await _db.Bids.FindAsync([bidId], ct);
+        if (bid is null || bid.Status == newStatus) return false;
+
+        bid.Status = newStatus;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
     }
     
-    public async Task<bool> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct)
+    public async Task<bool> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save)
     {
         var bids = await _db.Bids
-            .Where(b => b.RequestId == requestId && b.Status != BidStatusEnum.Rejected)
+            .Where(b => b.RequestId == requestId && b.Status != BidStatusEnum.Rejected && b.Status != BidStatusEnum.Done)
             .ToListAsync(ct);
 
         foreach (var bid in bids)
@@ -118,22 +121,33 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             bid.Status = BidStatusEnum.Rejected;
         }
 
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
         return true;
     }
 
-    public async Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct)
+    public async Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-
         // پذیرش پیشنهاد انتخابی
-        await _db.Bids
-            .Where(b => b.Id == bidId)
-            .ExecuteUpdateAsync(s => s.SetProperty(b => b.Status, BidStatusEnum.Accepted), ct);
+        var acceptedBid = await _db.Bids.FindAsync([bidId], ct);
+        if (acceptedBid != null)
+        {
+            acceptedBid.Status = BidStatusEnum.Accepted;
+        }
 
         // رد کردن سایر پیشنهادهای همان درخواست
-        await _db.Bids
-            .Where(b => b.RequestId == requestId && b.Id != bidId && b.Status != BidStatusEnum.Rejected)
-            .ExecuteUpdateAsync(s => s.SetProperty(b => b.Status, BidStatusEnum.Rejected), ct);
+        var otherBids = await _db.Bids
+            .Where(b => b.RequestId == requestId && b.Id != bidId && b.Status != BidStatusEnum.Rejected && b.Status != BidStatusEnum.Done)
+            .ToListAsync(ct);
+
+        foreach (var bid in otherBids)
+        {
+            bid.Status = BidStatusEnum.Rejected;
+        }
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
 
         return true;
     }

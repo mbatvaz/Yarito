@@ -111,4 +111,9 @@ public interface IRequestServices
     Task<Result<BidFullDto>> AcceptBidValidationAsync(int requestId, int bidId, int customerId, CancellationToken ct);
 
     Task<Result<bool>> SetAcceptedBidIdAsync(int requestId, int bidId, CancellationToken ct, bool save = true);
+
+    /// <summary>
+    /// دریافت لیست مراجعات یک متخصص بر اساس فیلترهای مشخص شده (مانند تاریخ امروز).
+    /// </summary>
+    Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct);
 }

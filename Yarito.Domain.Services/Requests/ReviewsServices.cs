@@ -9,8 +9,8 @@ namespace Yarito.Domain.Services.Requests
     public class ReviewsServices(
         IReviewRepo reviewRepo) : IReviewsServices
     {
-        public async Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct)
-            => await reviewRepo.ChangeStatusAsync(reviewId, newStatus, ct);
+        public async Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct, bool save = true)
+            => await reviewRepo.ChangeStatusAsync(reviewId, newStatus, ct, save);
 
         public async Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto request, CancellationToken ct)
             => await reviewRepo.GetReviewsForHomePageAsync(request, ct);

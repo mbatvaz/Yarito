@@ -66,13 +66,8 @@ public interface IAppUserRepo
     /// <returns>لیست دسته‌بندی‌ها با خدمات مربوطه</returns>
     Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct);
 
-    /// <summary>
-    /// حذف نرم کاربر بر اساس شناسه.
-    /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> SoftDeleteAsync(int userId, CancellationToken ct);
+    Task<bool> SoftDeleteAsync(int userId, CancellationToken ct, bool save);
 
     /// <summary>
     /// بررسی وجود ایمیل تکراری (برای افزودن).
@@ -117,4 +112,9 @@ public interface IAppUserRepo
 
     Task<bool> IncreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save);
     Task<bool> DecreaseWalletBalanceAsync(int userId, decimal amount, CancellationToken ct, bool save);
+
+    /// <summary>
+    /// دریافت اطلاعات مورد نیاز برای داشبورد کاربر (موجودی و وضعیت پروفایل).
+    /// </summary>
+    Task<UserDashboardDto?> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct);
 }

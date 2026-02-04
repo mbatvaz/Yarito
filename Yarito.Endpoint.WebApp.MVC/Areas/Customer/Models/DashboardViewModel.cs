@@ -5,7 +5,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
 {
     public class DashboardViewModel
     {
-        public AppUserSummaryDto UserInfo { get; set; }
+        public UserDashboardDto UserInfo { get; set; }
         public IReadOnlyList<RequestsSummaryDto> ActiveRequests { get; set; } = [];
     }
 }

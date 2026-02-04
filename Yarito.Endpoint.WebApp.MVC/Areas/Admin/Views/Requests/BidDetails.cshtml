@@ -84,8 +84,10 @@
             <h3>اطلاعات پیشنهاد</h3>
             <span class="badge @(Model.Bid.Status switch
                                                   {
+                                                      BidStatusEnum.Pending  => "badge--waiting",
                                                       BidStatusEnum.Accepted => "badge--completed",
                                                       BidStatusEnum.Rejected => "badge--cancelled",
+                                                      BidStatusEnum.Done     => "badge--completed",
                                                       _ => "badge--waiting" })">@Html.DisplayFor(_ => Model.Bid.Status)</span>
         </div>
         <div class="admin-info-columns">
@@ -101,7 +103,7 @@
                 <dl class="admin-details-list admin-details-list--vertical">
                     <div class="admin-details-list__item">
                         <dt>تاریخ مراجعه پیشنهادی</dt>
-                        <dd>@Model.Bid.ProposedVisitDateTime.CompleteShamsiDate("dn, dd mn yyyy"))</dd>
+                        <dd>@Model.Bid.ProposedVisitDateTime.CompleteShamsiDate("dn, dd mn yyyy")</dd>
                     </div>
                 </dl>
             </div>

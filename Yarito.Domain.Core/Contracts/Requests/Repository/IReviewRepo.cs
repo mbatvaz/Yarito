@@ -34,14 +34,8 @@ public interface IReviewRepo
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<bool> DeleteAsync(int reviewId, CancellationToken ct);
 
-    /// <summary>
-    /// تغییر وضعیت تایید یک نظر.
-    /// </summary>
-    /// <param name="reviewId">شناسه نظر</param>
-    /// <param name="newStatus">وضعیت جدید</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct);
+    Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct, bool save);
 
     /// <summary>
     /// دریافت نظرات تایید شده برای نمایش در صفحه اصلی.

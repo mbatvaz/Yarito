@@ -42,7 +42,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
 
         public async Task<IActionResult> Index(CancellationToken ct)
         {
-            var userResult = await appUserAppServices.GetAppUserSummaryByIdAsync(GetUserId(), ct);
+            var userResult = await appUserAppServices.GetAppUserDashboardByIdAsync(GetUserId(), ct);
 
             if (userResult.Status != ResultStatusEnum.Success && userResult.Data is null)
             {

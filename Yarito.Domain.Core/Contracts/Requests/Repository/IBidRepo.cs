@@ -40,26 +40,15 @@ public interface IBidRepo
     /// <param name="newStatus">وضعیت جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct);
+    Task<bool> ChangeSingleStatusAsync(int bidId, BidStatusEnum newStatus, CancellationToken ct, bool save);
 
 
 
-    /// <summary>
-    /// رد کردن تمامی پیشنهادهای یک درخواست به صورت انبوه.
-    /// </summary>
-    /// <param name="requestId">شناسه درخواست</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct);
+    Task<bool> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save);
 
-    /// <summary>
-    /// پذیرش یک پیشنهاد و رد کردن تمامی پیشنهادهای دیگر همان درخواست.
-    /// </summary>
-    /// <param name="bidId">شناسه پیشنهاد پذیرفته شده</param>
-    /// <param name="requestId">شناسه درخواست</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت عملیات</returns>
-    Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct);
+    Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct, bool save);
 
     /// <summary>
     /// دریافت لیست خلاصه پیشنهادات با قابلیت صفحه‌بندی و فیلتر.

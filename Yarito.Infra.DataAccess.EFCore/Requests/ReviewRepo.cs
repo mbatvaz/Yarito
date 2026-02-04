@@ -119,13 +119,17 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
                 .SetProperty(reviews => reviews.IsDeleted, true), ct) > 0;
     }
 
-    public async Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct)
+    public async Task<bool> ChangeStatusAsync(int reviewId, ReviewStatusEnum newStatus, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-        return await _db.Reviews
-            .Where(r => r.Id == reviewId && r.ReviewStatus != newStatus)
-            .ExecuteUpdateAsync(r => r
-                .SetProperty(reviews => reviews.ReviewStatus, newStatus), ct) > 0;
+        var review = await _db.Reviews.FindAsync([reviewId], ct);
+        if (review is null || review.ReviewStatus == newStatus) return false;
+
+        review.ReviewStatus = newStatus;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
     }
 
     public async Task<IReadOnlyList<ReviewSummaryDto>> GetReviewsForHomePageAsync(ReviewReqDto q, CancellationToken ct)

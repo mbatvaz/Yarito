@@ -57,7 +57,7 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             query = query.Where(r => r.PreferredVisitDateTime != null && r.PreferredVisitDateTime >= q.PreferredFrom.Value);
 
         if (q.PreferredTo is not null)
-            query = query.Where(r => r.PreferredVisitDateTime != null && r.PreferredVisitDateTime <= q.PreferredTo.Value);
+            query = query.Where(r => r.PreferredVisitDateTime != null && r.PreferredVisitDateTime < q.PreferredTo.Value);
 
 
         // Text search
@@ -143,13 +143,17 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
-    public async Task<bool> AcceptBidAsync(int requestId, int bidId, CancellationToken ct)
+    public async Task<bool> AcceptBidAsync(int requestId, int bidId, CancellationToken ct, bool save)
     {
-        _db.ChangeTracker.Clear();
-        return await _db.Requests
-            .Where(r => r.Id == requestId && r.AcceptedBidId == null)
-            .ExecuteUpdateAsync(r => r
-                    .SetProperty(request => request.AcceptedBidId, bidId), ct) > 0;
+        var request = await _db.Requests.FindAsync([requestId], ct);
+        if (request is null || request.AcceptedBidId != null) return false;
+
+        request.AcceptedBidId = bidId;
+
+        if (save)
+            return await _db.SaveChangesAsync(ct) > 0;
+
+        return true;
     }
 
     public async Task<bool> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct, bool save)
@@ -280,5 +284,33 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
     public void ClearChangeTracker()
     {
         _db.ChangeTracker.Clear();
+    }
+
+    public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
+    {
+        var query = ApplyFilters(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(r => new ExpertDashboardVisitDto
+            {
+                Id = r.Id,
+                BidId = r.AcceptedBidId!.Value,
+                Title = r.Title,
+                FirstName = r.Customer.FirstName!,
+                LastName = r.Customer.LastName!,
+                CustomerPhoneNumber = r.Customer.PhoneNumber,
+                VisitDateTime = r.AcceptedBid!.ProposedVisitDateTime
+            }).ToListAsync(ct);
+
+        return new PagedResult<ExpertDashboardVisitDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
     }
 }
