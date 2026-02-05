@@ -14,6 +14,11 @@ public interface IWorkRepo
     /// </summary>
     Task<WorkDto?> GetByIdAsync(int workId, CancellationToken ct);
 
+    /// <summary>
+    /// گرفتن لیستی از شناسه کارها و برگرداندن لیستی از اطلاعات کامل آن‌ها.
+    /// </summary>
+    Task<List<WorksFullDto>> GetWorksByIDs(List<int> ids, CancellationToken ct);
+
     #endregion
 
     #region Command Methods

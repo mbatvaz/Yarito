@@ -49,7 +49,7 @@ public interface IAppUserServices
     /// <summary>
     /// بروزرسانی اطلاعات کاربر.
     /// </summary>
-    Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct);
+    Task<Result<bool>> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.

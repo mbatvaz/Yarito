@@ -3,12 +3,13 @@ using Yarito.Domain.Core.Contracts.Cities.Services;
 using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.Contracts.Users.AppServices;
 using Yarito.Domain.Core.Contracts.Users.Services;
+using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs._Common;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
-using Yarito.Domain.Core.Entities.Users;
 using Yarito.Domain.Core.Enums._Common;
+using Yarito.Domain.Core.Enums.Users;
 
 namespace Yarito.Domain.AppServices.Users
 {
@@ -17,6 +18,7 @@ namespace Yarito.Domain.AppServices.Users
         IRequestServices requestServices,
         IBidServices bidServices,
         ICityServices cityServices,
+        IWorkServices workServices,
         IFileServices fileServices) : IAppUserAppServices
     {
         private const string DefaultProfileImage = "/Images/Profile/default.png";
@@ -45,7 +47,7 @@ namespace Yarito.Domain.AppServices.Users
         public async Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct)
             => await appUserServices.GetExpertCategoryWorksListDto(expertId, ct);
 
-        public async Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, string? currentProfileImage, CancellationToken ct)
+        public async Task<Result<bool>> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct)
         {
             var validationResult = appUserServices.IsPropertyValid(dto);
             if (validationResult.Status != ResultStatusEnum.Success || validationResult.Data is null)
@@ -55,13 +57,21 @@ namespace Yarito.Domain.AppServices.Users
 
             if (dto.Email is not null)
             {
-                var emailResult = await appUserServices.IsEmailDuplicationAsync(dto.Email, ct, userId);
+                var emailResult = await appUserServices.IsEmailDuplicationAsync(dto.Email, ct, dto.UserId);
                 if (emailResult.Status != ResultStatusEnum.Success)
                     return Result<bool>.Failure(emailResult.Message);
             }
 
             if (dto.CityId is not null && !await cityServices.IsExistAsync(dto.CityId.Value, ct))
                 return Result<bool>.Failure("شهر وارد شده معتبر نیست");
+
+            if (dto.UserType == UserTypeEnum.Expert || dto.WorkIds is not null)
+            {
+                var workFindResult = await workServices.GetWorksByIDs(dto.WorkIds, ct);
+                if (workFindResult.Status != ResultStatusEnum.Success)
+                    return Result<bool>.Failure(workFindResult.Message);
+                dto.WorksFull = workFindResult.Data;
+            }
 
             string? savedImageUrl = null;
 
@@ -71,25 +81,25 @@ namespace Yarito.Domain.AppServices.Users
                 {
                     dto.ProfileImgPath = DefaultProfileImage;
                 }
-                else if (dto.ProfileImage is not null && dto.ProfileImageExtension is not null)
+                else if (dto.ProfileImage is not null && dto.ProfileImageFormat is not null)
                 {
                     savedImageUrl = await fileServices.SaveImageOnDiskAsync(
                         dto.ProfileImage, 
                         "/Images/Profile", 
-                        dto.ProfileImageExtension, 
+                        dto.ProfileImageFormat, 
                         ct);
                     dto.ProfileImgPath = savedImageUrl;
                 }
 
-                var updateResult = await appUserServices.UpdateAsync(userId, dto, ct);
+                var updateResult = await appUserServices.UpdateAsync(dto, ct);
                 if (updateResult.Status != ResultStatusEnum.Success)
                     throw new Exception(updateResult.Message ?? "خطا در بروزرسانی اطلاعات");
 
-                if ((savedImageUrl is not null || dto.DeleteProfileImage) && 
-                    currentProfileImage is not null && 
-                    !currentProfileImage.EndsWith("default.png", StringComparison.OrdinalIgnoreCase))
+                if ((savedImageUrl is not null || dto.DeleteProfileImage) &&
+                    dto.CurrentProfileImage is not null &&
+                    dto.CurrentProfileImage.EndsWith("default.png", StringComparison.OrdinalIgnoreCase))
                 {
-                    await fileServices.DeleteImageOnDiskAsync(currentProfileImage, ct);
+                    await fileServices.DeleteImageOnDiskAsync(dto.CurrentProfileImage, ct);
                 }
 
                 return Result<bool>.Success("اطلاعات با موفقیت بروزرسانی شد");

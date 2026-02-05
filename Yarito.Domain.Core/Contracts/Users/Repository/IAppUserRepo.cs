@@ -33,7 +33,7 @@ public interface IAppUserRepo
     /// <param name="dto">اطلاعات بروزرسانی</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct);
+    Task<bool> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct);
 
     /// <summary>
     /// دریافت آمار تعداد کاربران (مشتری و متخصص).

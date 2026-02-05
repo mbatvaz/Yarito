@@ -24,6 +24,19 @@ public class WorkRepo(AppDbContext _db) : IWorkRepo
             .FirstOrDefaultAsync(ct);
     }
 
+    public async Task<List<WorksFullDto>> GetWorksByIDs(List<int> ids, CancellationToken ct)
+    {
+        return await _db.Works
+            .Where(w => ids.Contains(w.Id) && w.IsDeleted == false)
+            .Select(w => new WorksFullDto
+            {
+                Id = w.Id,
+                Title = w.Title,
+                BasePrice = w.BasePrice
+            })
+            .ToListAsync(ct);
+    }
+
     #endregion
 
     #region Command Methods

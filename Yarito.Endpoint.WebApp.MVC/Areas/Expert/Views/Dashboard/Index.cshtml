@@ -20,7 +20,10 @@
                 <p class="profile-alert__text">برای ثبت پیشنهاد جدید، لطفاً اطلاعات پروفایل خود را تکمیل کنید.</p>
             </div>
             <div class="profile-alert__action">
-                <a href="#" class="btn btn--sm">تکمیل پروفایل</a>
+                <a asp-area="Expert"
+                   asp-controller="Profile"
+                   asp-action="Form"
+                   class="btn btn--sm">تکمیل پروفایل</a>
             </div>
         </div>
     }
@@ -37,11 +40,12 @@
         else
         {
             <div class="service-chips">
-                @foreach (var cat in Model.ExpertWorks)
+                @foreach (var c in Model.ExpertWorks)
                 {
-                    @foreach (var work in cat.Works)
+                    <span>@c.CategoryTitle</span>
+                    @foreach (var w in c.Works)
                     {
-                        <span class="service-chip">@work.Title</span>
+                        <span class="service-chip">@w.Title</span>
                     }
                 }
             </div>

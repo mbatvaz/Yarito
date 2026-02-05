@@ -43,7 +43,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="expert-edit.html" class="user-sidebar__nav-item @(action == "" ? "user-sidebar__nav-item--active" : "")">
+                        <a asp-area="Expert" asp-controller="Profile" asp-action="Form"
+                           class="user-sidebar__nav-item @(action == "Form" ? "user-sidebar__nav-item--active" : "")">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

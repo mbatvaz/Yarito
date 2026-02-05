@@ -6,9 +6,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
     public class CustomerFormViewModel
     {
         public IReadOnlyList<CityFullDto?> CityList { get; set; } = [];
-        public string? PhoneNumber { get; set; }
-        public string? CurrentProfileImagePath { get; set; }
-
+        
 
         [Required(ErrorMessage = "وارد کردن نام الزامیست")]
         [MaxLength(50, ErrorMessage = "طول نام نباید بیشتر از 50 کاراکتر باشد")]
@@ -26,8 +24,10 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
 
         [Range(1, int.MaxValue, ErrorMessage = "شهر انتخاب شده معتبر نیست.")]
         public int? CityId { get; set; }
-
         public IFormFile? ProfileImage { get; set; }
         public bool DeleteProfileImage { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? CurrentProfileImagePath { get; set; }
+
     }
 }

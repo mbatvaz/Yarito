@@ -39,7 +39,7 @@ public interface IAppUserAppServices
     /// <param name="dto">اطلاعات بروزرسانی</param>
     /// <param name="currentProfileImage">مسیر تصویر فعلی برای حذف در صورت موفقیت</param>
     /// <param name="ct">توکن لغو</param>
-    Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, string? currentProfileImage, CancellationToken ct);
+    Task<Result<bool>> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct);
 
     /// <summary>
     /// حذف نرم کاربر بر اساس شناسه.

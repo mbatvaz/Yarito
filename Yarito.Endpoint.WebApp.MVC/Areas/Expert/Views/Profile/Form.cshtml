@@ -1,0 +1,169 @@
+﻿@model Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models.ExpertFormViewModel
+@{
+    Layout = "_Layout";
+
+    var categoryWorksData = new List<object>();
+    if (Model?.CategoryList != null)
+    {
+        foreach (var category in Model.CategoryList)
+        {
+            if (category is null) continue;
+            var worksData = category.Works.Select(w => new { id = w.Id, title = w.Title }).ToList();
+            categoryWorksData.Add(new { id = category.Id, works = worksData });
+        }
+    }
+    var categoryWorksJson = System.Text.Json.JsonSerializer.Serialize(categoryWorksData);
+
+    var currentServices = new List<object>();
+    if (Model?.CurrentWorkGrouped != null)
+    {
+        foreach (var category in Model.CurrentWorkGrouped)
+        {
+            foreach (var work in category.Works)
+            {
+                currentServices.Add(new { id = work.Id, title = work.Title, categoryTitle = category.CategoryTitle });
+            }
+        }
+    }
+    var currentServicesJson = System.Text.Json.JsonSerializer.Serialize(currentServices);
+}
+
+<div class="edit-container edit-container--wide">
+    <form asp-area="Expert" asp-controller="Profile" asp-action="Form" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="CurrentProfileImagePath" />
+        <input type="hidden" asp-for="DeleteProfileImage" id="DeleteProfileImage" />
+
+        <!-- Card A: Profile Image Section -->
+        <div class="card edit-card">
+            <h2 class="edit-card__title">تصویر پروفایل</h2>
+            <div class="edit-card__avatar-section">
+                <div class="avatar-preview" id="avatarPreview">
+                    <img class="avatar avatar--lg" id="avatarImage"
+                         src="@(Model?.CurrentProfileImagePath ?? "/Images/Profile/default.png")" 
+                         alt="تصویر پروفایل فعلی">
+                </div>
+                <div class="edit-card__avatar-upload">
+                    <div class="form-group">
+                        <label for="ProfileImage">انتخاب تصویر جدید</label>
+                        <input asp-for="ProfileImage" type="file" id="ProfileImage" accept="image/*">
+                    </div>
+                    <button type="button" id="removeProfileImageBtn" class="btn btn--text btn--danger" 
+                            style="margin-top: 0.5rem; font-size: 0.9rem; color: #ef4444;">
+                        حذف تصویر پروفایل
+                    </button>
+                    <p class="form-help">فرمت‌های مجاز: JPG، PNG، WebP - حداکثر ۲ مگابایت</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card B: Services Management Section -->
+        <div class="card edit-card">
+            <h2 class="edit-card__title">مدیریت خدمات</h2>
+
+            <!-- Current Services as Removable Chips -->
+            <div class="current-services">
+                <p class="form-group-label">خدمات فعلی شما:</p>
+                <div class="service-chips service-chips--editable" id="currentServicesContainer">
+                    <!-- Services will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Add New Service -->
+            <div class="add-service-section">
+                <p class="form-group-label">افزودن خدمت جدید:</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="categoryId" class="sr-only">انتخاب دسته‌بندی</label>
+                        <select id="categoryId" class="form-control" style="width: 100%;">
+                            <option value="">انتخاب دسته‌بندی</option>
+                            @if (Model?.CategoryList != null)
+                            {
+                                foreach (var category in Model.CategoryList)
+                                {
+                                    if (category is null) continue;
+                                    <option value="@category.Id">@category.CategoryTitle</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceId" class="sr-only">انتخاب سرویس</label>
+                        <select id="serviceId" class="form-control" style="width: 100%;">
+                            <option value="">ابتدا دسته‌بندی را انتخاب کنید</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="add-service-button-row">
+                    <button type="button" id="addServiceBtn" class="btn btn--primary btn--sm">افزودن به خدمات</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card C: Editable Fields Section -->
+        <div class="card edit-card">
+            <h2 class="edit-card__title">اطلاعات کاربری</h2>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="FirstName">نام</label>
+                    <input asp-for="FirstName" type="text" placeholder="نام خود را وارد کنید" autocomplete="given-name">
+                    <span asp-validation-for="FirstName" class="validation-error"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="LastName">نام خانوادگی</label>
+                    <input asp-for="LastName" type="text" placeholder="نام خانوادگی خود را وارد کنید" autocomplete="family-name">
+                    <span asp-validation-for="LastName" class="validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">ایمیل</label>
+                <input asp-for="Email" type="email" dir="ltr" placeholder="ایمیل خود را وارد کنید" autocomplete="email">
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
+
+            <!-- Phone and City -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">شماره موبایل</label>
+                    <input asp-for="PhoneNumber" type="tel" dir="ltr" readonly class="input--readonly" aria-describedby="phoneHelp">
+                    <p class="form-help" id="phoneHelp">شماره موبایل قابل ویرایش نیست</p>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="CityId">شهر</label>
+                    <select asp-for="CityId" id="citySelect" class="form-control" style="width: 100%;">
+                        <option value="">انتخاب شهر</option>
+                        @if (Model?.CityList != null)
+                        {
+                            foreach (var city in Model.CityList)
+                            {
+                                if (city is null) continue;
+                                <option value="@city.Id">@city.Name - @city.ParentName</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="CityId" class="validation-error"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <div class="edit-actions">
+            <a asp-area="Expert" asp-controller="Dashboard" asp-action="Index" class="btn btn--secondary">بازگشت</a>
+            <button type="submit" class="btn btn--primary">ثبت تغییرات</button>
+        </div>
+    </form>
+</div>
+
+<!-- Data for JavaScript -->
+<script type="application/json" id="categoryWorksData">@Html.Raw(categoryWorksJson)</script>
+<script type="application/json" id="currentServicesData">@Html.Raw(currentServicesJson)</script>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/profile-preview.js"></script>
+    <script src="~/js/expert-services-management.js" asp-append-version="true"></script>
+}

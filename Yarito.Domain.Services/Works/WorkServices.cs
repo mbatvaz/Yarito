@@ -19,6 +19,14 @@ public class WorkServices(IWorkRepo workRepo) : IWorkServices
             : Result<WorkDto>.Failure("خدمت یافت نشد");
     }
 
+    public async Task<Result<List<WorksFullDto>>> GetWorksByIDs(List<int> ids, CancellationToken ct)
+    {
+        var result = await workRepo.GetWorksByIDs(ids, ct);
+        return result.Count > 0
+            ? Result<List<WorksFullDto>>.Success("لیست خدمات با موفقیت دریافت شد", result)
+            : Result<List<WorksFullDto>>.Failure("هیچ خدمتی یافت نشد");
+    }
+
     #endregion
 
     #region Command Methods

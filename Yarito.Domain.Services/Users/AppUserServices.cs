@@ -49,9 +49,9 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
             : Result<RegisterDto>.Failure("کاربر ایجاد نشد");
     }
 
-    public async Task<Result<bool>> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct)
+    public async Task<Result<bool>> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct)
     {
-        return await appUserRepo.UpdateAsync(userId, dto, ct)
+        return await appUserRepo.UpdateAsync(dto, ct)
             ? Result<bool>.Success("اطلاعات کاربر با موفقیت بروزرسانی شد")
             : Result<bool>.Failure("خطا در بروزرسانی اطلاعات کاربر");
     }
@@ -115,7 +115,7 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
         if (dto.Address is not null && !Validation.IsValidAddress(dto.Address))
             return Result<AppUserUpdateDto>.Warning("آدرس وارد شده معتبر نیست");
 
-        if (dto.ProfileImage is not null && !Validation.IsValidImageUrlOrFileName(dto.ProfileImageExtension))
+        if (dto.ProfileImage is not null && !Validation.IsValidImageUrlOrFileName(dto.ProfileImageFormat))
             return Result<AppUserUpdateDto>.Warning("تصویر پروفایل وارد شده معتبر نیست");
 
         return Result<AppUserUpdateDto>.Success("همه ویژگی‌ها معتبر هستند", dto);

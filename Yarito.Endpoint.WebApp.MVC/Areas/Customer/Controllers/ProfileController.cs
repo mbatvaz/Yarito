@@ -85,32 +85,29 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 return View(model);
             }
 
-            var updateDto = new AppUserUpdateDto
-            {
-                FirstName = model.FirstName,
-                LastName = model.LastName,
-                Email = model.Email,
-                Address = model.Address,
-                CityId = model.CityId,
-                ProfileImage = model.ProfileImage?.OpenReadStream(),
-                ProfileImageExtension = model.ProfileImage is not null ? Path.GetExtension(model.ProfileImage.FileName) : null,
-                DeleteProfileImage = model.DeleteProfileImage
-            };
-
-            var result = await appUserAppServices.UpdateAsync(
-                GetUserId(),
-                updateDto,
-                model.CurrentProfileImagePath,
-                ct);
+            var result = await appUserAppServices.UpdateAsync(new AppUserUpdateDto {
+                    UserId = GetUserId(),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    Address = model.Address,
+                    CityId = model.CityId,
+                    ProfileImage = model.ProfileImage?.OpenReadStream(),
+                    ProfileImageFormat = model.ProfileImage is not null ? Path.GetExtension(model.ProfileImage.FileName) : null,
+                    CurrentProfileImage = model.CurrentProfileImagePath,
+                    DeleteProfileImage = model.DeleteProfileImage,
+                    UserType = UserTypeEnum.Customer}, ct);
 
             Notification(result);
 
-            if (result.Status == ResultStatusEnum.Success)
-                return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
+            if (result.Status != ResultStatusEnum.Success)
+            {
+                var citiesPost = await cityAppServices.GetAllAsync(ct);
+                model.CityList = citiesPost;
+                return View(model);
+            }
 
-            var citiesPost = await cityAppServices.GetAllAsync(ct);
-            model.CityList = citiesPost;
-            return View(model);
+            return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
         }
 
         public async Task<IActionResult> Expert(int expertId, CancellationToken ct, int page = 1)

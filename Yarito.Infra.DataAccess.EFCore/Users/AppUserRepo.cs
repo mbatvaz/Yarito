@@ -4,6 +4,7 @@ using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
 using Yarito.Domain.Core.Entities.Users;
+using Yarito.Domain.Core.Entities.Works;
 using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Users;
 using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
@@ -119,15 +120,15 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
-    public async Task<bool> UpdateAsync(int userId, AppUserUpdateDto dto, CancellationToken ct)
+    public async Task<bool> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct)
     {
-        var user = await _db.AppUsers.FindAsync([userId], ct);
+        var user = await _db.AppUsers.FirstOrDefaultAsync(u => u.Id == dto.UserId, ct);
         if (user == null) return false;
 
         if (!string.IsNullOrEmpty(dto.FirstName)) user.FirstName = dto.FirstName;
         if (!string.IsNullOrEmpty(dto.LastName)) user.LastName = dto.LastName;
         if (dto.Email != null) user.Email = dto.Email;
-        if (dto.CityId.HasValue) user.CityId = dto.CityId;
+        if (dto.CityId.HasValue) user.CityId = dto.CityId.Value;
         if (!string.IsNullOrEmpty(dto.ProfileImgPath)) user.ProfileImgPath = dto.ProfileImgPath;
 
         if (user is Customer customer && !string.IsNullOrEmpty(dto.Address))
@@ -135,8 +136,39 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
             customer.Address = dto.Address;
         }
 
-        return await _db.SaveChangesAsync(ct) > 0;
+        if (user is Expert && dto.WorksFull is not null)
+        {
+            var expert = await _db.Set<Expert>()
+                .Include(e => e.Works)
+                .FirstOrDefaultAsync(e => e.Id == dto.UserId, ct);
+
+            if (expert is null) return false;
+
+            var newIds = dto.WorksFull.Select(x => x.Id).ToHashSet();
+            var workToRemove = expert.Works
+                .Where(w => !newIds.Contains(w.Id))
+                .ToList();
+
+            foreach (var w in workToRemove)
+                expert.Works.Remove(w);
+
+
+            var currentIds = expert.Works.Select(x => x.Id).ToHashSet();
+            var worksToAdd = dto.WorksFull
+                .Where(w => !currentIds.Contains(w.Id))
+                .ToList();
+
+            foreach (var w in worksToAdd.Select(w => new Work { Id = w.Id }))
+            {
+                _db.Attach(w);
+                expert.Works.Add(w);
+            }
+        }
+
+        await _db.SaveChangesAsync(ct);
+        return true;
     }
+
 
     public async Task<AppUserStaticsDto?> GetUserCountAsync(CancellationToken ct)
     {
