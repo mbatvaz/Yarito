@@ -171,13 +171,6 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         return true;
     }
 
-    public async Task<bool> SaveChangesAsync(CancellationToken ct)
-    {
-        return await _db.SaveChangesAsync(ct) > 0;
-    }
-
-
-
     public async Task<PagedResult<RequestsSummaryDto>> GetRequestsSummaryListAsync(RequestReqDto q, CancellationToken ct)
     {
         var query = ApplyFilters(q);
@@ -281,11 +274,6 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             ct);
     }
 
-    public void ClearChangeTracker()
-    {
-        _db.ChangeTracker.Clear();
-    }
-
     public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
     {
         var query = ApplyFilters(q);
@@ -312,5 +300,15 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             PageSize = q.PageSize,
             TotalCount = total
         };
+    }
+
+    public async Task<bool> SaveChangesAsync(CancellationToken ct)
+    {
+        return await _db.SaveChangesAsync(ct) > 0;
+    }
+
+    public void ClearChangeTracker()
+    {
+        _db.ChangeTracker.Clear();
     }
 }

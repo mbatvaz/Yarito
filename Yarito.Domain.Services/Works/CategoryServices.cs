@@ -1,4 +1,5 @@
-﻿using Yarito.Domain.Core.Contracts.Works.Repository;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.Contracts.Works.Services;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
@@ -6,7 +7,9 @@ using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Works;
 
-public class CategoryServices(ICategoryRepo categoryRepo) : ICategoryServices
+public class CategoryServices(
+    ICategoryRepo categoryRepo,
+    IMemoryCache memoryCache) : ICategoryServices
 {
     #region Query Methods
 
@@ -19,7 +22,7 @@ public class CategoryServices(ICategoryRepo categoryRepo) : ICategoryServices
     public async Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct)
         => await categoryRepo.GetJustCategoriesListAsync(ct);
 
-    public async Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct)
+    public async Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct) 
         => await categoryRepo.GetCategoriesListAsync(q, ct);
 
     #endregion
@@ -28,6 +31,7 @@ public class CategoryServices(ICategoryRepo categoryRepo) : ICategoryServices
 
     public async Task<Result<CategoryDto>> AddAsync(CategoryDto newCategory, CancellationToken ct)
     {
+        memoryCache.Remove("Categories");
         return await categoryRepo.AddAsync(newCategory, ct)
             ? Result<CategoryDto>.Success("دسته بندی جدید با موفقیت ایجاد شد")
             : Result<CategoryDto>.Failure("دسته بندی ایجاد نشد");

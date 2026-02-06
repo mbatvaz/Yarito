@@ -191,6 +191,7 @@ public class ReviewRepo(AppDbContext _db) : IReviewRepo
             }).FirstOrDefaultAsync(ct);
 
     }
+
     public async Task<bool> HasReviewForRequestAsync(int requestId, CancellationToken ct)
     {
         return await _db.Reviews.AnyAsync(r => r.RequestId == requestId, ct);

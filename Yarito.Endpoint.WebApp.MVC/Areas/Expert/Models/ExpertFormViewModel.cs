@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 using Yarito.Domain.Core.DTOs.Cities;
 using Yarito.Domain.Core.DTOs.Works;

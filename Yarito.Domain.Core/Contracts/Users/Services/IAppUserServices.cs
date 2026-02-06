@@ -101,4 +101,7 @@ public interface IAppUserServices
     /// دریافت اطلاعات داشبورد کاربر.
     /// </summary>
     Task<Result<UserDashboardDto>> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct);
+
+
+    Task<Result<UserHeaderInfoDto>> GetUserHeaderInfoAsync(int userId, CancellationToken ct);
 }

@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
-namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
+namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models
 {
     public class ChangePasswordViewModel
     {

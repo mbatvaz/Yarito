@@ -11,8 +11,10 @@
     <title>داشبورد مدیریت | یاریتو</title>
     <meta name="description" content="پنل مدیریت یاریتو - داشبورد">
     <link rel="stylesheet" href="~/css/site.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css" />
+    <link rel="stylesheet" href="~/css/select2.min.css">
+    <link rel="stylesheet" href="~/css/glightbox.min.css">
+    @* <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css" /> *@
 </head>
 
 <body>
@@ -114,10 +116,15 @@
         @RenderBody()
     </main>
 </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/js/fa.js"></script>
+    <script src="~/js/select2.min.js"></script>
+    <script src="~/js/glightbox.min.js"></script>
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/i18n/fa.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js"></script> *@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

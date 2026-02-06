@@ -158,7 +158,7 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
                 .Where(w => !currentIds.Contains(w.Id))
                 .ToList();
 
-            foreach (var w in worksToAdd.Select(w => new Work { Id = w.Id }))
+            foreach (var w in worksToAdd.Select(w => new Work { Id = w.Id, Title = w.Title}))
             {
                 _db.Attach(w);
                 expert.Works.Add(w);

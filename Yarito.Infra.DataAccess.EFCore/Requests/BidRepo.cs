@@ -129,14 +129,12 @@ public class BidRepo(AppDbContext _db) : IBidRepo
 
     public async Task<bool> AcceptBidAndRejectOthersAsync(int bidId, int requestId, CancellationToken ct, bool save)
     {
-        // پذیرش پیشنهاد انتخابی
         var acceptedBid = await _db.Bids.FindAsync([bidId], ct);
         if (acceptedBid != null)
         {
             acceptedBid.Status = BidStatusEnum.Accepted;
         }
 
-        // رد کردن سایر پیشنهادهای همان درخواست
         var otherBids = await _db.Bids
             .Where(b => b.RequestId == requestId && b.Id != bidId && b.Status != BidStatusEnum.Rejected && b.Status != BidStatusEnum.Done)
             .ToListAsync(ct);

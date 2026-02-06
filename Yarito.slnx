@@ -16,6 +16,7 @@
   </Folder>
   <Folder Name="/src/02_Infrastructure/" />
   <Folder Name="/src/02_Infrastructure/DataAccess/">
+    <Project Path="Yarito.Infra.DataAccess.Cache/Yarito.Infra.DataAccess.Cache.csproj" Id="e129b9e4-78ff-4e3d-8b8b-6005531824ba" />
     <Project Path="Yarito.Infra.DataAccess.EFCore/Yarito.Infra.DataAccess.EFCore.csproj" />
     <Project Path="Yarito.Infra.DataAccess.Storage/Yarito.Infra.DataAccess.Storage.csproj" Id="c2ba7472-21ec-43cf-8b19-bde1591c9847" />
   </Folder>
@@ -24,6 +25,7 @@
     <Project Path="Yarito.Infra.Database.SQLServer.Identity/Yarito.Infra.Database.SQLServer.Identity.csproj" Id="82bbfbc6-f728-4e4c-9a43-420c097a7d10" />
   </Folder>
   <Folder Name="/src/03_Endpoint/">
+    <Project Path="Yarito.Endpoint.WebAPI/Yarito.Endpoint.WebAPI.csproj" Id="ea998f56-c66c-4a2d-8e3e-91bf10cf8a72" />
     <Project Path="Yarito.Endpoint.WebApp.MVC/Yarito.Endpoint.WebApp.MVC.csproj" />
   </Folder>
 </Solution>

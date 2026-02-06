@@ -1,4 +1,5 @@
-﻿using Yarito.Domain.Core.Contracts.Users.Repository;
+﻿using Yarito.Domain.Core.Contracts._Common.Repository;
+using Yarito.Domain.Core.Contracts.Users.Repository;
 using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.DTOs.Works;
@@ -8,7 +9,9 @@ using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Users;
 
-public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
+public class AppUserServices(
+    IAppUserRepo appUserRepo,
+    IInMemoryCacheRepo cacheRepo) : IAppUserServices
 {
     #region Query Methods
 
@@ -51,7 +54,13 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
 
     public async Task<Result<bool>> UpdateAsync(AppUserUpdateDto dto, CancellationToken ct)
     {
-        return await appUserRepo.UpdateAsync(dto, ct)
+        var result = await appUserRepo.UpdateAsync(dto, ct);
+        var key = $"UserHeaderInfo:{dto.UserId}";
+
+        if (result)
+            cacheRepo.Remove(key);
+
+        return result
             ? Result<bool>.Success("اطلاعات کاربر با موفقیت بروزرسانی شد")
             : Result<bool>.Failure("خطا در بروزرسانی اطلاعات کاربر");
     }
@@ -169,5 +178,31 @@ public class AppUserServices(IAppUserRepo appUserRepo) : IAppUserServices
         return result is not null
             ? Result<UserDashboardDto>.Success("اطلاعات داشبورد دریافت شد", result)
             : Result<UserDashboardDto>.Warning("اطلاعات داشبورد یافت نشد");
+    }
+
+    public async Task<Result<UserHeaderInfoDto>> GetUserHeaderInfoAsync(int userId, CancellationToken ct)
+    {
+        var key = $"UserHeaderInfo:{userId}";
+
+        var result = cacheRepo.Get<UserHeaderInfoDto>(key);
+
+        if (result is not null) 
+            return Result<UserHeaderInfoDto>.Success("اطلاعات پروفایل شما یافت شد", result);
+
+        var dbResult = await appUserRepo.GetAppUserSummaryByIdAsync(userId, ct);
+        if (dbResult is null)
+            return Result<UserHeaderInfoDto>.Failure("اطلاعات پروفایل شما یافت نشد");
+
+        var profileInfo = new UserHeaderInfoDto
+        {
+            FirstName = dbResult.FirstName,
+            LastName = dbResult.LastName,
+            ProfileImagePath = dbResult.ProfileImgPath ?? "/Images/Profile/default.png",
+            UserId = dbResult.Id
+        };
+
+        cacheRepo.Set(key, profileInfo, TimeSpan.FromMinutes(30));
+
+        return Result<UserHeaderInfoDto>.Success("اطلاعات پروفایل شما یافت شد", profileInfo);
     }
 }

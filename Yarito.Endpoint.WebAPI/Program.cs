@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 using Yarito.Domain.AppServices.Cities;
 using Yarito.Domain.AppServices.Requests;
 using Yarito.Domain.AppServices.Users;
@@ -28,9 +26,7 @@ using Yarito.Domain.Services.Images;
 using Yarito.Domain.Services.Requests;
 using Yarito.Domain.Services.Users;
 using Yarito.Domain.Services.Works;
-using Yarito.Endpoint.WebApp.MVC.Middleware;
 using Yarito.Framework;
-using Yarito.Infra.DataAccess.Cache.InMemory;
 using Yarito.Infra.DataAccess.EFCore.Cities;
 using Yarito.Infra.DataAccess.EFCore.Images;
 using Yarito.Infra.DataAccess.EFCore.Requests;
@@ -41,23 +37,6 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 using Yarito.Infra.Database.SQLServer.Identity.DatabaseContext;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddMemoryCache();
-
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .CreateLogger();
-
-// Add services to the container.
-builder.Services.AddControllersWithViews(options =>
-{
-    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
-});
-
-// Add AutoMapper.
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
-
 
 //Database Connection String
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -95,22 +74,6 @@ builder.Services
 
 
 
-// Cookie settings Configuration
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Authentication/Login";
-    options.AccessDeniedPath = "/Home/Index";
-
-    options.ExpireTimeSpan = TimeSpan.FromDays(14);
-    options.SlidingExpiration = true;
-
-    options.Cookie.Name = "Yarito.Auth";
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-});
-
-
 // Dependency Injection for AppServices
 builder.Services.AddScoped<IReviewsAppServices, ReviewsAppServices>();
 builder.Services.AddScoped<ICategoryAppServices, CategoryAppServices>();
@@ -142,40 +105,36 @@ builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IImageRepop, ImageRepop>();
-builder.Services.AddScoped<IInMemoryCacheRepo, InMemoryCacheRepo>();
 
 
+
+
+
+
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
-
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
 
-
-app.MapControllerRoute(
-        name: "areas",
-        pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
-
-app.UseMiddleware<ExceptionLoggingMiddleware>();
+app.MapControllers();
 
 app.Run();

@@ -68,8 +68,6 @@ namespace Yarito.Domain.AppServices.Users
             if (dto.UserType == UserTypeEnum.Expert || dto.WorkIds is not null)
             {
                 var workFindResult = await workServices.GetWorksByIDs(dto.WorkIds, ct);
-                if (workFindResult.Status != ResultStatusEnum.Success)
-                    return Result<bool>.Failure(workFindResult.Message);
                 dto.WorksFull = workFindResult.Data;
             }
 

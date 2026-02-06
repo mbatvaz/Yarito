@@ -22,6 +22,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Controllers
         IAppUserAppServices appUserAppServices,
         ICityAppServices cityAppServices,
         ICategoryAppServices categoryAppServices,
+        IAuthenticationAppServices authenticationAppServices,
         UserManager<IdentityUser<int>> userManager) : Controller
     {
         private void Notification<T>(Result<T> result)
@@ -118,6 +119,30 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Controllers
             }
 
             return RedirectToAction("Index", "Dashboard", new { area = "Expert" });
+        }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model, CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var result = await authenticationAppServices.ChangePasswordAsync(new ChangePasswordDto()
+            {
+                OldPassword = model.OldPassword,
+                NewPassword = model.NewPassword,
+                Id = GetUserId()
+            }, ct);
+
+            Notification(result);
+            return result.Status == ResultStatusEnum.Success
+                ? RedirectToAction("Login", "Authentication", new { area = "Account" })
+                : View(model);
         }
     }
 }
