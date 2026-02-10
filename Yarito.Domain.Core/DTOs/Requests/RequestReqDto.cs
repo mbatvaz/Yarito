@@ -17,6 +17,7 @@ public class RequestReqDto : PageRequest
     public int? CustomerId { get; init; }
     public int? ExpertId { get; init; }
     public int? WorkId { get; init; }
+    public IReadOnlyList<int> WorkIds { get; init; } = [];
     public int? CityId { get; init; }
 
     public DateTime? From { get; init; }

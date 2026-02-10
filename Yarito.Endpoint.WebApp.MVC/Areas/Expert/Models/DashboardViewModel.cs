@@ -7,7 +7,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models
     public class DashboardViewModel
     {
         public required UserDashboardDto UserInfo { get; init; }
-        public required IReadOnlyList<ExpertDashboardVisitDto> TodayVisits { get; init; } = [];
+        public required IReadOnlyList<BidForRequestDto> TodayVisits { get; init; } = [];
         public required IReadOnlyList<CategoryFullDto> ExpertWorks { get; init; } = [];
 
 

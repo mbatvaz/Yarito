@@ -127,10 +127,10 @@ namespace Yarito.Domain.AppServices.Requests
                     return Result<bool>.Failure(changStatusResult.Message); 
 
                 var balance = acceptedBid.Data.ProposedPrice * (decimal)0.9;
-                var feeResult = await appUserServices.DecreaseWalletBalanceAsync(11, balance, ct, false);
+                //var feeResult = await appUserServices.DecreaseWalletBalanceAsync(11, balance, ct, false);
                 
-                if (feeResult.Status != ResultStatusEnum.Success)
-                    throw new Exception();
+                //if (feeResult.Status != ResultStatusEnum.Success)
+                //    throw new Exception();
 
                 var result = await appUserServices.IncreaseWalletBalanceAsync(acceptedBid.Data.ExpertId, balance, ct, false);
                 
@@ -193,9 +193,9 @@ namespace Yarito.Domain.AppServices.Requests
                 if (decreaseResult.Status != ResultStatusEnum.Success)
                     return Result<bool>.Failure("خطا در کسر موجودی از حساب شما.");
 
-                var increaseResult = await appUserServices.IncreaseWalletBalanceAsync(11, bid.ProposedPrice, ct, false);
-                if (increaseResult.Status != ResultStatusEnum.Success)
-                    throw new Exception("خطا در واریز وجه به حساب سیستم.");
+                //var increaseResult = await appUserServices.IncreaseWalletBalanceAsync(11, bid.ProposedPrice, ct, false);
+                //if (increaseResult.Status != ResultStatusEnum.Success)
+                //    throw new Exception("خطا در واریز وجه به حساب سیستم.");
 
                 var changeRequestStatus = await requestServices.ChangeStatusAsync(requestId, RequestStatusEnum.InProgress, ct, false);
                 if (changeRequestStatus.Status != ResultStatusEnum.Success)
@@ -220,7 +220,7 @@ namespace Yarito.Domain.AppServices.Requests
             }
         }
 
-        public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
-            => await requestServices.GetExpertVisitsAsync(q, ct);
+        //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
+        //    => await requestServices.GetExpertVisitsAsync(q, ct);
     }
 }

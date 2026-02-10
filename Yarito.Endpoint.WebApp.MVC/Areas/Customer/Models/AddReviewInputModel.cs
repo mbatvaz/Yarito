@@ -4,7 +4,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
 {
     public class AddReviewInputModel
     {
-        [Required(ErrorMessage = "شناسه درخواست الزامی است.")]
+
         public int RequestId { get; set; }
 
         [Required(ErrorMessage = "امتیاز الزامی است.")]

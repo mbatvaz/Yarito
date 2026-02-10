@@ -1,4 +1,5 @@
 ﻿using Yarito.Domain.Core.Contracts.Requests.AppServices;
+using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
@@ -38,5 +39,8 @@ namespace Yarito.Domain.AppServices.Requests
 
         public async Task<Result<BidDetailsDto>> GetBidDetailsAsync(int bidId, CancellationToken ct)
             => await bidServices.GetBidDetailsAsync(bidId, ct);
+
+        public async Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct)
+            => await bidServices.GetExpertBids(q, ct);
     }
 }

@@ -29,10 +29,16 @@ public class BidRepo(AppDbContext _db) : IBidRepo
 
         // Date filters
         if (q.From is not null)
-            query = query.Where(b => b.CreatedAt >= q.From.Value);
+            query = query.Where(r => r.CreatedAt >= q.From.Value);
 
         if (q.To is not null)
-            query = query.Where(b => b.CreatedAt <= q.To.Value);
+            query = query.Where(r => r.CreatedAt < q.To.Value);
+
+        if (q.PreferredFrom is not null)
+            query = query.Where(r => r.ProposedVisitDateTime != null && r.ProposedVisitDateTime >= q.PreferredFrom.Value);
+
+        if (q.PreferredTo is not null)
+            query = query.Where(r => r.ProposedVisitDateTime != null && r.ProposedVisitDateTime < q.PreferredTo.Value);
 
         // Text search
         if (!string.IsNullOrWhiteSpace(q.TextSearch))
@@ -287,5 +293,37 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                 }
             })
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct)
+    {
+        var query = ApplyFilters(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(b => new BidForRequestDto()
+            {
+                BidId = b.Id,
+                RequestId = b.RequestId,
+                RequestTitle = b.Request.Title,
+                WorkTitle = b.Request.Work.Title,
+                CustomerFirstName = b.Request.Customer.FirstName,
+                CustomerLastName = b.Request.Customer.LastName,
+                CustomerPhoneNumber = b.Request.Customer.PhoneNumber,
+                Status = b.Status,
+                BidCreatedAt = b.CreatedAt,
+                ProposedPrice = b.ProposedPrice
+
+            }).ToListAsync(ct);
+
+        return new PagedResult<BidForRequestDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
     }
 }

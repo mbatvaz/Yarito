@@ -38,7 +38,7 @@ public class ReviewsAppServices(
 
     public async Task<Result<bool>> RegisterReviewAsync(AddNewReviewDto dto, CancellationToken ct)
     {
-        var validationResult = await requestServices.CompletionValidationAsync(dto.RequestId, dto.CustomerId, ct);
+        var validationResult = await reviewsServices.ReviewsValidationAsync(dto.RequestId, dto.CustomerId, ct);
         if (validationResult.Status != ResultStatusEnum.Success)
             return Result<bool>.Warning(validationResult.Message);
 

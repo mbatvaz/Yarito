@@ -139,6 +139,9 @@ namespace Yarito.Domain.Services.Requests
             return Result<BidFullDto>.Success("تغییر وضعیت به تکمیل ممکن است", bid);
         }
 
+ 
+
+
         public async Task<Result<bool>> CancelValidationAsync(int requestId, int customerId, CancellationToken ct)
         {
             var requestResult = await GetRequestFullByIdAsync(requestId, ct);
@@ -207,7 +210,7 @@ namespace Yarito.Domain.Services.Requests
                 : Result<bool>.Failure("خطا در ثبت پیشنهاد پذیرفته شده.");
         }
 
-        public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct) 
-            => await requestRepo.GetExpertVisitsAsync(q, ct);
+        //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct) 
+        //    => await requestRepo.GetExpertVisitsAsync(q, ct);
     }
 }

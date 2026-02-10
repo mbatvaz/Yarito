@@ -1,0 +1,132 @@
+﻿@using Yarito.Domain.Core.Enums.Requests
+@using Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models
+@model Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models.MyBidsViewModel
+@{
+    Layout = "_Layout";
+}
+
+
+<section class="profile-main">
+
+    <!-- Page Header -->
+    <div class="user-page-header">
+        <h2>پیشنهادات من</h2>
+    </div>
+
+    <!-- Filter Section - Improved Design -->
+    <div class="card user-section filter-section">
+        <div class="filter-section__header">
+            <h3 class="filter-section__title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                فیلتر پیشنهادات
+            </h3>
+        </div>
+        <form asp-area="Expert" asp-controller="Dashboard" asp-action="MyBids" class="filter-form" method="get">
+            <div class="filter-form__row">
+                <div class="filter-form__field filter-form__field--wide">
+                    <label asp-for="Search" class="filter-form__label">جستجو</label>
+                    <input type="text" asp-for="Search" class="form-control" placeholder="عنوان درخواست را وارد کنید...">
+                </div>
+                <div class="filter-form__field">
+                    <label asp-for="Status" class="filter-form__label">وضعیت</label>
+                    <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<BidStatusEnum>()">
+                        <option value="">همه</option>
+                    </select>
+                </div>
+                <div class="filter-form__actions">
+                    <button type="submit" class="btn btn--primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        اعمال فیلتر
+                    </button>
+                    <button type="reset" class="btn btn--ghost">پاک کردن</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Offers List -->
+    <div class="card dashboard-card">
+        <div class="dashboard-card__header">
+            <h3 class="dashboard-card__title">لیست پیشنهادات</h3>
+            <span class="badge badge--info">@Model.TotalCount.ToString("D").ToPersianNum() پیشنهاد</span>
+        </div>
+
+    <div class="offers-grid offers-grid--3cols">
+        @foreach (var b in Model.Bid)
+        {
+                <div class="offer-card @(b.Status == BidStatusEnum.Done ? "offer-card--accepted" : "")">
+                <div class="offer-card__body">
+                    <div class="offer-card__info">
+                        <div class="offer-card__info-item">
+                            <dt>عنوان درخواست</dt>
+                            <dd>@b.RequestTitle.ToPersianNum()</dd>
+                        </div>
+                        <div class="offer-card__info-item">
+                            <dt>سرویس</dt>
+                            <dd>@b.WorkTitle</dd>
+                        </div>
+                        <div class="offer-card__info-item">
+                            <dt>مشتری</dt>
+                            <dd>@b.CustomerFirstName @b.CustomerLastName</dd>
+                        </div>
+                        <div class="offer-card__info-item">
+                            <dt>وضعیت</dt>
+                            <span class="badge @(b.Status switch
+                                               {
+                                                   BidStatusEnum.Pending => "badge--pending",
+                                                   BidStatusEnum.Accepted => "badge--receiving",
+                                                   BidStatusEnum.Rejected => "badge--rejected",
+                                                   BidStatusEnum.Done => "badge--completed",
+                                                   _                            => ""
+                                               })">@Html.DisplayFor(_ => b.Status)</span>
+                        </div>
+                        <div class="offer-card__info-item">
+                            <dt>قیمت پیشنهادی</dt>
+                            <dd><strong class="text-primary">@b.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
+                        </div>
+                        <div class="offer-card__info-item">
+                            <dt>تاریخ ثبت</dt>
+                                    <dd>@b.BidCreatedAt.CompleteShamsiDate("yyyy/mm/dd")</dd>
+                        </div>
+                    </div>
+                </div>
+                <div class="offer-card__actions">
+                    <a asp-area="Expert" asp-controller="Request" asp-action="Details" asp-route-requestId="@b.RequestId" class="btn btn--ghost btn--sm">مشاهده جزئیات</a>
+                    @switch (b.Status)
+                    {
+                        case BidStatusEnum.Accepted:
+                            <button type="button" class="btn btn--danger btn--sm">انصراف</button>
+                            break;
+                        case BidStatusEnum.Pending:
+                            <button type="button" class="btn btn--danger btn--sm">حذف</button>
+                            break;
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+
+        <!-- Pagination -->
+        @await Html.PartialAsync("_Pagination", new PaginationViewModel
+        {
+            Page = Model.Page,
+            TotalPages = Model.TotalPages,
+            Area = "Expert",
+            Controller = "Dashboard",
+            Action = "MyBids",
+            RouteValues = new Dictionary<string, string?>()
+            {
+                ["search"] = Model.Search,
+                ["status"] = Model.Status.ToString(),
+            }
+        })
+    </div>
+</section>

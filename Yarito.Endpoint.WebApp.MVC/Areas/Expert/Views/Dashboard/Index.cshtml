@@ -66,14 +66,20 @@
         <div class="card dashboard-card">
             <h3 class="dashboard-card__title">درخواست‌های موجود</h3>
             <p class="dashboard-card__desc muted">مشاهده درخواست‌های جدید</p>
-            <a href="#" class="btn btn--primary btn--sm">مشاهده لیست</a>
+            <a asp-area="Expert"
+               asp-controller="Request"
+               asp-action="Open"
+               class="btn btn--primary btn--sm">مشاهده لیست</a>
         </div>
 
         <!-- Offer History Card -->
         <div class="card dashboard-card">
             <h3 class="dashboard-card__title">تاریخچه پیشنهادات</h3>
             <p class="dashboard-card__desc muted">مشاهده پیشنهادات قبلی</p>
-            <a href="#" class="btn btn--secondary btn--sm">مشاهده</a>
+            <a asp-area="Expert"
+               asp-controller="Dashboard"
+               asp-action="MyBids"
+               class="btn btn--secondary btn--sm">مشاهده</a>
         </div>
     </div>
 
@@ -82,7 +88,6 @@
         <div class="card dashboard-card dashboard-card--list">
             <div class="dashboard-card__header-inline">
                 <h3 class="dashboard-card__title">مراجعه‌های امروز <span class="offers-count">(@Model.TotalCount.ToString().ToPersianNum() مراجعه)</span></h3>
-                <a href="#" class="btn-link">مشاهده همه</a>
             </div>
             <div class="visit-list visit-list--grid">
                 @if (Model.TodayVisits.Count == 0)
@@ -95,14 +100,14 @@
                     {
                         <div class="visit-item">
                             <div class="visit-item__main">
-                                <span class="visit-item__title">@v.Title</span>
+                                <span class="visit-item__title">@v.RequestTitle.ToPersianNum()</span>
                                 <div class="visit-item__details">
                                     <div class="visit-item__detail">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                             <circle cx="12" cy="7" r="4"></circle>
                                         </svg>
-                                        <span>@v.FirstName @v.LastName</span>
+                                        <span>@v.CustomerFirstName @v.CustomerLastName</span>
                                     </div>
                                     <div class="visit-item__detail">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

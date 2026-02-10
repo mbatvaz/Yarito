@@ -56,7 +56,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="user-sidebar__nav-item @(action == "ChangePassword" ? "user-sidebar__nav-item--active" : "")">
+                        <a asp-area="Customer" asp-controller="Profile" asp-action="ChangePassword"
+                           class="user-sidebar__nav-item @(action == "ChangePassword" ? "user-sidebar__nav-item--active" : "")">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>

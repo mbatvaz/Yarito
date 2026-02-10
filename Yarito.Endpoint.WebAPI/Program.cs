@@ -27,6 +27,7 @@ using Yarito.Domain.Services.Requests;
 using Yarito.Domain.Services.Users;
 using Yarito.Domain.Services.Works;
 using Yarito.Framework;
+using Yarito.Infra.DataAccess.Cache.InMemory;
 using Yarito.Infra.DataAccess.EFCore.Cities;
 using Yarito.Infra.DataAccess.EFCore.Images;
 using Yarito.Infra.DataAccess.EFCore.Requests;
@@ -37,6 +38,8 @@ using Yarito.Infra.Database.SQLServer.EFCore.DatabaseContext;
 using Yarito.Infra.Database.SQLServer.Identity.DatabaseContext;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMemoryCache();
 
 //Database Connection String
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -105,6 +108,7 @@ builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IImageRepop, ImageRepop>();
+builder.Services.AddScoped<IInMemoryCacheRepo, InMemoryCacheRepo>();
 
 
 

@@ -40,6 +40,10 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
         if (q.WorkId is not null)
             query = query.Where(r => r.WorkId == q.WorkId.Value);
 
+        if (q.WorkIds is { Count: > 0 })
+            query = query.Where(r => q.WorkIds.Contains(r.WorkId));
+
+
         if (q.ExpertId is not null)
             query = query.Where(r => r.AcceptedBid != null && r.AcceptedBid.ExpertId == q.ExpertId.Value);
 
@@ -51,7 +55,7 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             query = query.Where(r => r.CreatedAt >= q.From.Value);
 
         if (q.To is not null)
-            query = query.Where(r => r.CreatedAt <= q.To.Value);
+            query = query.Where(r => r.CreatedAt < q.To.Value);
 
         if (q.PreferredFrom is not null)
             query = query.Where(r => r.PreferredVisitDateTime != null && r.PreferredVisitDateTime >= q.PreferredFrom.Value);
@@ -274,33 +278,33 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             ct);
     }
 
-    public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
-    {
-        var query = ApplyFilters(q);
-        var total = await query.CountAsync(ct);
-        var skip = (q.Page - 1) * q.PageSize;
-        var items = await query
-            .Skip(skip)
-            .Take(q.PageSize)
-            .Select(r => new ExpertDashboardVisitDto
-            {
-                Id = r.Id,
-                BidId = r.AcceptedBidId!.Value,
-                Title = r.Title,
-                FirstName = r.Customer.FirstName!,
-                LastName = r.Customer.LastName!,
-                CustomerPhoneNumber = r.Customer.PhoneNumber,
-                VisitDateTime = r.AcceptedBid!.ProposedVisitDateTime
-            }).ToListAsync(ct);
+    //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
+    //{
+    //    var query = ApplyFilters(q);
+    //    var total = await query.CountAsync(ct);
+    //    var skip = (q.Page - 1) * q.PageSize;
+    //    var items = await query
+    //        .Skip(skip)
+    //        .Take(q.PageSize)
+    //        .Select(r => new ExpertDashboardVisitDto
+    //        {
+    //            Id = r.Id,
+    //            BidId = r.AcceptedBidId!.Value,
+    //            Title = r.Title,
+    //            FirstName = r.Customer.FirstName!,
+    //            LastName = r.Customer.LastName!,
+    //            CustomerPhoneNumber = r.Customer.PhoneNumber,
+    //            VisitDateTime = r.AcceptedBid!.ProposedVisitDateTime
+    //        }).ToListAsync(ct);
 
-        return new PagedResult<ExpertDashboardVisitDto>
-        {
-            Items = items,
-            Page = q.Page,
-            PageSize = q.PageSize,
-            TotalCount = total
-        };
-    }
+    //    return new PagedResult<ExpertDashboardVisitDto>
+    //    {
+    //        Items = items,
+    //        Page = q.Page,
+    //        PageSize = q.PageSize,
+    //        TotalCount = total
+    //    };
+    //}
 
     public async Task<bool> SaveChangesAsync(CancellationToken ct)
     {

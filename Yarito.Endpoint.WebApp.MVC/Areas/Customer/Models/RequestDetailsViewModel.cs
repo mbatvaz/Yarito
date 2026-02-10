@@ -6,10 +6,10 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Models
     public class RequestDetailsViewModel
     {
         // Page Data
-        public required RequestFullDto Request { get; init; }
+        public RequestFullDto? Request { get; init; }
         public BidFullDto? AcceptedBid { get; init; }
         public ReviewSummaryDto? Review { get; init; }
-        public required IReadOnlyList<BidFullDto> Bids { get; init; }
+        public IReadOnlyList<BidFullDto>? Bids { get; init; }
 
         // Add Review
         public AddReviewInputModel ReviewModel { get; init; } = new();

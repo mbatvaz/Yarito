@@ -160,12 +160,14 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 return RedirectToAction("Index", "Dashboard", new { area = "Customer" });
             }
 
-            Notification(request);
+            if (TempData["Notification"] is null)
+                Notification(request);
+
             var review = await reviewsAppServices.GetReviewsForRequestByIdAsync(id, ct);
             
-            AddReviewInputModel? reviewModel = null;
-            if (TempData["ReviewModel"] is string reviewModelJson)
-                reviewModel = JsonConvert.DeserializeObject<AddReviewInputModel>(reviewModelJson);
+            //AddReviewInputModel? reviewModel = null;
+            //if (TempData["ReviewModel"] is string reviewModelJson)
+            //    reviewModel = JsonConvert.DeserializeObject<AddReviewInputModel>(reviewModelJson);
 
             var bids = await bidAppServices.GetBidsFullListAsync(new BidReqDto()
             {
@@ -180,7 +182,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 Request = request.Data,
                 Review = review.Data,
                 Bids = bids.Items,
-                ReviewModel = reviewModel ?? new AddReviewInputModel { RequestId = id },
+
 
                 Page = page,
                 Search = search,
@@ -224,20 +226,20 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddReview(AddReviewInputModel model, CancellationToken ct)
+        public async Task<IActionResult> AddReview(RequestDetailsViewModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
-                TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
+                //TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
                 Notification(Result<bool>.Failure("اطلاعات وارد شده معتبر نیست."));
-                return RedirectToAction(nameof(Details), new { id = model.RequestId });
+                return RedirectToAction(nameof(Details), new { id = model.ReviewModel.RequestId });
             }
 
             var result = await reviewsAppServices.RegisterReviewAsync(new AddNewReviewDto()
             {
-                Comment = model.Comment,
-                Rating = model.Rating,
-                RequestId = model.RequestId,
+                Comment = model.ReviewModel.Comment,
+                Rating = model.ReviewModel.Rating,
+                RequestId = model.ReviewModel.RequestId,
                 CustomerId = GetUserId()
             }, ct);
 
@@ -245,7 +247,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
 
             Notification(result);
-            return RedirectToAction(nameof(Details), new { id = model.RequestId });
+            return RedirectToAction(nameof(Details), new { id = model.ReviewModel.RequestId });
         }
 
         public async Task<IActionResult> History(CancellationToken ct, int page = 1, string? search = null,

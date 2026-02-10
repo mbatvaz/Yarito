@@ -40,4 +40,6 @@ public interface IReviewsServices
     Task<Result<bool>> AddAsync(AddNewReviewDto review, CancellationToken ct);
 
     Task<bool> HasReviewForRequestAsync(int requestId, CancellationToken ct);
+
+    Task<Result<BidFullDto>> ReviewsValidationAsync(int requestId, int customerId, CancellationToken ct);
 }

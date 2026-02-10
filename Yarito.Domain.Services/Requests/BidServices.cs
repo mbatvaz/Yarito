@@ -63,5 +63,8 @@ namespace Yarito.Domain.Services.Requests
                 ? Result<bool>.Success("پیشنهاد با موفقیت پذیرفته شد.")
                 : Result<bool>.Failure("خطا در پذیرش پیشنهاد.");
         }
+
+        public async Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct)
+            => await bidRepo.GetExpertBids(q, ct);
     }
 }

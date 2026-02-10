@@ -77,4 +77,6 @@ public interface IBidServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه لغو تمام پیشنهادات</returns>
     Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save = true);
+
+    Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct);
 }

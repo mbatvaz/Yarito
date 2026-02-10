@@ -41,4 +41,6 @@ public interface IBidAppServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>اطلاعات کامل پیشنهاد یا null در صورت عدم وجود</returns>
     Task<Result<BidDetailsDto>> GetBidDetailsAsync(int bidId, CancellationToken ct);
+
+    Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct);
 }

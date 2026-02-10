@@ -19,8 +19,7 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Controllers
     [LogActivity]
     public class DashboardController(
         IAppUserAppServices appUserAppServices,
-        IRequestAppServices requestAppServices,
-        ICategoryAppServices categoryAppServices,
+        IBidAppServices bidAppServices,
         UserManager<IdentityUser<int>> userManager) : Controller
     {
         private void Notification<T>(Result<T> result)
@@ -53,14 +52,15 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Controllers
                 return RedirectToAction("Logout", "Authentication", new { area = "Account" });
             }
 
-            var visitsResult = await requestAppServices.GetExpertVisitsAsync(new RequestReqDto
+            var visitsResult = await bidAppServices.GetExpertBids(new BidReqDto()
             {
                 ExpertId = userId,
-                FirstStatus = RequestStatusEnum.InProgress,
+                Status = BidStatusEnum.Pending,
                 PreferredFrom = DateTime.Today,
                 PreferredTo = DateTime.Today.AddDays(1).AddTicks(-1),
                 Page = page,
                 PageSize = 4
+
             }, ct);
 
             var expertWorks = await appUserAppServices.GetExpertCategoryWorksListDto(userId, ct);
@@ -74,6 +74,29 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Expert.Controllers
                 PageSize = visitsResult.PageSize,
                 Page = visitsResult.Page,
                 TotalCount = visitsResult.TotalCount
+            };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> MyBids(int page = 1, BidStatusEnum? status = null, string ? search = null,  CancellationToken ct = default)
+        {
+            var result = await bidAppServices.GetExpertBids(new BidReqDto()
+            {
+                ExpertId = GetUserId(),
+                TextSearch = search,
+                Status = status,
+                Page = page,
+                PageSize = 6,
+            }, ct);
+
+            var model = new MyBidsViewModel()
+            {
+                Bid = result.Items,
+
+                PageSize = result.PageSize,
+                Page = result.Page,
+                TotalCount = result.TotalCount
             };
 
             return View(model);

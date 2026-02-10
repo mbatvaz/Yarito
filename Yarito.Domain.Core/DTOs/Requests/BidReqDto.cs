@@ -16,7 +16,12 @@ public class BidReqDto : PageRequest
     public DateTime? From { get; init; }
     public DateTime? To { get; init; }
 
+    public DateTime? PreferredFrom { get; init; }
+    public DateTime? PreferredTo { get; init; }
+
     public string? TextSearch { get; set; }
+
+    public int? WorkId { get; init; }
 
     public SortRequest<BidSortableEnum>? Sort { get; init; }
 }
