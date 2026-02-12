@@ -21,5 +21,5 @@ public class AppUserUpdateDto
     public bool DeleteProfileImage { get; set; }
     public UserTypeEnum? UserType { get; set; }
     public List<int>? WorkIds { get; set; }
-    public List<WorksFullDto>? WorksFull { get; set; }
+
 }

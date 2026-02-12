@@ -94,13 +94,13 @@ public interface IAppUserRepo
     /// <returns>true در صورت وجود کاربر</returns>
     Task<bool> IsExistsAsync(int userId, CancellationToken ct);
 
-    /// <summary>
-    /// بررسی ثبت شهر برای کاربر بر اساس شناسه.
-    /// </summary>
-    /// <param name="userId">شناسه کاربر</param>
-    /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>true در صورت ثبت شهر</returns>
     Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت شناسه شهر کاربر.
+    /// </summary>
+    Task<int?> GetAppUserCityIdAsync(int userId, CancellationToken ct);
 
     /// <summary>
     /// آدرس کاربر رو بر می گرداند
@@ -117,4 +117,6 @@ public interface IAppUserRepo
     /// دریافت اطلاعات مورد نیاز برای داشبورد کاربر (موجودی و وضعیت پروفایل).
     /// </summary>
     Task<UserDashboardDto?> GetAppUserDashboardByIdAsync(int userId, CancellationToken ct);
+
+    Task<ExpertFindRequestInfoDto?> GetAppUserFindRequestInfoByIdAsync(int appUserId, CancellationToken ct);
 }

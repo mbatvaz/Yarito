@@ -39,4 +39,6 @@ public interface IWorkAppServices
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
     Task<Result<bool>> DeleteAsync(int workId, CancellationToken ct);
+
+    Task<IReadOnlyList<WorksFullDto>> GetExpertWorks(int expertId, CancellationToken ct);
 }

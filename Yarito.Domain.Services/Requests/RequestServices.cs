@@ -210,7 +210,7 @@ namespace Yarito.Domain.Services.Requests
                 : Result<bool>.Failure("خطا در ثبت پیشنهاد پذیرفته شده.");
         }
 
-        //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct) 
-        //    => await requestRepo.GetExpertVisitsAsync(q, ct);
+        public async Task<PagedResult<OpenRequestDto>> GetFineOpenRequestAsync(RequestReqDto q, CancellationToken ct) 
+            => await requestRepo.GetFineOpenRequestAsync(q, ct);
     }
 }

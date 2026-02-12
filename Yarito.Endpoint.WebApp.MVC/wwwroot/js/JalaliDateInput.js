@@ -6,7 +6,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         const faInput = document.getElementById("visitFa");
-        const hidden = document.getElementById("PreferredVisitDateTime");
+        const hidden = document.getElementById("VisitDateTime");
         if (!faInput || !hidden) return;
 
         // minDate = فردا (شمسی), maxDate = یک ماه بعد (شمسی)

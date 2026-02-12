@@ -164,10 +164,6 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
                 Notification(request);
 
             var review = await reviewsAppServices.GetReviewsForRequestByIdAsync(id, ct);
-            
-            //AddReviewInputModel? reviewModel = null;
-            //if (TempData["ReviewModel"] is string reviewModelJson)
-            //    reviewModel = JsonConvert.DeserializeObject<AddReviewInputModel>(reviewModelJson);
 
             var bids = await bidAppServices.GetBidsFullListAsync(new BidReqDto()
             {
@@ -230,7 +226,6 @@ namespace Yarito.Endpoint.WebApp.MVC.Areas.Customer.Controllers
         {
             if (!ModelState.IsValid)
             {
-                //TempData["ReviewModel"] = JsonConvert.SerializeObject(model);
                 Notification(Result<bool>.Failure("اطلاعات وارد شده معتبر نیست."));
                 return RedirectToAction(nameof(Details), new { id = model.ReviewModel.RequestId });
             }

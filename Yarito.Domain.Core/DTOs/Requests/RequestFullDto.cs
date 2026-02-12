@@ -10,6 +10,7 @@ namespace Yarito.Domain.Core.DTOs.Requests
         public decimal ProposedPrice { get; init; }
         public required string Address { get; init; }
         public required string WorkTitle { get; init; }
+        public required int WorkId { get; init; }
         public DateTime? PreferredVisitDateTime { get; init; }
         public DateTime CreatedAt { get; init; }
         public required RequestStatusEnum Status { get; init; }

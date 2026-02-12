@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Runtime.Intrinsics.Arm;
 using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Users;
@@ -85,9 +86,20 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             .CountAsync(ct);
     }
 
-    public async Task<bool> AddAsync(Bid newBid, CancellationToken ct)
+    public async Task<bool> AddAsync(AddNewBidDto newBid, CancellationToken ct)
     {
-        _db.Bids.Add(newBid);
+        var bid = new Bid
+        {
+            RequestId = newBid.RequestId,
+            ExpertId = newBid.ExpertId,
+            ProposedPrice = newBid.ProposedPrice,
+            ProposedVisitDateTime = newBid.ProposedVisitDateTime,
+            Description = newBid.Description,
+            CreatedAt = DateTime.Now,
+            Status = BidStatusEnum.Pending
+        };
+
+        _db.Bids.Add(bid);
         return await _db.SaveChangesAsync(ct) > 0;
     }
 
@@ -284,6 +296,7 @@ public class BidRepo(AppDbContext _db) : IBidRepo
                     Title = b.Request.Title,
                     Description = b.Request.Description,
                     WorkTitle = b.Request.Work.Title,
+                    WorkId = b.Request.WorkId,
                     ProposedPrice = b.Request.ProposedPrice ?? 0,
                     Address = b.Request.Address,
                     PreferredVisitDateTime = b.Request.PreferredVisitDateTime,
@@ -325,5 +338,32 @@ public class BidRepo(AppDbContext _db) : IBidRepo
             PageSize = q.PageSize,
             TotalCount = total
         };
+    }
+
+    public async Task<BidFullDto?> GetExpertBidForRequestAsync(int requestId, int expertId, CancellationToken ct)
+    {
+        return await _db.Bids.AsNoTracking()
+            .Where(b => b.RequestId == requestId && b.ExpertId == expertId)
+            .Select(b => new BidFullDto()
+            {
+                Id = b.Id,
+                RequestId = b.RequestId,
+                ExpertId = expertId,
+                ProposedVisitDateTime = b.ProposedVisitDateTime,
+                CreatedAt = b.CreatedAt,
+                ProposedPrice = b.ProposedPrice,
+                Status = b.Status,
+                Description = b.Description
+            }).FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<bool> SoftDelete(int bidId, CancellationToken ct)
+    {
+        var bid = await _db.Bids.FirstOrDefaultAsync(b => b.Id == bidId, ct);
+        if (bid == null || bid.Status != BidStatusEnum.Pending)
+            return false;
+
+        bid.IsDeleted = true;
+        return await _db.SaveChangesAsync(ct) > 0;
     }
 }

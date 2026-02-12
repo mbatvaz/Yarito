@@ -22,103 +22,6 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ExpertWork", b =>
-                {
-                    b.Property<int>("ExpertsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("WorksId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ExpertsId", "WorksId");
-
-                    b.HasIndex("WorksId");
-
-                    b.ToTable("ExpertWorks", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            ExpertsId = 6,
-                            WorksId = 1
-                        },
-                        new
-                        {
-                            ExpertsId = 6,
-                            WorksId = 2
-                        },
-                        new
-                        {
-                            ExpertsId = 6,
-                            WorksId = 3
-                        },
-                        new
-                        {
-                            ExpertsId = 7,
-                            WorksId = 4
-                        },
-                        new
-                        {
-                            ExpertsId = 7,
-                            WorksId = 5
-                        },
-                        new
-                        {
-                            ExpertsId = 7,
-                            WorksId = 6
-                        },
-                        new
-                        {
-                            ExpertsId = 8,
-                            WorksId = 7
-                        },
-                        new
-                        {
-                            ExpertsId = 8,
-                            WorksId = 8
-                        },
-                        new
-                        {
-                            ExpertsId = 8,
-                            WorksId = 9
-                        },
-                        new
-                        {
-                            ExpertsId = 9,
-                            WorksId = 10
-                        },
-                        new
-                        {
-                            ExpertsId = 9,
-                            WorksId = 11
-                        },
-                        new
-                        {
-                            ExpertsId = 9,
-                            WorksId = 12
-                        },
-                        new
-                        {
-                            ExpertsId = 10,
-                            WorksId = 13
-                        },
-                        new
-                        {
-                            ExpertsId = 10,
-                            WorksId = 14
-                        },
-                        new
-                        {
-                            ExpertsId = 10,
-                            WorksId = 15
-                        },
-                        new
-                        {
-                            ExpertsId = 10,
-                            WorksId = 2
-                        });
-                });
-
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Cities.City", b =>
                 {
                     b.Property<int>("Id")
@@ -277,7 +180,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 1,
                             CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req1_img1_a7f3d8e2.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 1
                         },
@@ -285,7 +188,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 2,
                             CreatedAt = new DateTime(2025, 11, 30, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req1_img2_b4e9c1f6.jpg",
+                            ImgPath = "/images/request/2.jpg",
                             IsDeleted = false,
                             RequestId = 1
                         },
@@ -293,7 +196,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 3,
                             CreatedAt = new DateTime(2025, 12, 7, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req2_img1_c2d8a5b9.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 2
                         },
@@ -301,7 +204,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 4,
                             CreatedAt = new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req3_img1_d9f6e3c7.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 3
                         },
@@ -309,7 +212,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 5,
                             CreatedAt = new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req3_img2_e5a8b4d1.jpg",
+                            ImgPath = "/images/request/2.jpg",
                             IsDeleted = false,
                             RequestId = 3
                         },
@@ -317,7 +220,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 6,
                             CreatedAt = new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req3_img3_f1c9d7e2.jpg",
+                            ImgPath = "/images/request/3.jpg",
                             IsDeleted = false,
                             RequestId = 3
                         },
@@ -325,7 +228,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 7,
                             CreatedAt = new DateTime(2025, 12, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req4_img1_g8b5f2a6.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 4
                         },
@@ -333,7 +236,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 8,
                             CreatedAt = new DateTime(2025, 12, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req4_img2_h3d7c9e4.jpg",
+                            ImgPath = "/images/request/2.jpg",
                             IsDeleted = false,
                             RequestId = 4
                         },
@@ -341,7 +244,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 9,
                             CreatedAt = new DateTime(2025, 12, 22, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req5_img1_i6e2a8b5.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 5
                         },
@@ -349,7 +252,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 10,
                             CreatedAt = new DateTime(2025, 12, 24, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req6_img1_j9f4c3d7.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 6
                         },
@@ -357,7 +260,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 11,
                             CreatedAt = new DateTime(2025, 12, 24, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req6_img2_k2a5e8b1.jpg",
+                            ImgPath = "/images/request/2.jpg",
                             IsDeleted = false,
                             RequestId = 6
                         },
@@ -365,7 +268,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 12,
                             CreatedAt = new DateTime(2025, 12, 24, 12, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req7_img1_l7c9d2f6.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 7
                         },
@@ -373,7 +276,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 13,
                             CreatedAt = new DateTime(2025, 12, 24, 16, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req8_img1_m4e6a3b8.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 8
                         },
@@ -381,7 +284,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 14,
                             CreatedAt = new DateTime(2025, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req10_img1_n8f5d7c2.jpg",
+                            ImgPath = "/images/request/1.jpg",
                             IsDeleted = false,
                             RequestId = 10
                         },
@@ -389,7 +292,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         {
                             Id = 15,
                             CreatedAt = new DateTime(2025, 12, 11, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ImgPath = "/images/requests/req10_img2_o1b9e4a6.jpg",
+                            ImgPath = "/images/request/2.jpg",
                             IsDeleted = false,
                             RequestId = 10
                         });
@@ -952,6 +855,7 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         .IsFixedLength();
 
                     b.Property<string>("ProfileImgPath")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
@@ -1046,6 +950,103 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                             Description = "تعمیر و سرویس انواع لوازم خانگی",
                             IsDeleted = false,
                             Title = "تعمیر لوازم خانگی"
+                        });
+                });
+
+            modelBuilder.Entity("Yarito.Domain.Core.Entities.Works.ExpertWork", b =>
+                {
+                    b.Property<int>("ExpertId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExpertId", "WorkId");
+
+                    b.HasIndex("WorkId");
+
+                    b.ToTable("ExpertWorks");
+
+                    b.HasData(
+                        new
+                        {
+                            ExpertId = 6,
+                            WorkId = 1
+                        },
+                        new
+                        {
+                            ExpertId = 6,
+                            WorkId = 2
+                        },
+                        new
+                        {
+                            ExpertId = 6,
+                            WorkId = 3
+                        },
+                        new
+                        {
+                            ExpertId = 7,
+                            WorkId = 4
+                        },
+                        new
+                        {
+                            ExpertId = 7,
+                            WorkId = 5
+                        },
+                        new
+                        {
+                            ExpertId = 7,
+                            WorkId = 6
+                        },
+                        new
+                        {
+                            ExpertId = 8,
+                            WorkId = 7
+                        },
+                        new
+                        {
+                            ExpertId = 8,
+                            WorkId = 8
+                        },
+                        new
+                        {
+                            ExpertId = 8,
+                            WorkId = 9
+                        },
+                        new
+                        {
+                            ExpertId = 9,
+                            WorkId = 10
+                        },
+                        new
+                        {
+                            ExpertId = 9,
+                            WorkId = 11
+                        },
+                        new
+                        {
+                            ExpertId = 9,
+                            WorkId = 12
+                        },
+                        new
+                        {
+                            ExpertId = 10,
+                            WorkId = 13
+                        },
+                        new
+                        {
+                            ExpertId = 10,
+                            WorkId = 14
+                        },
+                        new
+                        {
+                            ExpertId = 10,
+                            WorkId = 15
+                        },
+                        new
+                        {
+                            ExpertId = 10,
+                            WorkId = 2
                         });
                 });
 
@@ -1377,21 +1378,6 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ExpertWork", b =>
-                {
-                    b.HasOne("Yarito.Domain.Core.Entities.Users.Expert", null)
-                        .WithMany()
-                        .HasForeignKey("ExpertsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Yarito.Domain.Core.Entities.Works.Work", null)
-                        .WithMany()
-                        .HasForeignKey("WorksId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Cities.City", b =>
                 {
                     b.HasOne("Yarito.Domain.Core.Entities.Cities.City", "Parent")
@@ -1495,6 +1481,25 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("Yarito.Domain.Core.Entities.Works.ExpertWork", b =>
+                {
+                    b.HasOne("Yarito.Domain.Core.Entities.Users.Expert", "Expert")
+                        .WithMany("ExpertWorks")
+                        .HasForeignKey("ExpertId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Yarito.Domain.Core.Entities.Works.Work", "Work")
+                        .WithMany("ExpertWorks")
+                        .HasForeignKey("WorkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Expert");
+
+                    b.Navigation("Work");
+                });
+
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Works.Work", b =>
                 {
                     b.HasOne("Yarito.Domain.Core.Entities.Works.Category", "Category")
@@ -1529,6 +1534,8 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
 
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Works.Work", b =>
                 {
+                    b.Navigation("ExpertWorks");
+
                     b.Navigation("Requests");
                 });
 
@@ -1542,6 +1549,8 @@ namespace Yarito.Infra.Database.SQLServer.EFCore.Migrations
             modelBuilder.Entity("Yarito.Domain.Core.Entities.Users.Expert", b =>
                 {
                     b.Navigation("Bids");
+
+                    b.Navigation("ExpertWorks");
 
                     b.Navigation("Reviews");
                 });

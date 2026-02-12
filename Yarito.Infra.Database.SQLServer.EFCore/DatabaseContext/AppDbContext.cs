@@ -47,4 +47,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     public DbSet<Request> Requests { get; set; }
     public DbSet<Bid> Bids { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<ExpertWork> ExpertWorks { get; set; }
 }

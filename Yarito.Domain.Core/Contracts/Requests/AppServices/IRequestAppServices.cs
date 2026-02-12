@@ -72,8 +72,5 @@ public interface IRequestAppServices
 
     Task<Result<bool>> AcceptBidAsync(int requestId, int bidId, int customerId, CancellationToken ct);
 
-    /// <summary>
-    /// دریافت لیست مراجعات یک متخصص بر اساس فیلترهای مشخص شده (مانند تاریخ امروز).
-    /// </summary>
-    //Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct);
+    Task<Result<PagedResult<OpenRequestDto>>> GetOpenRequestAsync(RequestReqDto q, CancellationToken ct);
 }

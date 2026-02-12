@@ -20,6 +20,8 @@ public interface IWorkServices
     /// </summary>
     Task<Result<List<WorksFullDto>>> GetWorksByIDs(List<int> ids, CancellationToken ct);
 
+    Task<IReadOnlyList<WorksFullDto>> GetExpertWorks(int expertId, CancellationToken ct);
+
     #endregion
 
     #region Command Methods

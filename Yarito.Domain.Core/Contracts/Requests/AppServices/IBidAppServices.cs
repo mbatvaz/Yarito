@@ -43,4 +43,13 @@ public interface IBidAppServices
     Task<Result<BidDetailsDto>> GetBidDetailsAsync(int bidId, CancellationToken ct);
 
     Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct);
+
+    Task<Result<BidFullDto>> GetExpertBidForRequestAsync(int requestId, int expertId, CancellationToken ct);
+
+    /// <summary>
+    /// ثبت یک پیشنهاد جدید توسط متخصص.
+    /// </summary>
+    Task<Result<bool>> AddNewBidAsync(AddNewBidDto dto, CancellationToken ct);
+
+    Task<Result<bool>> DeleteAsync(int requestId, int bidId, int expertId, CancellationToken ct);
 }

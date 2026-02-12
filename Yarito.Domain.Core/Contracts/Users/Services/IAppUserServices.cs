@@ -80,10 +80,13 @@ public interface IAppUserServices
     /// </summary>
     Task<bool> IsExistsAsync(int userId, CancellationToken ct);
 
-    /// <summary>
-    /// بررسی ثبت شهر محل سکونت برای کاربر
-    /// </summary>
+    /// <returns>در صورت وجود آدرس مقدار آدرس در غیر این صورت null</returns>
     Task<bool> IsCitySetAsync(int userId, CancellationToken ct);
+
+    /// <summary>
+    /// دریافت شناسه شهر کاربر.
+    /// </summary>
+    Task<int?> GetAppUserCityIdAsync(int userId, CancellationToken ct);
 
 
     /// <summary>
@@ -104,4 +107,6 @@ public interface IAppUserServices
 
 
     Task<Result<UserHeaderInfoDto>> GetUserHeaderInfoAsync(int userId, CancellationToken ct);
+
+    Task<Result<ExpertFindRequestInfoDto>> GetAppUserFindRequestInfoByIdAsync(int appUserId, CancellationToken ct);
 }

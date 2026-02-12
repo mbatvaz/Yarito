@@ -27,7 +27,7 @@ public class WorkRepo(AppDbContext _db) : IWorkRepo
     public async Task<List<WorksFullDto>> GetWorksByIDs(List<int> ids, CancellationToken ct)
     {
         return await _db.Works
-            .Where(w => ids.Contains(w.Id) && w.IsDeleted == false)
+            .Where(w => ids.Contains(w.Id))
             .Select(w => new WorksFullDto
             {
                 Id = w.Id,

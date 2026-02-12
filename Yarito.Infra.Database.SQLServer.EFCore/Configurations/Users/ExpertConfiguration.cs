@@ -18,36 +18,6 @@ public class ExpertConfiguration : IEntityTypeConfiguration<Expert>
             .HasForeignKey(r => r.ExpertId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(e => e.Works)
-            .WithMany(w => w.Experts)
-            .UsingEntity(j => j.ToTable("ExpertWorks").HasData(
-                // Expert1 (رضا برقکار) - متخصص برق
-                new { ExpertsId = SeedDataIds.Expert1Id, WorksId = SeedDataIds.HomeWiringWorkId },
-                new { ExpertsId = SeedDataIds.Expert1Id, WorksId = SeedDataIds.LightInstallationWorkId },
-                new { ExpertsId = SeedDataIds.Expert1Id, WorksId = SeedDataIds.SwitchRepairWorkId },
-
-                // Expert2 (مهدی لوله‌کش) - متخصص لوله‌کشی
-                new { ExpertsId = SeedDataIds.Expert2Id, WorksId = SeedDataIds.PipeRepairWorkId },
-                new { ExpertsId = SeedDataIds.Expert2Id, WorksId = SeedDataIds.FaucetInstallationWorkId },
-                new { ExpertsId = SeedDataIds.Expert2Id, WorksId = SeedDataIds.ToiletRepairWorkId },
-
-                // Expert3 (سارا نظافتچی) - متخصص نظافت
-                new { ExpertsId = SeedDataIds.Expert3Id, WorksId = SeedDataIds.HomeCleaningWorkId },
-                new { ExpertsId = SeedDataIds.Expert3Id, WorksId = SeedDataIds.WindowCleaningWorkId },
-                new { ExpertsId = SeedDataIds.Expert3Id, WorksId = SeedDataIds.CarpetCleaningWorkId },
-
-                // Expert4 (احمد نقاش) - متخصص نقاشی
-                new { ExpertsId = SeedDataIds.Expert4Id, WorksId = SeedDataIds.InteriorPaintingWorkId },
-                new { ExpertsId = SeedDataIds.Expert4Id, WorksId = SeedDataIds.ExteriorPaintingWorkId },
-                new { ExpertsId = SeedDataIds.Expert4Id, WorksId = SeedDataIds.WallPaperingWorkId },
-
-                // Expert5 (نرگس تعمیرکار) - متخصص تعمیر لوازم خانگی + برخی برق
-                new { ExpertsId = SeedDataIds.Expert5Id, WorksId = SeedDataIds.WashingMachineRepairWorkId },
-                new { ExpertsId = SeedDataIds.Expert5Id, WorksId = SeedDataIds.RefrigeratorRepairWorkId },
-                new { ExpertsId = SeedDataIds.Expert5Id, WorksId = SeedDataIds.ACRepairWorkId },
-                new { ExpertsId = SeedDataIds.Expert5Id, WorksId = SeedDataIds.LightInstallationWorkId }
-            ));
-
         // Seed Data
         builder.HasData(
             new Expert

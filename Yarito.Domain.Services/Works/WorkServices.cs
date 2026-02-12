@@ -7,7 +7,9 @@ using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Works;
 
-public class WorkServices(IWorkRepo workRepo) : IWorkServices
+public class WorkServices(
+    IWorkRepo workRepo,
+    IExpertWorkRepo expertWorkRepo) : IWorkServices
 {
     #region Query Methods
 
@@ -26,6 +28,9 @@ public class WorkServices(IWorkRepo workRepo) : IWorkServices
             ? Result<List<WorksFullDto>>.Success("لیست خدمات با موفقیت دریافت شد", result)
             : Result<List<WorksFullDto>>.Failure("هیچ خدمتی یافت نشد");
     }
+
+    public async Task<IReadOnlyList<WorksFullDto>> GetExpertWorks(int expertId, CancellationToken ct) 
+        => await expertWorkRepo.GetExpertWorks(expertId, ct);
 
     #endregion
 

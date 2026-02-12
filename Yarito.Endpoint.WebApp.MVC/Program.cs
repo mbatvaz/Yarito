@@ -143,6 +143,7 @@ builder.Services.AddScoped<IWorkRepo, WorkRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IImageRepop, ImageRepop>();
 builder.Services.AddScoped<IInMemoryCacheRepo, InMemoryCacheRepo>();
+builder.Services.AddScoped<IExpertWorkRepo, ExpertWorkRepo>();
 
 
 

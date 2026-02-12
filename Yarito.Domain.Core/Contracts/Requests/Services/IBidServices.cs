@@ -41,6 +41,13 @@ public interface IBidServices
     Task<Result<BidFullDto>> GetBidFullByIdAsync(int bidId, CancellationToken ct);
 
     /// <summary>
+    /// افزودن یک پیشنهاد جدید.
+    /// </summary>
+    Task<Result<bool>> AddAsync(AddNewBidDto dto, CancellationToken ct);
+
+    Task<Result<AddNewBidDto>> AddValidateAsync(AddNewBidDto dto, CancellationToken ct);
+
+    /// <summary>
     /// تغییر وضعیت یک پیشنهاد.
     /// </summary>
     /// <param name="bidId">شناسه پیشنهاد</param>
@@ -79,4 +86,10 @@ public interface IBidServices
     Task<Result<bool>> RejectAllBidsByRequestIdAsync(int requestId, CancellationToken ct, bool save = true);
 
     Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct);
+
+    Task<Result<BidFullDto>> GetExpertBidForRequestAsync(int requestId, int expertId, CancellationToken ct);
+
+    Task<Result<bool>> DeleteValidateAsync(int requestId, int bidId, int expertId, CancellationToken ct);
+
+    Task<Result<bool>> DeleteAsync(int bidId, CancellationToken ct);
 }

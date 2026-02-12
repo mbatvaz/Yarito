@@ -32,6 +32,6 @@ public class Work : BaseEntity
 
     // Navigation Properties
     public Category Category { get; set; } = null!;
-    public ICollection<Expert> Experts { get; set; } = [];
+    public ICollection<ExpertWork> ExpertWorks { get; set; } = [];
     public ICollection<Request> Requests { get; set; } = [];
 }

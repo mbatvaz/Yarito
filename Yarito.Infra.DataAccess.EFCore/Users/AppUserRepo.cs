@@ -136,32 +136,14 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
             customer.Address = dto.Address;
         }
 
-        if (user is Expert && dto.WorksFull is not null)
+        if (user is Expert && dto.WorkIds is not null)
         {
-            var expert = await _db.Set<Expert>()
-                .Include(e => e.Works)
-                .FirstOrDefaultAsync(e => e.Id == dto.UserId, ct);
+            var existingWorks = _db.ExpertWorks.Where(ew => ew.ExpertId == dto.UserId);
+            _db.ExpertWorks.RemoveRange(existingWorks);
 
-            if (expert is null) return false;
-
-            var newIds = dto.WorksFull.Select(x => x.Id).ToHashSet();
-            var workToRemove = expert.Works
-                .Where(w => !newIds.Contains(w.Id))
-                .ToList();
-
-            foreach (var w in workToRemove)
-                expert.Works.Remove(w);
-
-
-            var currentIds = expert.Works.Select(x => x.Id).ToHashSet();
-            var worksToAdd = dto.WorksFull
-                .Where(w => !currentIds.Contains(w.Id))
-                .ToList();
-
-            foreach (var w in worksToAdd.Select(w => new Work { Id = w.Id, Title = w.Title}))
+            foreach (var workId in dto.WorkIds)
             {
-                _db.Attach(w);
-                expert.Works.Add(w);
+                _db.ExpertWorks.Add(new ExpertWork { ExpertId = dto.UserId, WorkId = workId });
             }
         }
 
@@ -232,21 +214,19 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
 
     public async Task<IReadOnlyList<CategoryFullDto>> GetExpertCategoryWorksListDto(int expertId, CancellationToken ct)
     {
-        var rows = await _db.Set<Expert>()
+        var rows = await _db.ExpertWorks
             .AsNoTracking()
-            .Where(e => e.Id == expertId)
-            .SelectMany(e =>
-                e.Works.Select(w => new
-                {
-                    CategoryId = w.CategoryId,
-                    CategoryTitle = w.Category.Title,
-                    CategoryDescription = w.Category.Description,
+            .Where(ew => ew.ExpertId == expertId)
+            .Select(ew => new
+            {
+                CategoryId = ew.Work.CategoryId,
+                CategoryTitle = ew.Work.Category.Title,
+                CategoryDescription = ew.Work.Category.Description,
 
-                    WorkId = w.Id,
-                    WorkTitle = w.Title,
-                    WorkBasePrice = w.BasePrice
-                }
-                ))
+                WorkId = ew.WorkId,
+                WorkTitle = ew.Work.Title,
+                WorkBasePrice = ew.Work.BasePrice
+            })
             .ToListAsync(ct);
 
         var result = rows
@@ -312,6 +292,14 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
         return await _db.AppUsers.AnyAsync(u => u.Id == userId && u.City != null, ct);
     }
 
+    public async Task<int?> GetAppUserCityIdAsync(int userId, CancellationToken ct)
+    {
+        return await _db.AppUsers
+            .Where(u => u.Id == userId)
+            .Select(u => u.CityId)
+            .FirstOrDefaultAsync(ct);
+    }
+
     public async Task<string?> GetCustomerAddressAsync(int userId, CancellationToken ct)
     {
         return await _db.AppUsers
@@ -359,5 +347,18 @@ public class AppUserRepo(AppDbContext _db) : IAppUserRepo
                 IsInfoComplete = u.CityId.HasValue
             })
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<ExpertFindRequestInfoDto?> GetAppUserFindRequestInfoByIdAsync(int appUserId, CancellationToken ct)
+    {
+        return await _db.AppUsers
+            .OfType<Expert>()
+            .AsNoTracking()
+            .Where(au => au.Id == appUserId)
+            .Select(au => new ExpertFindRequestInfoDto()
+            {
+                CityId = au.CityId,
+                WorkId = au.ExpertWorks.Select(w => w.WorkId).ToList()
+            }).FirstOrDefaultAsync(ct);
     }
 }

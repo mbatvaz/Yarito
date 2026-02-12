@@ -1,13 +1,19 @@
 ﻿using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
+using Yarito.Domain.Core.Contracts.Users.Repository;
+using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.Entities._Common;
+using Yarito.Domain.Core.Enums._Common;
 using Yarito.Domain.Core.Enums.Requests;
+using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Requests
 {
     public class BidServices(
-        IBidRepo bidRepo) : IBidServices
+        IBidRepo bidRepo,
+        IRequestRepo requestRepo,
+        IAppUserRepo appUserRepo) : IBidServices
     {
         public async Task<int> GetCountAsync(CancellationToken ct) 
             => await bidRepo.GetCountAsync(ct);
@@ -66,5 +72,77 @@ namespace Yarito.Domain.Services.Requests
 
         public async Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct)
             => await bidRepo.GetExpertBids(q, ct);
+
+        public async Task<Result<BidFullDto>> GetExpertBidForRequestAsync(int requestId, int expertId, CancellationToken ct)
+        {
+            var result = await bidRepo.GetExpertBidForRequestAsync(requestId, expertId, ct);
+            return result is not null
+                ? Result<BidFullDto>.Success("پیشنهاد شما برای این درخواست یافت شد", result)
+                : Result<BidFullDto>.Failure("پیشنهادی برای این درخواست ثبت نشده است");
+        }
+
+        public async Task<Result<AddNewBidDto>> AddValidateAsync(AddNewBidDto dto, CancellationToken ct)
+        {
+            dto.Description = dto.Description is not null ? Validation.NormalizeText(dto.Description) : null;
+
+            var existingBid = await GetExpertBidForRequestAsync(dto.RequestId, dto.ExpertId, ct);
+            if (existingBid.Status == ResultStatusEnum.Success || existingBid.Data is not null)
+                return Result<AddNewBidDto>.Warning("شما قبلاً پیشنهادی برای این درخواست ثبت کرده‌اید.");
+
+            if (dto.ProposedVisitDateTime.Date <= DateTime.Today)
+                return Result<AddNewBidDto>.Warning("تاریخ پیشنهادی باید حداقل از فردا باشد.");
+
+            var requestResult = await requestRepo.GetRequestFullByIdAsync(dto.RequestId, ct);
+            if (requestResult is null)
+                return Result<AddNewBidDto>.Failure("درخواست مورد نظر یافت نشد.");
+
+            if (requestResult.Status != RequestStatusEnum.Pending)
+                return Result<AddNewBidDto>.Warning("این درخواست دیگر در وضعیت دریافت پیشنهاد نمی‌باشد.");
+
+            var expertCityId = await appUserRepo.GetAppUserCityIdAsync(dto.ExpertId, ct);
+            var customerCityId = await appUserRepo.GetAppUserCityIdAsync(requestResult.CustomerId, ct);
+
+            if (expertCityId == null || customerCityId == null)
+                return Result<AddNewBidDto>.Failure("خطا در دریافت اطلاعات مکان کاربر.");
+
+            if (expertCityId != customerCityId)
+                return Result<AddNewBidDto>.Warning("شهر شما با شهر مشتری یکسان نیست.");
+
+            var expertInfo = await appUserRepo.GetAppUserFindRequestInfoByIdAsync(dto.ExpertId, ct);
+            if (expertInfo is null)
+                return Result<AddNewBidDto>.Failure("خطا در دریافت تخصص‌های کاربر.");
+
+            if (!expertInfo.WorkId.Contains(requestResult.WorkId))
+                return Result<AddNewBidDto>.Warning("این کار در لیست تخصص‌های شما قرار ندارد.");
+
+            return Result<AddNewBidDto>.Success("اعتبارسنجی با موفقیت انجام شد.", dto);
+        }
+
+        public async Task<Result<bool>> AddAsync(AddNewBidDto dto, CancellationToken ct)
+        {
+            return await bidRepo.AddAsync(dto, ct)
+                ? Result<bool>.Success("پیشنهاد شما با موفقیت ثبت شد")
+                : Result<bool>.Failure("خطا در ثبت پیشنهاد");
+        }
+
+        public async Task<Result<bool>> DeleteValidateAsync(int requestId, int bidId, int expertId, CancellationToken ct)
+        {
+            var bid = await bidRepo.GetExpertBidForRequestAsync(requestId, expertId, ct);
+            if(bid is null)
+                return Result<bool>.Failure("شما پیشنهادی با این شناسه ندارید");
+            if (bid.Status != BidStatusEnum.Pending)
+                return Result<bool>.Warning("فقط در وضعیت در انتظار امکان حذف درخواست وجود دارد");
+            if(bid.RequestId != requestId || bid.Id != bidId)
+                return Result<bool>.Failure("این پیشنهاد متعلق به این درخواست نمی باشد");
+            return Result<bool>.Success("تمام شرایط حذف درخواست امکان پذیر است");
+        }
+
+        public async Task<Result<bool>> DeleteAsync(int bidId, CancellationToken ct)
+        {
+            var result = await bidRepo.SoftDelete(bidId, ct);
+            return result
+                ? Result<bool>.Success("پیشنهاد با موفقیت حذف شد")
+                : Result<bool>.Failure("حذف پیشنهاد موفقیت آمیز نبوده");
+        }
     }
 }

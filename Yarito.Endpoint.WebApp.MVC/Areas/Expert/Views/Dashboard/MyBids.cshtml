@@ -98,7 +98,11 @@
                     </div>
                 </div>
                 <div class="offer-card__actions">
-                    <a asp-area="Expert" asp-controller="Request" asp-action="Details" asp-route-requestId="@b.RequestId" class="btn btn--ghost btn--sm">مشاهده جزئیات</a>
+                    <a asp-area="Expert"
+                       asp-controller="Request"
+                       asp-action="Details"
+                       asp-route-requestId="@b.RequestId"
+                       class="btn btn--ghost btn--sm">مشاهده جزئیات</a>
                     @switch (b.Status)
                     {
                         case BidStatusEnum.Accepted:

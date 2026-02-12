@@ -4930,3 +4930,75 @@ Select2 Custom Styles
         color: var(--color-text);
         margin: 0;
     }
+
+
+
+/* ==========================================================================
+   Expert Request Details Specific Styles
+   ========================================================================== */
+.expert-request-details-container {
+    width: 50% !important;
+    max-width: 50% !important;
+    min-width: 500px;
+    margin-inline: auto;
+}
+
+@media (max-width: 991px) {
+    .expert-request-details-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: auto;
+    }
+}
+
+.request-info-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-lg);
+}
+
+.customer-profile-header--integrated {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--space-md) !important;
+}
+
+.user-request-combined--stack {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.user-request-images--bottom {
+    width: 100% !important; /* Force full width to fill the card */
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+
+.user-images-grid--linear {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important; /* Force items to stay in one row and fill the width */
+    gap: var(--space-md) !important;
+    width: 100% !important;
+    margin-top: var(--space-md);
+}
+
+.user-image-item {
+    width: 100% !important;
+    aspect-ratio: 3 / 2 !important; /* Rectangular aspect ratio for a more 'row-like' appearance */
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    flex: none !important;
+}
+
+    .user-image-item img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }

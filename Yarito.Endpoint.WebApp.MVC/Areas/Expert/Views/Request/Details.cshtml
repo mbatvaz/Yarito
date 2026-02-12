@@ -1,222 +1,227 @@
-﻿@{
+﻿@using Yarito.Domain.Core.Enums.Requests
+@model Yarito.Endpoint.WebApp.MVC.Areas.Expert.Models.DetailsViewModel
+@{
     Layout = "_Layout";
 }
-<section class="profile-main">
 
-    <!-- Section 1: Request Info + Images -->
+
+<section class="profile-main expert-request-details-container">
+
+    <header class="user-section__header" style="margin-bottom: var(--space-md);">
+        <h3 style="color: var(--color-primary); font-weight: 700;">اطلاعات درخواست</h3>
+    </header>
+
+    <!-- Main Card -->
     <section class="card user-section">
-        <div class="user-section__header">
-            <h3>اطلاعات درخواست</h3>
-            <span class="badge badge--receiving">در حال دریافت پیشنهاد</span>
+        <!-- Top Row: Customer Info + Status Badge -->
+        <div class="request-info-header">
+            <div class="customer-profile-header customer-profile-header--integrated">
+                <img class="customer-profile-avatar" src="@Model.Customer.ProfileImgPath" alt="تصویر مشتری">
+                <div class="customer-profile-info">
+                    <h4 class="customer-profile-name">@Model.Customer.FirstName @Model.Customer.LastName</h4>
+                    <div class="customer-profile-phone">
+                        <span dir="ltr">@Model.Customer.PhoneNumber.ToPersianNum()</span>
+                    </div>
+                </div>
+            </div>
+            <span class="badge
+                  @(Model.Request.Status switch
+                  {
+                      RequestStatusEnum.Pending => "badge--receiving",
+                      RequestStatusEnum.Completed => "badge--completed",
+                      RequestStatusEnum.Cancelled => "badge--cancelled",
+                      RequestStatusEnum.InProgress => "badge--waiting",
+                      _ => ""
+                  })">@Html.DisplayFor(_ => Model.Request.Status)</span>
         </div>
 
-        <div class="user-request-combined">
-            <!-- Request Info -->
-            <div class="user-request-info">
+        <div class="user-request-combined user-request-combined--stack">
+            <!-- Request Info (Below User Info) -->
+            <div class="user-request-info" style="margin-top: var(--space-lg);">
                 <div class="user-info-grid">
                     <div class="user-info-item">
                         <dt>عنوان درخواست</dt>
-                        <dd>تعمیر پکیج دیواری ایران رادیاتور</dd>
+                        <dd>@Model.Request.Title</dd>
                     </div>
                     <div class="user-info-item">
                         <dt>سرویس</dt>
-                        <dd>تهویه مطبوع</dd>
+                        <dd>@Model.Request.WorkTitle</dd>
                     </div>
                     <div class="user-info-item">
                         <dt>تاریخ ثبت</dt>
-                        <dd>۱۴۰۴/۱۰/۰۹</dd>
+                        <dd>@Model.Request.CreatedAt.CompleteShamsiDate("dd mn yyyy")</dd>
                     </div>
                     <div class="user-info-item">
                         <dt>تاریخ مراجعه درخواستی</dt>
-                        <dd>۱۴۰۴/۱۰/۱۵</dd>
+                        <dd>@(Model.Request.PreferredVisitDateTime is null 
+                                ? "تاریخی انتخاب نشده" 
+                                : Model.Request.PreferredVisitDateTime.Value.CompleteShamsiDate("dd mn yyyy"))</dd>
                     </div>
                     <div class="user-info-item">
                         <dt>قیمت پیشنهادی مشتری</dt>
-                        <dd><strong class="text-primary">۵۰۰٬۰۰۰ تومان</strong></dd>
+                        <dd><strong class="text-primary">@Model.Request.ProposedPrice.ToString("N0").ToPersianNum() تومان</strong></dd>
                     </div>
                     <div class="user-info-item">
                         <dt>آدرس</dt>
-                        <dd>تهران، خیابان آزادی، کوچه بهار، پلاک ۱۲، واحد ۳</dd>
+                        <dd>@Model.Request.Address.ToPersianNum()</dd>
                     </div>
                     <div class="user-info-item user-info-item--full">
                         <dt>توضیحات</dt>
                         <dd>
-                            پکیج دیواری ایران رادیاتور مدل M24 خطای E۱۰ می‌دهد و آب گرم نمی‌کند. قبلاً یکبار سرویس شده اما
-                            مشکل برطرف نشده. نیاز به بررسی کامل و تعمیر دارد. در صورت نیاز به تعویض قطعه، هماهنگ شود.
+                            @Model.Request.Description.ToPersianNum()
                         </dd>
                     </div>
                 </div>
             </div>
 
-            <!-- Uploaded Images -->
-            <div class="user-request-images">
-                <div class="user-images-grid user-images-grid--4">
-                    <div class="user-image-item">
-                        <img src="../images.jpg" alt="تصویر آپلود شده">
-                    </div>
-                    <div class="user-image-item">
-                        <img src="../images.jpg" alt="تصویر آپلود شده">
-                    </div>
-                    <div class="user-image-item">
-                        <img src="../images.jpg" alt="تصویر آپلود شده">
-                    </div>
-                    <div class="user-image-item">
-                        <img src="../images.jpg" alt="تصویر آپلود شده">
-                    </div>
+            <!-- Uploaded Images at Bottom (Linear) -->
+            <div class="user-request-images user-request-images--bottom">
+                <div class="user-images-grid user-images-grid--4 user-images-grid--linear">
+                    @foreach (var i in Model.Request.RequestImagesPath)
+                    {
+                        <a href="@i" class="glightbox user-image-item" data-gallery="request-images">
+                            <img src="@i" alt="تصویر آپلود شده">
+                        </a>
+                    }
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Two Column Layout: Customer Info (Right) + Proposal (Left) -->
-    <div class="two-column-layout">
-        <!-- Right Column: Customer Info with Profile Image -->
-        <section class="card user-section customer-profile-card">
-            <div class="user-section__header">
-                <h3>اطلاعات مشتری</h3>
-            </div>
-
-            <div class="customer-profile-header">
-                <img class="customer-profile-avatar" src="../default.png" alt="تصویر مشتری">
-                <div class="customer-profile-info">
-                    <h4 class="customer-profile-name">محمد احمدی</h4>
-                    <div class="customer-profile-phone">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                            </path>
-                        </svg>
-                        <span dir="ltr">۰۹۱۲۳۴۵۶۷۸۹</span>
-                    </div>
-                </div>
-            </div>
-
-            <dl class="customer-profile-details">
-                <div class="customer-detail-row">
-                    <dt>آدرس:</dt>
-                    <dd>تهران، خیابان آزادی، کوچه بهار، پلاک ۱۲، طبقه ۳، واحد غربی</dd>
-                </div>
-            </dl>
-        </section>
-
-        <!-- Left Column: Expert's Proposal -->
+    <!-- Expert's Proposal - Below the main box -->
+    @if (Model.Bid is not null)
+    {
         <section class="card user-section">
             <div class="user-section__header">
                 <h3>پیشنهاد شما</h3>
-                <span class="badge badge--pending">در انتظار بررسی</span>
+                <span class="badge @(Model.Bid.Status switch
+                                   {
+                                       BidStatusEnum.Pending => "badge--pending",
+                                       BidStatusEnum.Accepted => "badge--receiving",
+                                       BidStatusEnum.Rejected => "badge--rejected",
+                                       BidStatusEnum.Done => "badge--completed",
+                                       _                            => ""
+                                   })">@Html.DisplayFor(_ => Model.Bid.Status)</span>
             </div>
 
             <div class="user-info-grid">
                 <div class="user-info-item">
                     <dt>قیمت پیشنهادی</dt>
-                    <dd><strong class="text-primary">۵۵۰٬۰۰۰ تومان</strong></dd>
+                    <dd><strong class="text-primary">@Model.Bid.ProposedPrice تومان</strong></dd>
                 </div>
                 <div class="user-info-item">
                     <dt>تاریخ مراجعه پیشنهادی</dt>
-                    <dd>۱۴۰۴/۱۰/۱۴</dd>
+                    <dd>@Model.Bid.ProposedVisitDateTime.CompleteShamsiDate("dd mn yyyy")</dd>
                 </div>
                 <div class="user-info-item">
                     <dt>تاریخ ثبت پیشنهاد</dt>
-                    <dd>۱۴۰۴/۱۰/۰۹</dd>
+                    <dd>@Model.Bid.CreatedAt.CompleteShamsiDate("dd mn yyyy")</dd>
                 </div>
                 <div class="user-info-item user-info-item--full">
                     <dt>توضیحات پیشنهاد</dt>
                     <dd>
-                        با توجه به تجربه ۸ ساله در تعمیر انواع پکیج، می‌توانم مشکل را بررسی و برطرف کنم. در صورت نیاز به
-                        تعویض قطعه، هزینه جداگانه محاسبه خواهد شد.
+                        @Model.Bid.Description.ToPersianNum()
                     </dd>
+
                 </div>
             </div>
+            <div class="wizard-footer">
+                @switch (Model.Bid.Status)
+                {
+                    case BidStatusEnum.Accepted:
 
-            <div class="user-section__actions">
-                <a href="expert-requests.html" class="btn btn--ghost btn--sm">بازگشت به لیست</a>
+                        <button type="button" class="btn btn--danger">انصراف</button>
+                        break;
+                    case BidStatusEnum.Pending:
+                        <form asp-area="Expert"
+                              asp-controller="Request"
+                              asp-action="Delete"
+                              asp-route-bidId="@Model.Bid.Id"
+                              asp-route-requestId="@Model.RequestId"
+                              method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn--danger">حذف</button>
+                        </form>
+                        break;
+                }
             </div>
         </section>
-    </div>
-
-    <!-- State B: No Proposal - Show Form (Commented Out) -->
-    <!--
-    <div class="two-column-layout">
-      <section class="card user-section customer-profile-card">
-        <div class="user-section__header">
-          <h3>اطلاعات مشتری</h3>
-        </div>
-
-        <div class="customer-profile-header">
-          <img class="customer-profile-avatar" src="../default.png" alt="تصویر مشتری">
-          <div class="customer-profile-info">
-            <h4 class="customer-profile-name">محمد احمدی</h4>
-            <div class="customer-profile-phone">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-              <span dir="ltr">۰۹۱۲۳۴۵۶۷۸۹</span>
+    }
+    else if(Model.Request.Status == RequestStatusEnum.Pending)
+    {
+        <section class="card user-section" id="proposal-form-section">
+            <div class="user-section__header">
+                <h3>ثبت پیشنهاد جدید</h3>
             </div>
-          </div>
-        </div>
 
-        <dl class="customer-profile-details">
-          <div class="customer-detail-row">
-            <dt>آدرس:</dt>
-            <dd>تهران، خیابان آزادی، کوچه بهار، پلاک ۱۲، طبقه ۳، واحد غربی</dd>
-          </div>
-        </dl>
-      </section>
+            <form asp-area="Expert" asp-controller="Request" asp-action="AddBid" class="wizard-form" method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-section">
+                    <div class="form-section__body">
+                        <input type="hidden" value="@Model.RequestId" asp-for="RequestId">
+                        <div class="form-field__row">
+                            <div class="form-field">
+                                <label class="form-field__label" asp-for="ProposedPrice">
+                                    قیمت پیشنهادی (تومان)
+                                    <span class="form-field__required">*</span>
+                                </label>
+                                <div class="form-field__input-wrapper form-field__input-wrapper--price">
+                                    <input type="text" asp-for="ProposedPrice" class="form-field__input form-field__input--price">
+                                    <span class="form-field__suffix">تومان</span>
+                                    <span asp-validation-for="ProposedPrice" class="validation-error"></span>
+                                </div>
+                            </div>
 
-      <section class="card user-section" id="proposal-form-section">
-        <div class="user-section__header">
-          <h3>ثبت پیشنهاد جدید</h3>
-        </div>
+                            <div class="form-field">
+                                <label class="form-field__label" for="visit-date">
+                                    تاریخ مراجعه پیشنهادی
+                                    <span class="form-field__required">*</span>
+                                </label>
 
-        <form class="wizard-form">
-          <div class="form-section">
-            <div class="form-section__body">
-              <div class="form-field__row">
-                <div class="form-field">
-                  <label class="form-field__label" for="price">
-                    قیمت پیشنهادی (تومان)
-                    <span class="form-field__required">*</span>
-                  </label>
-                  <div class="form-field__input-wrapper form-field__input-wrapper--price">
-                    <input type="text" id="price" class="form-field__input form-field__input--price" placeholder="مثال: ۵۰۰۰۰۰">
-                    <span class="form-field__suffix">تومان</span>
-                  </div>
-                  <span class="form-field__hint form-field__hint--price">
-                    قیمت پیشنهادی مشتری: <strong>۵۰۰٬۰۰۰ تومان</strong>
-                  </span>
+                                <div class="form-field__input-wrapper">
+                                    <input id="visitFa" type="text" data-jdp class="form-field__input form-field__input--ltr" autocomplete="off" placeholder="۱۴۰۴/۱۰/۱۵">
+                                    <input type="hidden" id="VisitDateTime" asp-for="ProposedVisitDateTime">
+                                    <span class="form-field__icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <span class="form-field__hint">تاریخ مورد نظر شما برای انجام کار</span>
+                                
+                                
+
+                                <span asp-validation-for="ProposedVisitDateTime" class="validation-error"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-field">
+                            <label class="form-field__label" asp-for="Description">
+                                توضیحات پیشنهاد
+                            </label>
+                            <textarea asp-for="Description" class="form-field__textarea" rows="4" placeholder="توضیحات خود را درباره نحوه انجام کار، تجربه و سوابق مرتبط بنویسید..."></textarea>
+                            <span class="form-field__hint">
+                                توضیحات کامل‌تر شانس پذیرش پیشنهاد شما را افزایش می‌دهد.
+                            </span>
+                            <span asp-validation-for="Description" class="validation-error"></span>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-field">
-                  <label class="form-field__label" for="visit-date">
-                    تاریخ مراجعه پیشنهادی
-                    <span class="form-field__required">*</span>
-                  </label>
-                  <input type="text" id="visit-date" class="form-field__input" placeholder="مثال: ۱۴۰۴/۱۰/۱۵">
-                  <span class="form-field__hint">
-                    تاریخ درخواستی مشتری: ۱۴۰۴/۱۰/۱۵
-                  </span>
+                <div class="wizard-footer">
+                    <button type="submit" class="btn btn--primary">ثبت پیشنهاد</button>
                 </div>
-              </div>
-
-              <div class="form-field">
-                <label class="form-field__label" for="description">
-                  توضیحات پیشنهاد
-                </label>
-                <textarea id="description" class="form-field__textarea" rows="4" placeholder="توضیحات خود را درباره نحوه انجام کار، تجربه و سوابق مرتبط بنویسید..."></textarea>
-                <span class="form-field__hint">
-                  توضیحات کامل‌تر شانس پذیرش پیشنهاد شما را افزایش می‌دهد.
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div class="wizard-footer">
-            <a href="expert-requests.html" class="btn btn--ghost">انصراف</a>
-            <button type="submit" class="btn btn--primary">ثبت پیشنهاد</button>
-          </div>
-        </form>
-      </section>
-    </div>
-    -->
-
+            </form>
+        </section>
+    }
 </section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/glightbox-init.js"></script>
+    <script src="~/js/JalaliDateInput.js"></script>
+}

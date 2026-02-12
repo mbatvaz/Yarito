@@ -93,10 +93,8 @@ public interface IRequestRepo
 
 
     Task<int> CountOfOpenRequestForCustomerIdAsync(int customerId, CancellationToken ct);
+
     void ClearChangeTracker();
 
-    /// <summary>
-    /// دریافت لیست مراجعات یک متخصص بر اساس فیلترهای مشخص شده (مانند تاریخ امروز).
-    /// </summary>
-    //Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct);
+    Task<PagedResult<OpenRequestDto>> GetFineOpenRequestAsync(RequestReqDto q, CancellationToken ct);
 }

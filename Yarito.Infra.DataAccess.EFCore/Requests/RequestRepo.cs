@@ -188,7 +188,7 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                 Id = r.Id,
                 Status = r.Status,
                 CityName = r.Customer.City!.Name,
-                ServicesTitle = r.Work.Title,
+                WorkTitle = r.Work.Title,
                 Title = r.Title,
                 CreateAt = r.CreatedAt
             }).ToListAsync(ct);
@@ -263,6 +263,7 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
                 Status = r.Status,
                 CustomerId = r.CustomerId,
                 WorkTitle = r.Work.Title,
+                WorkId = r.WorkId,
                 AcceptedBidId = r.AcceptedBidId,
                 RequestImagesPath = r.RequestImages.Select(i => i.ImgPath).ToList()
             })
@@ -278,33 +279,33 @@ public class RequestRepo(AppDbContext _db) : IRequestRepo
             ct);
     }
 
-    //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
-    //{
-    //    var query = ApplyFilters(q);
-    //    var total = await query.CountAsync(ct);
-    //    var skip = (q.Page - 1) * q.PageSize;
-    //    var items = await query
-    //        .Skip(skip)
-    //        .Take(q.PageSize)
-    //        .Select(r => new ExpertDashboardVisitDto
-    //        {
-    //            Id = r.Id,
-    //            BidId = r.AcceptedBidId!.Value,
-    //            Title = r.Title,
-    //            FirstName = r.Customer.FirstName!,
-    //            LastName = r.Customer.LastName!,
-    //            CustomerPhoneNumber = r.Customer.PhoneNumber,
-    //            VisitDateTime = r.AcceptedBid!.ProposedVisitDateTime
-    //        }).ToListAsync(ct);
+    public async Task<PagedResult<OpenRequestDto>> GetFineOpenRequestAsync(RequestReqDto q, CancellationToken ct)
+    {
+        var query = ApplyFilters(q);
+        var total = await query.CountAsync(ct);
+        var skip = (q.Page - 1) * q.PageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(q.PageSize)
+            .Select(r => new OpenRequestDto()
+            {
+                Title = r.Title,
+                WorkTitle = r.Work.Title,
+                RequestId = r.Id,
+                CreatedAt = r.CreatedAt,
+                Description = r.Description,
+                PreferredVisitDateTime = r.PreferredVisitDateTime,
+                ProposedPrice = r.ProposedPrice
+            }).ToListAsync(ct);
 
-    //    return new PagedResult<ExpertDashboardVisitDto>
-    //    {
-    //        Items = items,
-    //        Page = q.Page,
-    //        PageSize = q.PageSize,
-    //        TotalCount = total
-    //    };
-    //}
+        return new PagedResult<OpenRequestDto>
+        {
+            Items = items,
+            Page = q.Page,
+            PageSize = q.PageSize,
+            TotalCount = total
+        };
+    }
 
     public async Task<bool> SaveChangesAsync(CancellationToken ct)
     {

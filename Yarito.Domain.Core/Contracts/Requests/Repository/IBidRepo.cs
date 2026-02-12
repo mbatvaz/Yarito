@@ -20,10 +20,10 @@ public interface IBidRepo
     /// <summary>
     /// افزودن یک پیشنهاد جدید به دیتابیس.
     /// </summary>
-    /// <param name="newBid">موجودیت پیشنهاد جدید</param>
+    /// <param name="newBid">DTO پیشنهاد جدید</param>
     /// <param name="ct">توکن لغو عملیات</param>
     /// <returns>نتیجه موفقیت یا عدم موفقیت عملیات</returns>
-    Task<bool> AddAsync(Bid newBid, CancellationToken ct);
+    Task<bool> AddAsync(AddNewBidDto newBid, CancellationToken ct);
 
     /// <summary>
     /// به‌روزرسانی اطلاعات یک پیشنهاد موجود.
@@ -84,4 +84,8 @@ public interface IBidRepo
 
 
     Task<PagedResult<BidForRequestDto>> GetExpertBids(BidReqDto q, CancellationToken ct);
+
+    Task<BidFullDto?> GetExpertBidForRequestAsync(int requestId, int expertId, CancellationToken ct);
+
+    Task<bool> SoftDelete(int bidId, CancellationToken ct);
 }

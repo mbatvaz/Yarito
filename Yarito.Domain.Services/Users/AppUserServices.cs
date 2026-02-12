@@ -148,6 +148,9 @@ public class AppUserServices(
     public async Task<bool> IsCitySetAsync(int userId, CancellationToken ct)
         => await appUserRepo.IsCitySetAsync(userId, ct);
 
+    public async Task<int?> GetAppUserCityIdAsync(int userId, CancellationToken ct)
+        => await appUserRepo.GetAppUserCityIdAsync(userId, ct);
+
     public async Task<Result<string>> GetCustomerAddressAsync(int userId, CancellationToken ct)
     {
         var result = await appUserRepo.GetCustomerAddressAsync(userId, ct);
@@ -204,5 +207,18 @@ public class AppUserServices(
         cacheRepo.Set(key, profileInfo, TimeSpan.FromMinutes(30));
 
         return Result<UserHeaderInfoDto>.Success("اطلاعات پروفایل شما یافت شد", profileInfo);
+    }
+
+    public async Task<Result<ExpertFindRequestInfoDto>> GetAppUserFindRequestInfoByIdAsync(int appUserId,
+        CancellationToken ct)
+    {
+        var result = await appUserRepo.GetAppUserFindRequestInfoByIdAsync(appUserId, ct);
+        if (result is null)
+            return Result<ExpertFindRequestInfoDto>.Failure("هیچ مشخصاتی برای این شناسه یافت نشد");
+
+        if(result.CityId is null || result.WorkId.Count == 0)
+            return Result<ExpertFindRequestInfoDto>.Warning("پروفایل کاربر ناقص است");
+
+        return Result<ExpertFindRequestInfoDto>.Success("اطلاعات کاربر به درستی پیدا شد", result);
     }
 }

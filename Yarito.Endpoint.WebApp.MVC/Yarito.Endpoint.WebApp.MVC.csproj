@@ -26,6 +26,7 @@
     <ProjectReference Include="..\Yarito.Domain.Services\Yarito.Domain.Services.csproj" />
     <ProjectReference Include="..\Yarito.Framework\Yarito.Framework.csproj" />
     <ProjectReference Include="..\Yarito.Infra.DataAccess.Cache\Yarito.Infra.DataAccess.Cache.csproj" />
+    <ProjectReference Include="..\Yarito.Infra.DataAccess.Dapper\Yarito.Infra.DataAccess.Dapper.csproj" />
     <ProjectReference Include="..\Yarito.Infra.DataAccess.EFCore\Yarito.Infra.DataAccess.EFCore.csproj" />
     <ProjectReference Include="..\Yarito.Infra.DataAccess.Storage\Yarito.Infra.DataAccess.Storage.csproj" />
     <ProjectReference Include="..\Yarito.Infra.Database.SQLServer.EFCore\Yarito.Infra.Database.SQLServer.EFCore.csproj" />

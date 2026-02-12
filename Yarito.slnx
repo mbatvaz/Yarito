@@ -17,6 +17,7 @@
   <Folder Name="/src/02_Infrastructure/" />
   <Folder Name="/src/02_Infrastructure/DataAccess/">
     <Project Path="Yarito.Infra.DataAccess.Cache/Yarito.Infra.DataAccess.Cache.csproj" Id="e129b9e4-78ff-4e3d-8b8b-6005531824ba" />
+    <Project Path="Yarito.Infra.DataAccess.Dapper/Yarito.Infra.DataAccess.Dapper.csproj" Id="a2eabbb4-3676-4672-93b5-30d600aaeb4c" />
     <Project Path="Yarito.Infra.DataAccess.EFCore/Yarito.Infra.DataAccess.EFCore.csproj" />
     <Project Path="Yarito.Infra.DataAccess.Storage/Yarito.Infra.DataAccess.Storage.csproj" Id="c2ba7472-21ec-43cf-8b19-bde1591c9847" />
   </Folder>

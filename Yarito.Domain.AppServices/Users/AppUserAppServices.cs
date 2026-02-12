@@ -65,10 +65,12 @@ namespace Yarito.Domain.AppServices.Users
             if (dto.CityId is not null && !await cityServices.IsExistAsync(dto.CityId.Value, ct))
                 return Result<bool>.Failure("شهر وارد شده معتبر نیست");
 
-            if (dto.UserType == UserTypeEnum.Expert || dto.WorkIds is not null)
+            if (dto.WorkIds is not null && dto.WorkIds.Count > 0)
             {
                 var workFindResult = await workServices.GetWorksByIDs(dto.WorkIds, ct);
-                dto.WorksFull = workFindResult.Data;
+
+                if (workFindResult.Status != ResultStatusEnum.Success)
+                    return Result<bool>.Failure("خدمات انتخاب شده یافت نشدند");
             }
 
             string? savedImageUrl = null;

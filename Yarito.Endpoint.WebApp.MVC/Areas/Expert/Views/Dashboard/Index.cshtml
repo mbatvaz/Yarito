@@ -117,7 +117,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" class="btn btn--ghost btn--sm">نمایش جزئیات</a>
+                            <a asp-area="Expert"
+                               asp-controller="Request"
+                               asp-action="Details"
+                               asp-route-requestId="@v.RequestId"
+                               class="btn btn--ghost btn--sm">نمایش جزئیات</a>
                         </div>
                     }
                 }

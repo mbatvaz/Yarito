@@ -43,4 +43,7 @@ public class WorkAppServices(IWorkServices workServices) : IWorkAppServices
     {
         return await workServices.DeleteAsync(workId, ct);
     }
+
+    public async Task<IReadOnlyList<WorksFullDto>> GetExpertWorks(int expertId, CancellationToken ct)
+        => await workServices.GetExpertWorks(expertId, ct);
 }

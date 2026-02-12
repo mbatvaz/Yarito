@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Yarito.Domain.Core.Contracts._Common.Services;
+﻿using Yarito.Domain.Core.Contracts._Common.Services;
 using Yarito.Domain.Core.Contracts.Images.Services;
 using Yarito.Domain.Core.Contracts.Requests.AppServices;
 using Yarito.Domain.Core.Contracts.Requests.Services;
@@ -18,11 +17,8 @@ namespace Yarito.Domain.AppServices.Requests
         IFileServices fileServices,
         IImageServices imageServices,
         IBidServices bidServices,
-        IWorkServices workServices,
-        IConfiguration configuration) : IRequestAppServices
+        IWorkServices workServices) : IRequestAppServices
     {
-        #region Query Methods
-
         public async Task<Result<RequestFullDto>> GetRequestFullByIdAsync(int requestId, CancellationToken ct)
             => await requestServices.GetRequestFullByIdAsync(requestId, ct);
 
@@ -35,14 +31,8 @@ namespace Yarito.Domain.AppServices.Requests
         public async Task<PagedResult<RequestCardDto>> GetRequestsCardListAsync(RequestReqDto q, CancellationToken ct)
             => await requestServices.GetRequestsCardListAsync(q, ct);
 
-        #endregion
-
-        #region Command Methods
-
         public async Task<Result<bool>> ChangeStatusAsync(int requestId, RequestStatusEnum newStatus, CancellationToken ct)
             => await requestServices.ChangeStatusAsync(requestId, newStatus, ct);
-
-        #endregion
 
         public async Task<Result<int>> AddNewRequest(RequestNewDto dto, CancellationToken ct)
         {
@@ -127,15 +117,15 @@ namespace Yarito.Domain.AppServices.Requests
                     return Result<bool>.Failure(changStatusResult.Message); 
 
                 var balance = acceptedBid.Data.ProposedPrice * (decimal)0.9;
+
                 //var feeResult = await appUserServices.DecreaseWalletBalanceAsync(11, balance, ct, false);
-                
                 //if (feeResult.Status != ResultStatusEnum.Success)
                 //    throw new Exception();
 
                 var result = await appUserServices.IncreaseWalletBalanceAsync(acceptedBid.Data.ExpertId, balance, ct, false);
                 
                 if (result.Status != ResultStatusEnum.Success)
-                    throw new Exception();
+                    throw new Exception(result.Message);
 
                 var bidStatusResult = await bidServices.ChangeSingleStatusAsync(acceptedBid.Data.Id, BidStatusEnum.Done, ct, false);
                 if (bidStatusResult.Status != ResultStatusEnum.Success)
@@ -220,7 +210,27 @@ namespace Yarito.Domain.AppServices.Requests
             }
         }
 
-        //public async Task<PagedResult<ExpertDashboardVisitDto>> GetExpertVisitsAsync(RequestReqDto q, CancellationToken ct)
-        //    => await requestServices.GetExpertVisitsAsync(q, ct);
+        public async Task<Result<PagedResult<OpenRequestDto>>> GetOpenRequestAsync(RequestReqDto q, CancellationToken ct)
+        {
+            var expert = await appUserServices.GetAppUserFindRequestInfoByIdAsync(q.ExpertId.Value, ct);
+            if (expert.Status == ResultStatusEnum.Failure || expert.Data is null)
+                return Result<PagedResult<OpenRequestDto>>.Failure(expert.Message);
+            if (expert.Status == ResultStatusEnum.Warning || expert.Data.CityId is null)
+                return Result<PagedResult<OpenRequestDto>>.Warning(expert.Message);
+
+            var newRequestReq = new RequestReqDto()
+            {
+                CityId = expert.Data.CityId,
+                WorkIds = q.WorkId is not null ? null : expert.Data.WorkId,
+                FirstStatus = RequestStatusEnum.Pending,
+                WorkId = q.WorkId,
+                To = DateTime.Now.AddDays(1),
+                Page = q.Page,
+                PageSize = q.PageSize,
+                TextSearch = q.TextSearch
+            };
+            var result = await requestServices.GetFineOpenRequestAsync(newRequestReq, ct);
+            return Result<PagedResult<OpenRequestDto>>.Success("درخواست های یافت شدند", result);
+        }
     }
 }
