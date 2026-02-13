@@ -4,7 +4,6 @@ using Yarito.Domain.Core.Contracts.Users.Services;
 using Yarito.Domain.Core.DTOs.Users;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
-using Yarito.Domain.Core.Entities.Users;
 using Yarito.Framework;
 
 namespace Yarito.Domain.Services.Users;

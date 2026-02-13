@@ -9,6 +9,7 @@ namespace Yarito.Domain.Services.Works;
 
 public class WorkServices(
     IWorkRepo workRepo,
+    IWorkQueryRepo workQueryRepo,
     IExpertWorkRepo expertWorkRepo) : IWorkServices
 {
     #region Query Methods
@@ -23,7 +24,7 @@ public class WorkServices(
 
     public async Task<Result<List<WorksFullDto>>> GetWorksByIDs(List<int> ids, CancellationToken ct)
     {
-        var result = await workRepo.GetWorksByIDs(ids, ct);
+        var result = await workQueryRepo.GetWorksByIDs(ids, ct);
         return result.Count > 0
             ? Result<List<WorksFullDto>>.Success("لیست خدمات با موفقیت دریافت شد", result)
             : Result<List<WorksFullDto>>.Failure("هیچ خدمتی یافت نشد");

@@ -28,6 +28,8 @@ using Yarito.Domain.Services.Users;
 using Yarito.Domain.Services.Works;
 using Yarito.Framework;
 using Yarito.Infra.DataAccess.Cache.InMemory;
+using Yarito.Infra.DataAccess.Dapper.Cities;
+using Yarito.Infra.DataAccess.Dapper.Works;
 using Yarito.Infra.DataAccess.EFCore.Cities;
 using Yarito.Infra.DataAccess.EFCore.Images;
 using Yarito.Infra.DataAccess.EFCore.Requests;
@@ -106,6 +108,15 @@ builder.Services.AddScoped<IReviewRepo, ReviewRepo>();
 builder.Services.AddScoped<IAppUserRepo, AppUserRepo>();
 builder.Services.AddScoped<ICategoryRepo, CategoryRepo>();
 builder.Services.AddScoped<IWorkRepo, WorkRepo>();
+builder.Services.AddScoped<IFileRepository, FileRepository>();
+builder.Services.AddScoped<IImageRepop, ImageRepop>();
+builder.Services.AddScoped<IInMemoryCacheRepo, InMemoryCacheRepo>();
+builder.Services.AddScoped<IExpertWorkRepo, ExpertWorkRepo>();
+
+// Dapper Query Repositories (Query operations)
+builder.Services.AddScoped<ICityQueryRepo, CityQueryRepo>();
+builder.Services.AddScoped<ICategoryQueryRepo, CategoryQueryRepo>();
+builder.Services.AddScoped<IWorkQueryRepo, WorkQueryRepo>();
 builder.Services.AddScoped<IFileRepository, FileRepository>();
 builder.Services.AddScoped<IImageRepop, ImageRepop>();
 builder.Services.AddScoped<IInMemoryCacheRepo, InMemoryCacheRepo>();

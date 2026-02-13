@@ -9,6 +9,7 @@ namespace Yarito.Domain.Services.Works;
 
 public class CategoryServices(
     ICategoryRepo categoryRepo,
+    ICategoryQueryRepo categoryQueryRepo,
     IMemoryCache memoryCache) : ICategoryServices
 {
     #region Query Methods
@@ -17,10 +18,10 @@ public class CategoryServices(
         => await categoryRepo.GetByIdAsync(categoryId, ct);
 
     public async Task<IReadOnlyList<CategoryStringDataDto>> GetAllCategoriesNamesAsync(CancellationToken ct)
-        => await categoryRepo.GetAllCategoriesNamesAsync(ct);
+        => await categoryQueryRepo.GetAllCategoriesNamesAsync(ct);
 
     public async Task<IReadOnlyList<CategoryDto>> GetJustCategoriesListAsync(CancellationToken ct)
-        => await categoryRepo.GetJustCategoriesListAsync(ct);
+        => await categoryQueryRepo.GetJustCategoriesListAsync(ct);
 
     public async Task<PagedResult<CategoryFullDto>> GetCategoriesListAsync(CategoryReqDto q, CancellationToken ct) 
         => await categoryRepo.GetCategoriesListAsync(q, ct);

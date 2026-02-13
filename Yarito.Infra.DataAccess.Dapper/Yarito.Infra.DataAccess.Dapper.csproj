@@ -6,16 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Cities\" />
-    <Folder Include="Images\" />
-    <Folder Include="Requests\" />
-    <Folder Include="Users\" />
-    <Folder Include="Works\" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Yarito.Domain.Core\Yarito.Domain.Core.csproj" />
   </ItemGroup>
 
 </Project>
