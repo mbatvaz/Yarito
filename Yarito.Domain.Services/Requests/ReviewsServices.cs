@@ -51,7 +51,7 @@ namespace Yarito.Domain.Services.Requests
                 return Result<BidFullDto>.Failure("دسترسی غیرمجاز.");
 
             if (request.Status != RequestStatusEnum.Completed)
-                return Result<BidFullDto>.Success("این درخواست هنوز تمام نشده است.");
+                return Result<BidFullDto>.Warning("این درخواست هنوز تمام نشده است.");
 
 
             var bidResult = await bidServices.GetBidFullByIdAsync(request.AcceptedBidId.Value, ct);

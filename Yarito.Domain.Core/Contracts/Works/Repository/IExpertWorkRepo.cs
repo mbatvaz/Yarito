@@ -5,5 +5,6 @@ namespace Yarito.Domain.Core.Contracts.Works.Repository
     public interface IExpertWorkRepo
     {
         Task<IReadOnlyList<WorksFullDto>> GetExpertWorks(int expertId, CancellationToken ct);
+        Task<bool> HasExpertWork(int expertId, int workId, CancellationToken ct);
     }
 }

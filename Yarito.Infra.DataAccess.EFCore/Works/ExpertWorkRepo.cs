@@ -19,5 +19,8 @@ namespace Yarito.Infra.DataAccess.EFCore.Works
                     BasePrice = w.Work.BasePrice
                 }).ToListAsync(ct);
         }
+
+        public async Task<bool> HasExpertWork(int expertId, int workId, CancellationToken ct)
+            => await _db.ExpertWorks.AnyAsync(ew => ew.ExpertId == expertId && ew.WorkId == workId, ct);
     }
 }

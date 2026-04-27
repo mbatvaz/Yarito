@@ -1,6 +1,7 @@
 ﻿using Yarito.Domain.Core.Contracts.Requests.Repository;
 using Yarito.Domain.Core.Contracts.Requests.Services;
 using Yarito.Domain.Core.Contracts.Users.Services;
+using Yarito.Domain.Core.Contracts.Works.Repository;
 using Yarito.Domain.Core.DTOs.Requests;
 using Yarito.Domain.Core.DTOs.Works;
 using Yarito.Domain.Core.Entities._Common;
@@ -13,7 +14,8 @@ namespace Yarito.Domain.Services.Requests
     public class RequestServices(
         IRequestRepo requestRepo,
         IBidServices bidServices,
-        IAppUserServices appUserServices) : IRequestServices
+        IAppUserServices appUserServices,
+        IExpertWorkRepo expertWorkRepo) : IRequestServices
     {
         public async Task<int> GetCountAsync(CancellationToken ct)
             => await requestRepo.GetCountAsync(ct);
@@ -199,6 +201,12 @@ namespace Yarito.Domain.Services.Requests
 
             if (userResult.Data.WalletBalance < bid.ProposedPrice)
                 return Result<BidFullDto>.Failure("موجودی حساب شما برای پذیرش این پیشنهاد کافی نیست.");
+
+            if (!await expertWorkRepo.HasExpertWork(bid.ExpertId, request.WorkId, ct))
+            {
+                await bidServices.ChangeSingleStatusAsync(bidId, BidStatusEnum.Rejected, ct);
+                return Result<BidFullDto>.Failure("متخصص انتخابی شما دیگر این خدمت را ارائه نمیدهد.");
+            }
 
             return Result<BidFullDto>.Success("اعتبارسنجی با موفقیت انجام شد.", bid);
         }
